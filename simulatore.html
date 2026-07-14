@@ -311,7 +311,7 @@ async function avvia(){
 
   for(let i = 0; i < N && running; i++){
     const uid  = 'SIM_' + String(i + 1).padStart(3, '0');
-    const nome = NOMI[i % NOMI.length] + '.' + String(i + 1).padStart(3,'0');
+    const nome = NOMI[i % NOMI.length] + '_' + String(i + 1).padStart(3,'0');
 
     try{
       // Crea app Firebase con nome univoco → WebSocket separato
@@ -358,6 +358,9 @@ async function avvia(){
 /* ============================================================
    FORZA VOTO IMMEDIATO SU TUTTI + calcola scores se quiz
    ============================================================ */
+// Firebase non accetta . # $ / [ ] nelle chiavi — sanitizza prima di scrivere
+function safeKey(str){ return str.replace(/[.#$\/\[\]]/g, '_'); }
+
 async function forzaVoto(){
   if(!currentSid || currentSlide === null){ log('Nessuna slide attiva.', 'err'); return; }
   const s = slides[currentSlide];
@@ -407,7 +410,7 @@ async function forzaVoto(){
     let corretti = 0;
     Object.entries(votiPerBot).forEach(([uid, voto]) => {
       if(voto === correctOption){
-        const nome  = uidToNome[uid] || uid;
+        const nome  = safeKey(uidToNome[uid] || uid);
         const bonus = Math.floor(Math.random() * 50);
         scoresUpdate[nome] = (existing[nome] || 0) + 100 + bonus;
         corretti++;
@@ -622,7 +625,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 16 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 17 · 14.07.2026</div>
 
 </body>
 </html>
