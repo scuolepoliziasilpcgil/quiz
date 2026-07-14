@@ -4100,7 +4100,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 9 · 14.07.2026</div>
+<div class="rev-tag">index · rev 10 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile
@@ -4435,7 +4435,8 @@ document.getElementById('edCloseBtn').addEventListener('click', () => {
 document.getElementById('edSaveBtn').addEventListener('click', async () => {
   document.getElementById('edStatus').textContent = 'Salvataggio…';
   try{
-    await db.ref(DB_PREFIX + '/slides_config/custom').set(editorSlides);
+    const toSave = editorSlides.map(s => { const c = Object.assign({}, s); delete c._new; return c; });
+    await db.ref(DB_PREFIX + '/slides_config/custom').set(toSave);
     await db.ref(DB_PREFIX + '/slides_config/savedAt').set(Date.now());
     // Aggiorna runtime
     slides = editorSlides.filter(s => !s.disabled);
@@ -4473,7 +4474,7 @@ document.getElementById('edResetBtn').addEventListener('click', async () => {
 // ───── Aggiungi domanda ─────
 document.getElementById('edAddBtn').addEventListener('click', () => {
   // Aggiunge una nuova slide quiz vuota prima della closing (o in fondo)
-  const newSlide = { type:'quiz', section:'p2', q:'', options:['',''], correct:0, answer:'' };
+  const newSlide = { type:'quiz', section:'p2', q:'', options:['',''], correct:0, answer:'', _new:true };
   const closingIdx = editorSlides.findIndex(s => s.type === 'closing');
   if(closingIdx > -1){
     editorSlides.splice(closingIdx, 0, newSlide);
@@ -4663,6 +4664,34 @@ function buildEdForm(container, s, idx){
     appendInputField(container, 'Titolo', s.titolo || '', val => { editorSlides[idx].titolo = val; updateEdPreview(idx); });
     appendTextareaField(container, 'Testo', s.testo || '', val => { editorSlides[idx].testo = val; });
   }
+
+  // Pulsanti in fondo al form — sempre presenti
+  const formBtns = document.createElement('div');
+  formBtns.style.cssText = 'display:flex;gap:.6rem;justify-content:flex-end;padding-top:.4rem;border-top:1px solid rgba(247,243,232,.08);margin-top:.2rem;';
+
+  const annullaBtn = document.createElement('button');
+  annullaBtn.className = 'ghost-btn';
+  annullaBtn.style.cssText = 'border-color:rgba(247,243,232,.3);color:var(--crema);font-size:.82rem;padding:.4rem 1rem;';
+  annullaBtn.textContent = s._new ? '✕ Scarta' : '✕ Chiudi';
+  annullaBtn.addEventListener('click', () => {
+    if(editorSlides[idx] && editorSlides[idx]._new){
+      editorSlides.splice(idx, 1);
+      renderEditorList();
+      document.getElementById('edStatus').textContent = 'Domanda scartata.';
+    } else {
+      toggleEdRow(idx);
+    }
+  });
+  formBtns.appendChild(annullaBtn);
+
+  const saveFormBtn = document.createElement('button');
+  saveFormBtn.className = 'ghost-btn';
+  saveFormBtn.style.cssText = 'border-color:var(--accent-p3);color:var(--accent-p3);font-size:.82rem;padding:.4rem 1rem;';
+  saveFormBtn.textContent = '💾 Salva';
+  saveFormBtn.addEventListener('click', () => document.getElementById('edSaveBtn').click());
+  formBtns.appendChild(saveFormBtn);
+
+  container.appendChild(formBtns);
 }
 
 // Costruisce la lista opzioni con radio (quiz) o solo X (wordcloud/sondaggio)
