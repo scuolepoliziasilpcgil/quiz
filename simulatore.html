@@ -345,7 +345,7 @@ async function avvia(){
         setTimeout(() => votaBot(botDb, uid, idx), delay);
       });
 
-      bots[uid] = { app, db: botDb, presRef, slideRef, score: 0 };
+      bots[uid] = { app, db: botDb, presRef, slideRef, score: 0, nome };
       totalConn++;
 
       if(i % 20 === 0 || i === N - 1){
@@ -365,8 +365,7 @@ async function avvia(){
   log('✓ Simulazione completata — ' + totalConn + ' connessioni attive', 'ok');
   document.getElementById('btnVota').disabled  = false;
   document.getElementById('btnScore').disabled = false;
-  document.getElementById('btnReset').disabled = false;
-  aggiornaUI();
+  document.getElementById('btnReset').disabled = false;  aggiornaUI();
 }
 
 /* ============================================================
@@ -458,9 +457,12 @@ async function ferma(){
   // Cancella l'intero nodo presenza — così pulisce anche residui di sessioni precedenti
   if(currentSid){
     try{
-      await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').remove();
-      log('Presenza svuotata completamente.', 'ok');
-    }catch(e){ log('Errore pulizia presenza: ' + e.message, 'err'); }
+      await Promise.all([
+        masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').remove(),
+        masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scores').remove(),
+      ]);
+      log('Presenza e scores svuotati.', 'ok');
+    }catch(e){ log('Errore pulizia: ' + e.message, 'err'); }
   }
 
   // Stacco i listener e chiudo le app
@@ -535,27 +537,42 @@ function renderClassifica(presenzaObj){
    variabile di domande (0-8 risposte corrette × punti per risposta).
    ============================================================ */
 async function assegnaPunteggi(){
-  if(!currentSid || Object.keys(bots).length === 0){
-    log('Avvia prima la simulazione.', 'err'); return;
-  }
-  log('Assegno punteggi random ai bot…', 'info');
-  const PTS_PER_RISPOSTA = 100; // punti base per risposta corretta
-  const MAX_RISPOSTE = 8;
+  if(!currentSid){ log('Nessuna sessione attiva.', 'err'); return; }
 
-  const payload = {};
-  Object.keys(bots).forEach(uid => {
-    const risposteCorrette = Math.floor(Math.random() * (MAX_RISPOSTE + 1));
-    // velocità casuale: bonus da 0 a 50 punti per risposta
-    const bonus = Math.floor(Math.random() * 50);
-    const score = risposteCorrette * (PTS_PER_RISPOSTA + bonus);
-    payload[uid + '/s'] = score;
+  const uidList = Object.keys(bots).length > 0
+    ? Object.keys(bots)
+    : Array.from({ length: parseInt(document.getElementById('numBots').value) || 150 },
+        (_, i) => 'SIM_' + String(i + 1).padStart(3, '0'));
+
+  if(uidList.length === 0){ log('Nessun bot da punteggiare.', 'err'); return; }
+
+  log('Assegno punteggi a ' + uidList.length + ' bot…', 'info');
+  const PTS = 100;
+  const MAX = 8;
+
+  // Due payload: presenza (per pannello simulatore) e scores (per classifica index)
+  const presPayload   = {};
+  const scoresPayload = {};
+
+  uidList.forEach(uid => {
+    const corrette = Math.floor(Math.random() * (MAX + 1));
+    const bonus    = Math.floor(Math.random() * 50);
+    const score    = Math.max(50, corrette * (PTS + bonus));
+    // Nickname = campo n nella presenza (es. "Marco.001"), o uid come fallback
+    const pres = bots[uid];
+    const nome = pres ? (pres.nome || uid) : uid;
+    presPayload[uid + '/s']  = score;   // per pannello simulatore
+    scoresPayload[nome]      = score;   // per classifica index.html
   });
 
   try{
-    await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
-    log('✓ Punteggi assegnati a ' + Object.keys(bots).length + ' bot', 'ok');
+    await Promise.all([
+      masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(presPayload),
+      masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scores').update(scoresPayload),
+    ]);
+    log('✓ Punteggi scritti in /presence e /scores per ' + uidList.length + ' bot', 'ok');
   }catch(e){
-    log('Errore assegnazione punteggi: ' + e.message, 'err');
+    log('Errore: ' + e.message, 'err');
     totalErr++;
   }
 }
@@ -593,6 +610,9 @@ initMaster().then(() => {
       'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX;
     document.getElementById('valSlide').textContent = '—';
     document.getElementById('valSlideInfo').textContent = '';
+    // Abilita pulsanti che funzionano anche senza bot attivi
+    document.getElementById('btnScore').disabled = false;
+    document.getElementById('btnReset').disabled = false;
 
     // Stacco listener precedenti
     if(masterDb._slideRef) masterDb._slideRef.off();
@@ -659,7 +679,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 11 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 13 · 14.07.2026</div>
 
 </body>
 </html>
