@@ -154,6 +154,17 @@ const NOMI = [
 /* ============================================================
    STATO GLOBALE
    ============================================================ */
+const TIPI_VOTO = ['quiz', 'sondaggio', 'wordcloud'];
+
+const ETICHETTE_TIPO = {
+  title:      'Inizio',
+  closing:    'Fine',
+  pausa:      'Pausa',
+  quiz:       'Quiz',
+  sondaggio:  'Sondaggio',
+  wordcloud:  'Word cloud',
+  narrazione: 'Narrazione',
+};
 let masterDb    = null;   // connessione principale per leggere sessione
 let currentSid  = null;   // sessionId corrente
 let currentSlide = null;  // indice slide corrente
@@ -227,45 +238,9 @@ async function initMaster(){
   try{
     masterDb = firebase.initializeApp(FIREBASE_CONFIG, 'master-sim').database();
   }catch(e){
-    // app già esistente
     masterDb = firebase.app('master-sim').database();
   }
-
-  // Leggo sessionId corrente
-  const snap = await masterDb.ref(DB_PREFIX + '/config/currentSession').once('value');
-  currentSid = snap.val();
-  if(!currentSid){ log('Nessuna sessione attiva. Avvia una sessione dal relatore.', 'err'); return false; }
-  log('Sessione trovata: ' + currentSid, 'ok');
-  document.getElementById('sessionInfo').textContent =
-    'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX;
-
-  // Ascolto slide corrente (per mostrare in dashboard e bloccare voti su slide non votabili)
-  masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide').on('value', snap => {
-    currentSlide = snap.val();
-    if(currentSlide !== null && slides[currentSlide]){
-      const s = slides[currentSlide];
-      const TIPI_VOTO = ['quiz','sondaggio','wordcloud'];
-      const votabile = TIPI_VOTO.includes(s.type);
-      document.getElementById('valSlide').textContent =
-        (currentSlide + 1) + ' di ' + slides.length + ' — ' + s.type.toUpperCase();
-      document.getElementById('valSlideInfo').textContent =
-        (votabile ? '✔ votabile' : '✗ non votabile') +
-        ' — ' + (s.q || s.titolo || '').slice(0, 60);
-      // Reset distribuzione voti al cambio slide
-      votoDistrib = {};
-      document.getElementById('votoWrap').style.display = 'none';
-    } else {
-      document.getElementById('valSlide').textContent = '—';
-      document.getElementById('valSlideInfo').textContent = '';
-    }
-  });
-
-  // Ascolto presenza per contatore live E classifica
-  masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').on('value', snap => {
-    document.getElementById('valPres').textContent = snap.numChildren();
-    renderClassifica(snap.val() || {});
-  });
-
+  log('Connesso a Firebase. In attesa di sessione dal relatore…', 'ok');
   return true;
 }
 
@@ -345,7 +320,6 @@ async function avvia(){
 /* ============================================================
    VOTO BOT — solo su slide votabili (quiz, sondaggio, wordcloud)
    ============================================================ */
-const TIPI_VOTO = ['quiz', 'sondaggio', 'wordcloud'];
 
 async function votaBot(botDb, uid, slideIdx){
   if(!currentSid) return;
@@ -555,9 +529,58 @@ window.addEventListener('beforeunload', () => {
   }
 });
 
-// Avvio
-initMaster().then(ok => {
-  if(ok) log('Pronto. Avvia la simulazione quando vuoi.', 'ok');
+// Avvio: init Firebase poi attacca listener permanente su currentSession
+initMaster().then(() => {
+  masterDb.ref(DB_PREFIX + '/config/currentSession').on('value', snap => {
+    const nuovoSid = snap.val();
+    if(!nuovoSid){
+      log('Nessuna sessione attiva — avvia una sessione dal relatore.', 'err');
+      document.getElementById('sessionInfo').textContent = 'In attesa di sessione…';
+      return;
+    }
+    if(nuovoSid === currentSid) return; // stessa sessione, nulla da fare
+
+    currentSid = nuovoSid;
+    currentSlide = null;
+    votoDistrib = {};
+    log('🔄 Sessione rilevata: ' + currentSid, 'info');
+    document.getElementById('sessionInfo').textContent =
+      'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX;
+    document.getElementById('valSlide').textContent = '—';
+    document.getElementById('valSlideInfo').textContent = '';
+
+    // Stacco listener precedenti
+    if(masterDb._slideRef) masterDb._slideRef.off();
+    if(masterDb._presRef)  masterDb._presRef.off();
+
+    // Listener slide corrente
+    masterDb._slideRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide');
+    masterDb._slideRef.on('value', snap => {
+      currentSlide = snap.val();
+      if(currentSlide !== null && slides[currentSlide]){
+        const s = slides[currentSlide];
+        const votabile = TIPI_VOTO.includes(s.type);
+        document.getElementById('valSlide').textContent =
+          (currentSlide + 1) + ' di ' + slides.length +
+          ' — ' + (ETICHETTE_TIPO[s.type] || s.type);
+        document.getElementById('valSlideInfo').textContent =
+          (votabile ? '✔ votabile' : '✗ non votabile') +
+          ' — ' + (s.q || s.titolo || '').slice(0, 60);
+        votoDistrib = {};
+        document.getElementById('votoWrap').style.display = 'none';
+      } else {
+        document.getElementById('valSlide').textContent = '—';
+        document.getElementById('valSlideInfo').textContent = '';
+      }
+    });
+
+    // Listener presenza
+    masterDb._presRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence');
+    masterDb._presRef.on('value', snap => {
+      document.getElementById('valPres').textContent = snap.numChildren();
+      renderClassifica(snap.val() || {});
+    });
+  });
   aggiornaUI();
 });
 
@@ -571,7 +594,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 4 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 5 · 14.07.2026</div>
 
 </body>
 </html>
