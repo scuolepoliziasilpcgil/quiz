@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SILP Quiz — Simulatore di carico</title>
+<style>
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{ background:#0a1428; color:#f7f3e8; font-family:'IBM Plex Mono',monospace; font-size:.85rem; padding:1.2rem; }
+  h1{ font-family:sans-serif; font-size:1.3rem; margin-bottom:1rem; color:#9fd8ff; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:.8rem; margin-bottom:1.2rem; }
+  .card{ background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:10px; padding:.9rem; }
+  .card .label{ font-size:.65rem; letter-spacing:.1em; text-transform:uppercase; opacity:.55; margin-bottom:.3rem; }
+  .card .val{ font-size:2rem; font-weight:700; font-family:sans-serif; }
+  .val.ok{ color:#b6e3c0; }
+  .val.warn{ color:#ffe699; }
+  .val.err{ color:#ffb3be; }
+  .controls{ display:flex; gap:.7rem; flex-wrap:wrap; margin-bottom:1.2rem; align-items:center; }
+  button{
+    background:none; border:1px solid rgba(255,255,255,.3); border-radius:8px;
+    color:#f7f3e8; cursor:pointer; font-family:inherit; font-size:.82rem;
+    padding:.5rem 1.1rem; transition:background .15s;
+  }
+  button:hover{ background:rgba(255,255,255,.1); }
+  button.primary{ border-color:#b6e3c0; color:#b6e3c0; }
+  button.danger{ border-color:#ffb3be; color:#ffb3be; }
+  button:disabled{ opacity:.35; cursor:not-allowed; }
+  label{ font-size:.75rem; opacity:.6; }
+  input[type=number]{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.2);
+    border-radius:6px; color:#f7f3e8; font-family:inherit; font-size:.85rem;
+    padding:.35rem .6rem; width:70px; }
+  .log{ background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.1); border-radius:8px;
+    height:220px; overflow-y:auto; padding:.7rem; font-size:.75rem; line-height:1.6; }
+  .log-entry{ opacity:.75; }
+  .log-entry.ok{ color:#b6e3c0; }
+  .log-entry.err{ color:#ffb3be; }
+  .log-entry.info{ color:#9fd8ff; }
+  .bar-wrap{ margin-bottom:1.2rem; }
+  .bar-label{ font-size:.7rem; opacity:.55; margin-bottom:.4rem; }
+  .bar-outer{ background:rgba(255,255,255,.08); border-radius:6px; height:14px; overflow:hidden; }
+  .bar-inner{ height:100%; background:#b6e3c0; border-radius:6px; transition:width .3s; }
+  .session-info{ font-size:.75rem; opacity:.55; margin-bottom:1rem; }
+  .vote-distrib{ display:flex; gap:1.2rem; flex-wrap:wrap; margin-top:.5rem; }
+  .vote-opt{ flex:1; min-width:80px; }
+  .vote-opt .opt-label{ font-size:.68rem; opacity:.6; margin-bottom:.25rem; }
+  .vote-opt .opt-bar{ background:rgba(255,255,255,.08); border-radius:4px; height:8px; overflow:hidden; }
+  .vote-opt .opt-fill{ height:100%; border-radius:4px; transition:width .3s; }
+  .opt-fill.c0{ background:#b6e3c0; }
+  .opt-fill.c1{ background:#9fd8ff; }
+  .opt-fill.c2{ background:#ffe699; }
+  .opt-fill.c3{ background:#ffb3be; }
+  .rtt-hist{ display:flex; align-items:flex-end; gap:2px; height:40px; margin-top:.5rem; }
+  .rtt-bar{ flex:1; background:#9fd8ff; border-radius:2px 2px 0 0; min-height:2px; }
+  hr{ border:none; border-top:1px solid rgba(255,255,255,.1); margin:1rem 0; }
+</style>
+</head>
+<body>
+
+<h1>⚡ SILP Quiz — Simulatore di carico</h1>
+<p class="session-info" id="sessionInfo">Carico sessione da Firebase…</p>
+
+<div class="grid">
+  <div class="card">
+    <div class="label">Connessioni aperte</div>
+    <div class="val ok" id="valConn">0</div>
+  </div>
+  <div class="card">
+    <div class="label">Presenze Firebase</div>
+    <div class="val ok" id="valPres">0</div>
+  </div>
+  <div class="card">
+    <div class="label">Voti inviati</div>
+    <div class="val ok" id="valVoti">0</div>
+  </div>
+  <div class="card">
+    <div class="label">Errori</div>
+    <div class="val err" id="valErr">0</div>
+  </div>
+  <div class="card">
+    <div class="label">RTT medio (ms)</div>
+    <div class="val warn" id="valRtt">—</div>
+  </div>
+  <div class="card">
+    <div class="label">Slide corrente</div>
+    <div class="val" id="valSlide">—</div>
+  </div>
+</div>
+
+<div class="bar-wrap">
+  <div class="bar-label">Progresso connessioni</div>
+  <div class="bar-outer"><div class="bar-inner" id="progressBar" style="width:0%"></div></div>
+</div>
+
+<div class="controls">
+  <label>Bot: <input type="number" id="numBots" value="300" min="1" max="500"></label>
+  <label>Ramp ms: <input type="number" id="rampMs" value="80" min="20" max="500"></label>
+  <button class="primary" id="btnStart">▶ Avvia simulazione</button>
+  <button class="danger" id="btnStop" disabled>■ Ferma e pulisci</button>
+  <button id="btnVota" disabled>🗳 Forza voto ora</button>
+  <button id="btnReset" disabled>↺ Reset presenze</button>
+</div>
+
+<div class="bar-wrap" id="votoWrap" style="display:none">
+  <div class="bar-label">Distribuzione voti — slide corrente</div>
+  <div class="vote-distrib" id="votoDistrib"></div>
+</div>
+
+<div class="rtt-hist" id="rttHist"></div>
+
+<hr>
+<div class="log" id="logEl"></div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="config.js"></script>
+
+<script>
+/* ============================================================
+   CONFIGURAZIONE
+   ============================================================ */
+const NOMI = [
+  'Marco','Luca','Sara','Giulia','Andrea','Chiara','Paolo','Elena',
+  'Davide','Laura','Matteo','Alice','Roberto','Francesca','Giorgio',
+  'Valentina','Simone','Martina','Fabio','Serena','Riccardo','Alessia',
+  'Daniele','Federica','Stefano','Camilla','Antonio','Beatrice','Michele','Ilaria'
+];
+
+/* ============================================================
+   STATO GLOBALE
+   ============================================================ */
+let masterDb    = null;   // connessione principale per leggere sessione
+let currentSid  = null;   // sessionId corrente
+let currentSlide = null;  // indice slide corrente
+let bots        = {};     // uid → { app, db, presRef, slideRef, score }
+let totalConn   = 0;
+let totalVoti   = 0;
+let totalErr    = 0;
+let rttSamples  = [];
+let votoDistrib = {};
+let running     = false;
+let rampTimer   = null;
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+function log(msg, cls = 'info'){
+  const el = document.getElementById('logEl');
+  const div = document.createElement('div');
+  div.className = 'log-entry ' + cls;
+  div.textContent = '[' + new Date().toLocaleTimeString('it') + '] ' + msg;
+  el.appendChild(div);
+  el.scrollTop = el.scrollHeight;
+  // max 200 righe
+  while(el.children.length > 200) el.removeChild(el.firstChild);
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function aggiornaUI(){
+  const N = parseInt(document.getElementById('numBots').value) || 300;
+  document.getElementById('valConn').textContent  = totalConn;
+  document.getElementById('valPres').textContent  = Object.keys(bots).length;
+  document.getElementById('valVoti').textContent  = totalVoti;
+  document.getElementById('valErr').textContent   = totalErr;
+  document.getElementById('progressBar').style.width = Math.min(100, totalConn / N * 100) + '%';
+  if(rttSamples.length > 0){
+    const avg = Math.round(rttSamples.reduce((a,b)=>a+b,0) / rttSamples.length);
+    document.getElementById('valRtt').textContent = avg + ' ms';
+  }
+  // istogramma RTT
+  const hist = document.getElementById('rttHist');
+  hist.innerHTML = '';
+  const last = rttSamples.slice(-30);
+  const maxR = Math.max(1, ...last);
+  last.forEach(r => {
+    const b = document.createElement('div');
+    b.className = 'rtt-bar';
+    b.style.height = Math.max(4, Math.round(r / maxR * 38)) + 'px';
+    b.title = r + ' ms';
+    hist.appendChild(b);
+  });
+  // distribuzione voti
+  const wrap = document.getElementById('votoDistrib');
+  if(Object.keys(votoDistrib).length > 0){
+    document.getElementById('votoWrap').style.display = 'block';
+    const total = Object.values(votoDistrib).reduce((a,b)=>a+b,0) || 1;
+    wrap.innerHTML = '';
+    Object.entries(votoDistrib).forEach(([k,v], i) => {
+      wrap.innerHTML += `<div class="vote-opt">
+        <div class="opt-label">Opzione ${k} — ${v} voti</div>
+        <div class="opt-bar"><div class="opt-fill c${i}" style="width:${Math.round(v/total*100)}%"></div></div>
+      </div>`;
+    });
+  }
+}
+
+/* ============================================================
+   INIT MASTER CONNECTION
+   ============================================================ */
+async function initMaster(){
+  try{
+    masterDb = firebase.initializeApp(FIREBASE_CONFIG, 'master-sim').database();
+  }catch(e){
+    // app già esistente
+    masterDb = firebase.app('master-sim').database();
+  }
+
+  // Leggo sessionId corrente
+  const snap = await masterDb.ref(DB_PREFIX + '/config/currentSession').once('value');
+  currentSid = snap.val();
+  if(!currentSid){ log('Nessuna sessione attiva. Avvia una sessione dal relatore.', 'err'); return false; }
+  log('Sessione trovata: ' + currentSid, 'ok');
+  document.getElementById('sessionInfo').textContent =
+    'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX;
+
+  // Ascolto slide corrente (per mostrare in dashboard)
+  masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide').on('value', snap => {
+    currentSlide = snap.val();
+    document.getElementById('valSlide').textContent =
+      currentSlide !== null ? ('Slide ' + (currentSlide + 1)) : '—';
+  });
+
+  // Ascolto presenza per contatore live
+  masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').on('value', snap => {
+    document.getElementById('valPres').textContent = snap.numChildren();
+  });
+
+  return true;
+}
+
+/* ============================================================
+   AVVIA SIMULAZIONE
+   ============================================================ */
+async function avvia(){
+  if(!currentSid){ log('Nessuna sessione attiva.', 'err'); return; }
+
+  const N       = parseInt(document.getElementById('numBots').value) || 300;
+  const rampMs  = parseInt(document.getElementById('rampMs').value)  || 80;
+
+  running = true;
+  document.getElementById('btnStart').disabled = true;
+  document.getElementById('btnStop').disabled  = false;
+
+  log('Avvio simulazione — ' + N + ' bot, ramp ' + rampMs + 'ms/bot', 'info');
+
+  for(let i = 0; i < N && running; i++){
+    const uid  = 'SIM_' + String(i + 1).padStart(3, '0');
+    const nome = NOMI[i % NOMI.length] + '.' + String(i + 1).padStart(3,'0');
+
+    try{
+      // Crea app Firebase con nome univoco → WebSocket separato
+      let app;
+      try{ app = firebase.app('bot-' + i); }
+      catch(e){ app = firebase.initializeApp(FIREBASE_CONFIG, 'bot-' + i); }
+      const botDb = app.database();
+
+      // Misura RTT (tempo write → conferma)
+      const t0 = Date.now();
+      const presRef = botDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence/' + uid);
+      await presRef.set({ n: nome, s: 0, t: Date.now() });
+      presRef.onDisconnect().remove();
+      const rtt = Date.now() - t0;
+      rttSamples.push(rtt);
+      if(rttSamples.length > 200) rttSamples.shift();
+
+      // Ascolta slide per votare automaticamente quando cambia
+      const slideRef = botDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide');
+      slideRef.on('value', snap => {
+        const idx = snap.val();
+        if(idx === null) return;
+        // Voto con delay casuale realistico (50-2500ms)
+        const delay = Math.floor(Math.random() * 2450) + 50;
+        setTimeout(() => votaBot(botDb, uid, idx, bots[uid]?.score || 0), delay);
+      });
+
+      bots[uid] = { app, db: botDb, presRef, slideRef, score: 0 };
+      totalConn++;
+
+      if(i % 20 === 0 || i === N - 1){
+        log('Bot ' + totalConn + '/' + N + ' connessi | RTT medio: ' +
+          Math.round(rttSamples.reduce((a,b)=>a+b,0)/rttSamples.length) + ' ms', 'ok');
+        aggiornaUI();
+      }
+
+    }catch(e){
+      totalErr++;
+      log('Errore bot ' + i + ': ' + e.message, 'err');
+    }
+
+    await sleep(rampMs);
+  }
+
+  log('✓ Simulazione completata — ' + totalConn + ' connessioni attive', 'ok');
+  document.getElementById('btnVota').disabled  = false;
+  document.getElementById('btnReset').disabled = false;
+  aggiornaUI();
+}
+
+/* ============================================================
+   VOTO BOT
+   ============================================================ */
+async function votaBot(botDb, uid, slideIdx, currentScore){
+  if(!currentSid) return;
+  try{
+    // Leggo la slide per capire il voteKey e le opzioni
+    const slideSnap = await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide').once('value');
+    const liveSlide = slideSnap.val();
+    if(liveSlide !== slideIdx) return; // slide già cambiata, skip
+
+    const voteKey = slideIdx; // il sistema usa l'indice come chiave
+    // Distribuzione realistica: risposta 0 più frequente (come vero pubblico)
+    const r = Math.random();
+    let voto;
+    if(r < 0.60) voto = 0;
+    else if(r < 0.85) voto = 1;
+    else voto = 2;
+
+    const t0 = Date.now();
+    await botDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/votes/' + voteKey + '/' + uid).set(voto);
+    rttSamples.push(Date.now() - t0);
+    if(rttSamples.length > 200) rttSamples.shift();
+
+    totalVoti++;
+    votoDistrib[voto] = (votoDistrib[voto] || 0) + 1;
+    aggiornaUI();
+  }catch(e){
+    totalErr++;
+  }
+}
+
+/* ============================================================
+   FORZA VOTO IMMEDIATO SU TUTTI
+   ============================================================ */
+async function forzaVoto(){
+  if(!currentSid || currentSlide === null){ log('Nessuna slide attiva.', 'err'); return; }
+  log('Forzo voto su tutti i bot — slide ' + currentSlide, 'info');
+  const uids = Object.keys(bots);
+  const BATCH = 50; // scrive in batch da 50 per non saturare
+  for(let i = 0; i < uids.length; i += BATCH){
+    const chunk = uids.slice(i, i + BATCH);
+    const payload = {};
+    chunk.forEach(uid => {
+      const r = Math.random();
+      const voto = r < 0.60 ? 0 : r < 0.85 ? 1 : 2;
+      payload[uid] = voto;
+      votoDistrib[voto] = (votoDistrib[voto] || 0) + 1;
+    });
+    const t0 = Date.now();
+    await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/votes/' + currentSlide).update(payload);
+    rttSamples.push(Date.now() - t0);
+    totalVoti += chunk.length;
+    aggiornaUI();
+    await sleep(100);
+  }
+  log('✓ ' + uids.length + ' voti inviati', 'ok');
+}
+
+/* ============================================================
+   FERMA E PULISCI
+   ============================================================ */
+async function ferma(){
+  running = false;
+  clearInterval(rampTimer);
+  log('Pulizia in corso…', 'info');
+  document.getElementById('btnStop').disabled = true;
+
+  // Rimuovo tutte le presenze dal nodo Firebase
+  const payload = {};
+  Object.keys(bots).forEach(uid => { payload[uid] = null; });
+  if(currentSid && Object.keys(payload).length > 0){
+    try{
+      await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
+      log('Presenze rimosse: ' + Object.keys(payload).length, 'ok');
+    }catch(e){ log('Errore rimozione presenze: ' + e.message, 'err'); }
+  }
+
+  // Stacco i listener e chiudo le app
+  let chiuse = 0;
+  for(const [uid, bot] of Object.entries(bots)){
+    try{
+      if(bot.slideRef) bot.slideRef.off();
+      // Non chiudo le app Firebase (delete è asincrono e rischioso), stacco solo i listener
+      chiuse++;
+    }catch(_){}
+  }
+  bots = {};
+  totalConn = 0;
+  totalVoti = 0;
+  totalErr  = 0;
+  rttSamples = [];
+  votoDistrib = {};
+  aggiornaUI();
+  log('✓ Simulazione fermata — ' + chiuse + ' listener staccati', 'ok');
+
+  document.getElementById('btnStart').disabled = false;
+  document.getElementById('btnVota').disabled  = true;
+  document.getElementById('btnReset').disabled = true;
+  document.getElementById('progressBar').style.width = '0%';
+}
+
+/* ============================================================
+   RESET PRESENZE (senza fermare i bot)
+   ============================================================ */
+async function resetPresenze(){
+  if(!currentSid) return;
+  const payload = {};
+  Object.keys(bots).forEach(uid => { payload[uid] = null; });
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
+  log('Presenze reset — nodo pulito', 'ok');
+}
+
+/* ============================================================
+   WIRING
+   ============================================================ */
+document.getElementById('btnStart').addEventListener('click', avvia);
+document.getElementById('btnStop').addEventListener('click', ferma);
+document.getElementById('btnVota').addEventListener('click', forzaVoto);
+document.getElementById('btnReset').addEventListener('click', resetPresenze);
+
+// Pulizia automatica alla chiusura della tab
+window.addEventListener('beforeunload', () => {
+  if(currentSid && Object.keys(bots).length > 0){
+    const payload = {};
+    Object.keys(bots).forEach(uid => { payload[uid] = null; });
+    masterDb?.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
+  }
+});
+
+// Avvio
+initMaster().then(ok => {
+  if(ok) log('Pronto. Avvia la simulazione quando vuoi.', 'ok');
+  aggiornaUI();
+});
+
+// Aggiornamento UI periodico
+setInterval(aggiornaUI, 2000);
+</script>
+</body>
+</html>

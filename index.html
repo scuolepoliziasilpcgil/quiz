@@ -2726,10 +2726,12 @@ let audioCtx = null;
 // Il primo clic ovunque sulla pagina sblocca l'audio per tutto il resto della conferenza.
 function sbloccaAudio(){
   if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  if(audioCtx.state === 'suspended') audioCtx.resume();
-  document.removeEventListener('click', sbloccaAudio);
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  ['click','keydown','pointerdown'].forEach(e => document.removeEventListener(e, sbloccaAudio));
 }
-document.addEventListener('click', sbloccaAudio);
+['click','keydown','pointerdown'].forEach(e =>
+  document.addEventListener(e, sbloccaAudio, { once: true, passive: true })
+);
 
 function suonaTono(frequenza, durataMs, volume){
   try{
@@ -4100,7 +4102,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 11 · 14.07.2026</div>
+<div class="rev-tag">index · rev 12 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile
