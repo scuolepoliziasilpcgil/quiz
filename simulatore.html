@@ -203,6 +203,11 @@ const NOMI = [
   'Daniele','Federica','Stefano','Camilla','Antonio','Beatrice','Michele','Ilaria'
 ];
 
+// ID univoco per questa istanza del simulatore —
+// permette di eseguire più simulatori in parallelo (browser diversi)
+// senza che si sovrascrivano le presenze su Firebase.
+const INSTANCE_ID = Math.random().toString(36).slice(2, 6).toUpperCase();
+
 /* ============================================================
    STATO GLOBALE
    ============================================================ */
@@ -310,7 +315,7 @@ async function avvia(){
   log('Avvio simulazione — ' + N + ' bot, ramp ' + rampMs + 'ms/bot', 'info');
 
   for(let i = 0; i < N && running; i++){
-    const uid  = 'SIM_' + String(i + 1).padStart(3, '0');
+    const uid  = INSTANCE_ID + '_SIM_' + String(i + 1).padStart(3, '0');
     const nome = NOMI[i % NOMI.length] + '_' + String(i + 1).padStart(3,'0');
 
     try{
@@ -540,7 +545,7 @@ initMaster().then(() => {
     votoDistrib = {};
     log('🔄 Sessione rilevata: ' + currentSid, 'info');
     document.getElementById('sessionInfo').textContent =
-      'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX;
+      'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX + ' — Istanza: ' + INSTANCE_ID;
     document.getElementById('valSlide').textContent = '—';
     document.getElementById('valSlideInfo').textContent = '';
     // Abilita pulsanti che funzionano anche senza bot attivi
@@ -627,7 +632,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 18 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 19 · 14.07.2026</div>
 
 </body>
 </html>
