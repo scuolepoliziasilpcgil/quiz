@@ -455,14 +455,12 @@ async function ferma(){
   log('Pulizia in corso…', 'info');
   document.getElementById('btnStop').disabled = true;
 
-  // Rimuovo tutte le presenze dal nodo Firebase
-  const payload = {};
-  Object.keys(bots).forEach(uid => { payload[uid] = null; });
-  if(currentSid && Object.keys(payload).length > 0){
+  // Cancella l'intero nodo presenza — così pulisce anche residui di sessioni precedenti
+  if(currentSid){
     try{
-      await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
-      log('Presenze rimosse: ' + Object.keys(payload).length, 'ok');
-    }catch(e){ log('Errore rimozione presenze: ' + e.message, 'err'); }
+      await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').remove();
+      log('Presenza svuotata completamente.', 'ok');
+    }catch(e){ log('Errore pulizia presenza: ' + e.message, 'err'); }
   }
 
   // Stacco i listener e chiudo le app
@@ -498,10 +496,8 @@ async function ferma(){
    ============================================================ */
 async function resetPresenze(){
   if(!currentSid) return;
-  const payload = {};
-  Object.keys(bots).forEach(uid => { payload[uid] = null; });
-  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
-  log('Presenze reset — nodo pulito', 'ok');
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').remove();
+  log('Presenza svuotata completamente.', 'ok');
 }
 
 /* ============================================================
@@ -575,11 +571,7 @@ document.getElementById('btnReset').addEventListener('click', resetPresenze);
 
 // Pulizia automatica alla chiusura della tab
 window.addEventListener('beforeunload', () => {
-  if(currentSid && Object.keys(bots).length > 0){
-    const payload = {};
-    Object.keys(bots).forEach(uid => { payload[uid] = null; });
-    masterDb?.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').update(payload);
-  }
+  if(currentSid) masterDb?.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence').remove();
 });
 
 // Avvio: init Firebase poi attacca listener permanente su currentSession
@@ -667,7 +659,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 10 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 11 · 14.07.2026</div>
 
 </body>
 </html>
