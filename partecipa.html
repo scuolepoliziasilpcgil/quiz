@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corso Allievi Agenti — Partecipa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blu-deep:#234C72;
+    --blu:#3A6CA0;
+    --rosso:#C8102E;
+    --giallo:#FFE699;
+    --verde:#4FA66B;
+    --crema:#F7F3E8;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;
+    height:100vh;
+    height:100dvh;
+  }
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--blu-deep);
+    color:var(--crema);
+    height:100vh;
+    height:100dvh;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  .top-logo{
+    display:block;
+    width:min(32vw,120px);
+    height:min(32vw,120px);
+    margin:.4rem 0 0 1.2rem;
+    border-radius:14px;
+    object-fit:cover;
+    flex:0 0 auto;
+  }
+  header{
+    padding:.6rem 1.2rem .3rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    opacity:.7;
+    text-align:center;
+    flex:0 0 auto;
+  }
+  .rev-tag{
+    position:fixed;
+    bottom:.5rem;
+    right:.6rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.6rem;
+    letter-spacing:.05em;
+    color:#234C72;
+    opacity:.35;
+    z-index:40;
+    pointer-events:none;
+  }
+  .slide-counter{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.55;
+    text-align:center;
+    flex:0 0 auto;
+    padding-bottom:.3rem;
+  }
+  main{
+    flex:1 1 0;
+    min-height:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:.8rem 1.2rem;
+    overflow-y:auto;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.75rem;
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    padding:.4rem 1rem;
+    border-radius:999px;
+    border:1px solid currentColor;
+    opacity:.85;
+    margin-bottom:1.4rem;
+  }
+  .badge.wordcloud{color:#9FD8FF;}
+  .badge.sondaggio{color:#FFD27A;}
+  .badge.quiz{color:#FF9AA8;}
+  .question{
+    font-weight:900;
+    font-size:clamp(1.3rem,6vw,2rem);
+    line-height:1.25;
+    max-width:24ch;
+    margin:0 0 1.6rem;
+  }
+  .question .hl{color:var(--giallo);}
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:.8rem;
+    width:100%;
+    max-width:420px;
+  }
+  .options.cloud-grid{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:.45rem;
+    width:100%;
+    max-width:480px;
+  }
+  .options.cloud-grid .option-btn{
+    font-size:.78rem;
+    padding:.5rem .4rem;
+    border-radius:10px;
+    text-align:center;
+    flex:unset;
+  }
+  .option-btn.selected{
+    background:var(--giallo);
+    border-color:var(--giallo);
+    color:var(--blu-deep);
+  }
+  .option-btn.disabled{
+    opacity:.4;
+    pointer-events:none;
+  }
+  .cloud-hint{
+    font-size:.78rem;
+    opacity:.6;
+    margin-bottom:.4rem;
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:.06em;
+  }
+  .cloud-send{
+    margin-top:.8rem;
+    padding:.75rem 2rem;
+    background:var(--rosso);
+    color:#fff;
+    border:none;
+    border-radius:12px;
+    font-family:'Inter',sans-serif;
+    font-size:1rem;
+    font-weight:700;
+    cursor:pointer;
+    opacity:.5;
+    transition:opacity .15s;
+  }
+  .cloud-send.ready{opacity:1;}
+  .option-btn{
+    font-family:'Inter',sans-serif;
+    font-size:1.05rem;
+    font-weight:700;
+    color:var(--crema);
+    background:rgba(247,243,232,.08);
+    border:1px solid rgba(247,243,232,.22);
+    border-radius:14px;
+    padding:1rem 1.2rem;
+    text-align:left;
+    cursor:pointer;
+    transition:background .15s, border-color .15s;
+  }
+  .option-btn:active, .option-btn.selected{
+    background:var(--verde);
+    border-color:var(--verde);
+    color:var(--blu-deep);
+  }
+  .text-input-row{
+    display:flex;
+    gap:.6rem;
+    width:100%;
+    max-width:420px;
+  }
+  .text-input{
+    flex:1;
+    font-family:'Inter',sans-serif;
+    font-size:1.05rem;
+    padding:.9rem 1rem;
+    border-radius:14px;
+    border:1px solid rgba(247,243,232,.3);
+    background:rgba(247,243,232,.08);
+    color:var(--crema);
+  }
+  .text-input::placeholder{color:rgba(247,243,232,.5);}
+  .send-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:500;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    background:var(--verde);
+    color:var(--blu-deep);
+    border:none;
+    border-radius:14px;
+    padding:0 1.3rem;
+    cursor:pointer;
+  }
+  .send-btn:disabled{opacity:.4;}
+  .confirm{
+    font-size:1.1rem;
+    font-weight:700;
+    color:var(--verde);
+    margin-top:1rem;
+  }
+  .confirm-attesa{
+    color:var(--crema);
+    opacity:.75;
+  }
+  .confirm-errore{
+    color:var(--rosso);
+    margin-bottom:.8rem;
+  }
+  .standby-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(2.2rem,9vw,3.5rem);
+    margin:0 0 .6rem;
+    animation:standbyIn .5s ease both;
+  }
+  .standby-sub{
+    opacity:.75;
+    max-width:30ch;
+    font-size:1.05rem;
+    animation:standbyIn .5s ease .1s both;
+  }
+  @keyframes standbyIn{
+    from{opacity:0; transform:translateY(14px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .standby-dots{
+    display:flex;
+    gap:.5rem;
+    justify-content:center;
+    margin-top:1.6rem;
+  }
+  .standby-dots span{
+    width:.7rem; height:.7rem;
+    border-radius:50%;
+    background:var(--giallo);
+    opacity:.4;
+    animation:dotPulse 1.4s ease-in-out infinite;
+  }
+  .standby-dots span:nth-child(2){animation-delay:.2s;}
+  .standby-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes dotPulse{
+    0%,100%{opacity:.3; transform:scale(.85);}
+    50%{opacity:1; transform:scale(1.15);}
+  }
+  .pausa-screen{background:var(--giallo); color:var(--blu-deep); width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .stats-bar{
+    display:flex;
+    justify-content:center;
+    gap:1.4rem;
+    padding:.45rem 1rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    opacity:.7;
+    background:rgba(255,255,255,.05);
+    border-top:1px solid rgba(247,243,232,.08);
+    flex:0 0 auto;
+  }
+  .stat-item{ display:flex; align-items:center; gap:.35rem; }
+  .stat-dot{ width:.55rem; height:.55rem; border-radius:50%; flex:0 0 auto; }
+  .stat-dot.green{ background:#4FA66B; }
+  .stat-dot.yellow{ background:var(--giallo); }
+  .stat-dot.blu{ background:#9FD8FF; }
+  .countdown-bar{
+    display:block;
+    height:5px;
+    width:100%;
+    background:var(--giallo);
+    transform-origin:left center;
+    flex:0 0 auto;
+    opacity:.9;
+  }
+  .countdown-bar.running{
+    animation:countdownShrink linear forwards;
+  }
+  @keyframes countdownShrink{
+    from{transform:scaleX(1);}
+    to{transform:scaleX(0);}
+  }
+  .contact-cta{
+    display:block;
+    margin-top:2rem;
+    padding:1rem 1.4rem;
+    background:var(--rosso);
+    color:#fff;
+    border-radius:14px;
+    font-weight:700;
+    font-size:.95rem;
+    line-height:1.45;
+    text-decoration:none;
+    max-width:28ch;
+    text-align:center;
+    animation:standbyIn .5s ease .2s both;
+    box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  .contact-cta:active{opacity:.85;}
+  .contact-corner{
+    position:fixed;
+    right:.9rem;
+    bottom:.9rem;
+    z-index:40;
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    padding:.55rem .8rem;
+    background:var(--rosso);
+    color:#fff;
+    border-radius:999px;
+    font-size:.75rem;
+    font-weight:700;
+    text-decoration:none;
+    box-shadow:0 4px 14px rgba(0,0,0,.3);
+    opacity:.92;
+  }
+  .contact-corner:active{opacity:.75;}
+  .contact-corner svg{width:15px; height:15px; flex:0 0 auto;}
+  .config-warning{
+    max-width:34ch;
+    font-size:.95rem;
+    line-height:1.5;
+    opacity:.8;
+  }
+
+  /* ============================================================
+     LOGIN SCREEN
+     ============================================================ */
+  #loginScreen{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    background:var(--blu-deep);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:2rem 1.6rem;
+    text-align:center;
+    transition:opacity .3s;
+  }
+  #loginScreen.hidden{
+    opacity:0;
+    pointer-events:none;
+  }
+  .login-logo{
+    width:min(28vw,90px);
+    height:min(28vw,90px);
+    border-radius:12px;
+    object-fit:cover;
+    margin:0 0 1.5rem;
+  }
+  .login-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(1.7rem,7vw,2.4rem);
+    margin:0 0 .5rem;
+  }
+  .login-sub{
+    opacity:.7;
+    font-size:.92rem;
+    margin:0 0 1.8rem;
+    max-width:26ch;
+    line-height:1.5;
+  }
+  .login-row{
+    display:flex;
+    gap:.6rem;
+    width:100%;
+    max-width:300px;
+  }
+  #nickError{
+    color:var(--rosso);
+    font-size:.82rem;
+    margin-top:.7rem;
+    min-height:1.1em;
+    font-family:'IBM Plex Mono',monospace;
+    letter-spacing:.04em;
+  }
+  .nick-hint{
+    margin-top:1.1rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.65rem;
+    letter-spacing:.1em;
+    opacity:.4;
+    text-transform:uppercase;
+  }
+
+  /* ============================================================
+     CLASSIFICA
+     ============================================================ */
+  .esito-banner{
+    font-size:1.15rem;
+    font-weight:900;
+    margin-bottom:.35rem;
+  }
+  .esito-banner.ok{ color:var(--verde); }
+  .esito-banner.ko{ color:var(--rosso); }
+  .mio-totale{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.1em;
+    opacity:.65;
+    margin-bottom:1.1rem;
+  }
+  .class-titolo{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    opacity:.45;
+    margin-bottom:.6rem;
+  }
+  .class-lista{
+    width:100%;
+    max-width:380px;
+  }
+  .class-riga{
+    display:flex;
+    align-items:center;
+    gap:.6rem;
+    padding:.48rem .75rem;
+    border-radius:10px;
+    margin-bottom:.28rem;
+    background:rgba(247,243,232,.07);
+    font-size:.9rem;
+  }
+  .class-riga.io{
+    background:var(--giallo);
+    color:var(--blu-deep);
+  }
+  .class-pos{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    min-width:1.7rem;
+    text-align:center;
+    flex:0 0 auto;
+  }
+  .class-nick{
+    flex:1;
+    font-weight:700;
+    text-align:left;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .class-pts{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    flex:0 0 auto;
+  }
+  .class-sep{
+    text-align:center;
+    opacity:.3;
+    font-size:.75rem;
+    margin:.15rem 0;
+  }
+  .class-attesa{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.35;
+    margin-top:.9rem;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     SCHERMATA LOGIN — scompare dopo inserimento nickname
+     ============================================================ -->
+<div id="loginScreen">
+  <img class="login-logo" src="logo.jpg" alt="">
+  <div class="login-title">Come ti chiami?</div>
+  <div class="login-sub">Scegli un soprannome per entrare in classifica</div>
+  <div class="login-row">
+    <input class="text-input" id="nickInput" type="text" maxlength="16"
+      placeholder="es. Marco.R"
+      autocapitalize="none" autocorrect="off" spellcheck="false"
+      inputmode="text">
+    <button class="send-btn" id="nickBtn">Entra</button>
+  </div>
+  <div id="nickError"></div>
+  <div class="nick-hint">max 16 caratteri · niente spazi</div>
+</div>
+
+<header id="pageHeader">SILP CGIL · Corso Allievi Agenti</header>
+<div id="slideCounter" class="slide-counter"></div>
+<img class="top-logo" src="logo.jpg" alt="">
+<main id="main">
+  <div class="standby-title">Connessione…</div>
+</main>
+<a class="contact-corner" id="contactCorner" href="https://scuolepoliziasilpcgil.github.io/contatti/index.html" target="_blank">
+  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  Contatti
+</a>
+<div class="countdown-bar" id="countdownBar" style="display:none"></div>
+<div class="stats-bar" id="statsBar" style="display:none">
+  <div class="stat-item"><span class="stat-dot blu"></span><span id="statNick" style="max-width:10ch;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</span></div>
+  <div class="stat-item"><span class="stat-dot green"></span><span id="statConnessi">—</span> conn.</div>
+  <div class="stat-item"><span class="stat-dot yellow"></span><span id="statRisposte">—</span> risp.</div>
+</div>
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="slides_data.js?v=20260711qi"></script>
+<script src="config.js?v=20260711qi"></script>
+<script>
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.database();
+
+const main         = document.getElementById('main');
+const statsBar     = document.getElementById('statsBar');
+const statConnessi = document.getElementById('statConnessi');
+const statRisposte = document.getElementById('statRisposte');
+const statNick     = document.getElementById('statNick');
+const countdownBar = document.getElementById('countdownBar');
+const contactCorner= document.getElementById('contactCorner');
+
+let lastSessionId   = null;
+let lastSlide       = null;
+let answeredKey     = null;
+let countdownSeconds= 15;
+let slideOpenTime   = null;   // per calcolare il bonus velocità
+let classificaRef   = null;   // listener Firebase classifica attivo
+let currentSid      = null;   // sessione corrente, serve per registrare il nick in ritardo
+
+// Nickname — letto da localStorage, oppure null finché l'utente non fa login
+let myNick = localStorage.getItem('silpNick') || null;
+
+// Identificatore univoco per questo browser (usato per presence e votes)
+const CLIENT_ID = 'C' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+
+/* ============================================================
+   LOGIN
+   ============================================================ */
+(function initLogin(){
+  const screen = document.getElementById('loginScreen');
+  const input  = document.getElementById('nickInput');
+  const btn    = document.getElementById('nickBtn');
+  const err    = document.getElementById('nickError');
+
+  function submit(){
+    const val = input.value.trim().replace(/\s+/g, '.');
+    if(val.length < 2){ err.textContent = 'Almeno 2 caratteri'; return; }
+    err.textContent = '';
+    myNick = val;
+    localStorage.setItem('silpNick', val);
+    if(statNick) statNick.textContent = myNick;
+    screen.classList.add('hidden');
+    setTimeout(function(){ screen.style.display = 'none'; }, 320);
+    // Se la sessione Firebase è già nota, registra nick e presenza
+    if(currentSid){
+      registraNick(currentSid, myNick);
+      registraPresenza(currentSid);
+    }
+  }
+
+  // I listener vengono agganciati SEMPRE, anche se myNick esiste già:
+  // avvia() può rimettere in mostra il loginScreen in caso di nuova sessione,
+  // e il pulsante deve funzionare anche in quel caso.
+  btn.addEventListener('click', submit);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') submit(); });
+
+  if(myNick){
+    screen.style.display = 'none';
+  } else {
+    input.focus();
+  }
+})();
+
+/* ============================================================
+   NICK REGISTRATION — richiede unicità per sessione via transazione
+   ============================================================ */
+async function registraNick(sid, nick){
+  if(!nick) return;
+  try{
+    var ref = db.ref(DB_PREFIX + '/sessions/' + sid + '/nicks/' + nick);
+    var res = await ref.transaction(function(curr){
+      // Se il nodo è libero o è già nostro (refresh) → prendiamo
+      if(curr === null || curr === CLIENT_ID) return CLIENT_ID;
+      return undefined; // abort → nick già preso da qualcun altro
+    });
+    if(!res.committed){
+      // Nick già occupato: aggiungiamo un suffisso automatico
+      var fallback = nick.slice(0, 12) + '_' + CLIENT_ID.slice(-3);
+      myNick = fallback;
+      localStorage.setItem('silpNick', fallback);
+      if(statNick) statNick.textContent = myNick;
+      await db.ref(DB_PREFIX + '/sessions/' + sid + '/nicks/' + fallback).set(CLIENT_ID);
+    }
+  } catch(e){ /* non critico, ignoriamo */ }
+}
+
+/* ============================================================
+   PUNTEGGIO — scrittura atomica via transazione
+   ============================================================ */
+async function scriviPunteggio(sid, nick, pts){
+  if(!nick) return;
+  try{
+    await db.ref(DB_PREFIX + '/sessions/' + sid + '/scores/' + nick).transaction(function(curr){
+      return (curr || 0) + pts;
+    });
+  } catch(e){ /* ignoriamo */ }
+}
+
+/* ============================================================
+   CLASSIFICA LIVE — avviata dopo aver risposto a una quiz
+   ============================================================ */
+function avviaClassificaLive(sid, isCorrect, ptsGuadagnati){
+  // Ferma il listener precedente se c'è
+  if(classificaRef){ classificaRef.off(); classificaRef = null; }
+
+  var feedbackHtml = isCorrect
+    ? '<div class="esito-banner ok">Corretto! ✅</div>'
+    : '<div class="esito-banner ko">Sbagliato ❌</div>';
+
+  main.innerHTML =
+    '<div style="display:flex;flex-direction:column;align-items:center;width:100%">' +
+      feedbackHtml +
+      (isCorrect && ptsGuadagnati > 0
+        ? '<div class="mio-totale" id="guadagnato">+' + ptsGuadagnati + ' pt questa domanda</div>'
+        : '<div style="height:.4rem"></div>') +
+      '<div class="mio-totale" id="mioTotale"></div>' +
+      '<div class="class-titolo">Classifica</div>' +
+      '<div class="class-lista" id="classLista"></div>' +
+      '<div class="class-attesa">In attesa del relatore</div>' +
+    '</div>';
+
+  classificaRef = db.ref(DB_PREFIX + '/sessions/' + sid + '/scores');
+  classificaRef.on('value', function(snap){
+    var scores = snap.exists() ? snap.val() : {};
+    var sorted = Object.entries(scores).sort(function(a, b){ return b[1] - a[1]; });
+    var lista   = document.getElementById('classLista');
+    var totale  = document.getElementById('mioTotale');
+    if(!lista){ classificaRef.off(); classificaRef = null; return; }
+
+    var myRankIdx = myNick ? sorted.findIndex(function(e){ return e[0] === myNick; }) : -1;
+    var myRank    = myRankIdx >= 0 ? myRankIdx + 1 : 0;
+    var myPts     = myNick && scores[myNick] ? scores[myNick] : 0;
+
+    if(totale && myNick){
+      totale.textContent = myPts + ' pt totali'
+        + (myRank > 0 ? ' · ' + myRank + '° su ' + sorted.length : '');
+    }
+
+    var TOP = 8;
+    var html = '';
+    var topSlice = sorted.slice(0, TOP);
+    topSlice.forEach(function(entry, i){
+      var nick = entry[0];
+      var pts  = entry[1];
+      var isMe = nick === myNick;
+      var medaglia = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : (i + 1) + '.';
+      html += '<div class="class-riga' + (isMe ? ' io' : '') + '">'
+        + '<span class="class-pos">' + medaglia + '</span>'
+        + '<span class="class-nick">' + nick + (isMe ? ' ◀' : '') + '</span>'
+        + '<span class="class-pts">' + pts + ' pt</span>'
+        + '</div>';
+    });
+
+    // Se l'utente non è nelle prime TOP posizioni, aggiungiamo separatore e sua riga
+    if(myRank > TOP && myNick){
+      html += '<div class="class-sep">···</div>';
+      html += '<div class="class-riga io">'
+        + '<span class="class-pos">' + myRank + '.</span>'
+        + '<span class="class-nick">' + myNick + ' ◀</span>'
+        + '<span class="class-pts">' + myPts + ' pt</span>'
+        + '</div>';
+    }
+
+    if(!html) html = '<div style="opacity:.4;font-size:.85rem;margin-top:.5rem">Ancora nessun punteggio</div>';
+    lista.innerHTML = html;
+  });
+}
+
+/* ============================================================
+   COUNTDOWN BAR
+   ============================================================ */
+function startCountdown(){
+  if(!countdownBar) return;
+  if(countdownSeconds <= 0){ countdownBar.style.display = 'none'; return; }
+  countdownBar.style.display = 'block';
+  countdownBar.classList.remove('running');
+  countdownBar.style.animationDuration = countdownSeconds + 's';
+  void countdownBar.offsetWidth; // forza reflow
+  countdownBar.classList.add('running');
+}
+function hideCountdown(){
+  if(countdownBar){ countdownBar.classList.remove('running'); countdownBar.style.display = 'none'; }
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+function storageKey(sessionId, slide){
+  return 'risposta_' + sessionId + '_' + slide;
+}
+
+/* ============================================================
+   RENDER STANDBY
+   ============================================================ */
+function renderStandby(title, sub, pausaStyle){
+  if(pausaStyle){
+    main.parentElement.style.background = 'var(--giallo)';
+    main.parentElement.style.color = 'var(--blu-deep)';
+  } else {
+    main.parentElement.style.background = '';
+    main.parentElement.style.color = '';
+  }
+  main.innerHTML =
+    '<div class="standby-title">' + title + '</div>' +
+    '<div class="standby-sub">' + sub + '</div>' +
+    '<div class="standby-dots"><span></span><span></span><span></span></div>';
+}
+
+/* ============================================================
+   RENDER SLIDE
+   ============================================================ */
+function renderSlide(sessionId, slideIndex){
+  // Ferma classifica listener della slide precedente
+  if(classificaRef){ classificaRef.off(); classificaRef = null; }
+
+  main.parentElement.style.background = '';
+  main.parentElement.style.color = '';
+  slideOpenTime = null;
+
+  var s = slides[slideIndex];
+
+  if(!s || s.type === 'title'){
+    if(contactCorner) contactCorner.style.display = 'flex';
+    renderStandby('Si comincia!', 'Tieni il telefono a portata di mano: le domande arriveranno qui via via che il relatore avanza con le slide.');
+    return;
+  }
+  if(s.type === 'closing'){
+    if(contactCorner) contactCorner.style.display = 'none';
+    hideCountdown();
+    main.innerHTML =
+      '<div class="standby-title">Grazie!</div>' +
+      '<div class="standby-sub">SILP CGIL è il vostro riferimento da oggi in poi.</div>' +
+      '<a class="contact-cta" href="https://scuolepoliziasilpcgil.github.io/contatti/index.html" target="_blank">' +
+        'Clicca qui per essere ricontattato in vista delle assegnazioni e su dubbi o informazioni' +
+      '</a>';
+    return;
+  }
+  if(s.type === 'narrazione'){
+    if(contactCorner) contactCorner.style.display = 'none';
+    hideCountdown();
+    main.innerHTML =
+      '<div class="standby-title" style="font-size:clamp(1.3rem,6vw,2rem);">' + s.titolo + '</div>' +
+      '<div class="standby-sub">' + (s.testo ? s.testo.substring(0, 90) + (s.testo.length > 90 ? '…' : '') : '') + '</div>' +
+      '<a class="contact-cta" href="https://scuolepoliziasilpcgil.github.io/contatti/index.html" target="_blank" style="margin-top:1.8rem;">' +
+        'Lascia i tuoi contatti' +
+      '</a>';
+    return;
+  }
+  if(s.type === 'pausa'){
+    if(contactCorner) contactCorner.style.display = 'none';
+    main.parentElement.style.background = 'var(--verde)';
+    main.parentElement.style.color = 'var(--crema)';
+    hideCountdown();
+    main.innerHTML =
+      '<div class="standby-title">Pausa</div>' +
+      '<div class="standby-sub">Approfittane per fare due chiacchiere con i delegati presenti in sala. Tra poco si ricomincia.</div>' +
+      '<a class="contact-cta" href="https://scuolepoliziasilpcgil.github.io/contatti/index.html" target="_blank" style="margin-top:1.4rem; background:#C8102E; color:#fff;">' +
+        'Lascia i tuoi contatti' +
+      '</a>' +
+      '<div class="standby-dots" style="margin-top:1rem;"><span></span><span></span><span></span></div>';
+    return;
+  }
+
+  if(contactCorner) contactCorner.style.display = 'flex';
+
+  var badge   = badgeLabels[s.type];
+  var already = localStorage.getItem(storageKey(sessionId, slideIndex));
+
+  if(already !== null){
+    hideCountdown();
+    main.innerHTML = '<div class="confirm">Risposta inviata ✅</div>';
+    return;
+  }
+
+  // Slide interattiva: segna il momento di apertura per il bonus velocità
+  slideOpenTime = Date.now();
+
+  var html = '<div class="badge ' + badge.cls + '">' + badge.text + '</div>';
+  html += '<div class="question">' + s.q + '</div>';
+
+  var isCloudWithOptions = (s.type === 'wordcloud' && s.options && s.options.length > 0);
+  var hasOptions = (s.options && s.options.length > 0);
+  var maxSel = s.maxSelect || 1;
+
+  if(isCloudWithOptions){
+    var hint = maxSel > 1 ? 'Scegli fino a ' + maxSel + ' parole' : 'Scegli una parola';
+    html += '<div class="cloud-hint">' + hint + '</div>';
+    html += '<div class="options cloud-grid" id="opts">';
+    s.options.forEach(function(opt){
+      html += '<button class="option-btn" data-value="' + opt.replace(/"/g, '&quot;') + '">' + opt + '</button>';
+    });
+    html += '</div>';
+    html += '<button class="cloud-send" id="cloudSend" disabled>Invia</button>';
+    main.innerHTML = html;
+
+    var selected = [];
+    var sendBtn  = document.getElementById('cloudSend');
+    document.querySelectorAll('.option-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var val = btn.dataset.value;
+        if(btn.classList.contains('selected')){
+          btn.classList.remove('selected');
+          selected.splice(selected.indexOf(val), 1);
+        } else {
+          if(selected.length >= maxSel) return;
+          btn.classList.add('selected');
+          selected.push(val);
+        }
+        if(selected.length >= maxSel){
+          document.querySelectorAll('.option-btn:not(.selected)').forEach(function(b){ b.classList.add('disabled'); });
+        } else {
+          document.querySelectorAll('.option-btn').forEach(function(b){ b.classList.remove('disabled'); });
+        }
+        if(selected.length > 0){ sendBtn.disabled = false; sendBtn.classList.add('ready'); }
+        else { sendBtn.disabled = true; sendBtn.classList.remove('ready'); }
+      });
+    });
+    sendBtn.addEventListener('click', function(){
+      if(selected.length === 0) return;
+      submitAnswer(sessionId, slideIndex, selected.join(','), true);
+    });
+
+  } else if(hasOptions){
+    html += '<div class="options" id="opts">';
+    s.options.forEach(function(opt){
+      html += '<button class="option-btn" data-value="' + opt.replace(/"/g, '&quot;') + '">' + opt + '</button>';
+    });
+    html += '</div>';
+    main.innerHTML = html;
+    document.querySelectorAll('.option-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        submitAnswer(sessionId, slideIndex, btn.dataset.value, false);
+      });
+    });
+  } else {
+    html +=
+      '<div class="text-input-row">' +
+        '<input class="text-input" id="textAnswer" type="text" maxlength="40" placeholder="Scrivi qui...">' +
+        '<button class="send-btn" id="sendBtn">Invia</button>' +
+      '</div>';
+    main.innerHTML = html;
+    var input2 = document.getElementById('textAnswer');
+    var btn2   = document.getElementById('sendBtn');
+    var send2  = function(){
+      var value = input2.value.trim();
+      if(!value) return;
+      submitAnswer(sessionId, slideIndex, value, false);
+    };
+    btn2.addEventListener('click', send2);
+    input2.addEventListener('keydown', function(e){ if(e.key === 'Enter') send2(); });
+  }
+}
+
+/* ============================================================
+   SUBMIT ANSWER
+   ============================================================ */
+async function submitAnswer(sessionId, slideIndex, value, spezzaSuVirgola){
+  hideCountdown();
+  main.innerHTML = '<div class="confirm confirm-attesa">Invio in corso…</div>';
+
+  // Per le wordcloud con opzioni multiple ogni parola è un voto separato.
+  // Per quiz e sondaggi la risposta è unica (non si spezza su virgola interna).
+  var values = spezzaSuVirgola ? value.split(',').map(function(v){ return v.trim(); }).filter(Boolean) : [value];
+  var risultati = await Promise.all(values.map(function(v, i){ return inviaVotoConTentativi(sessionId, slideIndex, v, i); }));
+  var tuttiRiusciti = risultati.every(function(ok){ return ok; });
+
+  if(tuttiRiusciti){
+    var s          = slides[slideIndex];
+    var isQuizScorata = (s && s.type === 'quiz' && s.correct !== undefined);
+
+    // Calcola e scrivi il punteggio se è una quiz scorata
+    var ptsGuadagnati = 0;
+    if(isQuizScorata && myNick){
+      var isCorrect = (value === s.options[s.correct]);
+      if(isCorrect){
+        var elapsed    = slideOpenTime ? (Date.now() - slideOpenTime) / 1000 : countdownSeconds;
+        var speedRatio = Math.max(0, 1 - elapsed / Math.max(1, countdownSeconds));
+        ptsGuadagnati  = Math.round(50 + 50 * speedRatio);
+      }
+      // Scrivi sempre: pts > 0 se corretto (speed-based), 0 se sbagliato
+      // Così il nick compare in classifica anche con risposta errata
+      await scriviPunteggio(sessionId, myNick, ptsGuadagnati);
+    }
+
+    localStorage.setItem(storageKey(sessionId, slideIndex), value);
+
+    main.innerHTML = '<div class="confirm">Risposta inviata ✅</div>';
+  } else {
+    main.innerHTML =
+      '<div class="confirm confirm-errore">Non siamo riusciti a inviare la risposta, prova di nuovo.</div>' +
+      '<button class="send-btn" id="riprovaInvioBtn">Riprova</button>';
+    document.getElementById('riprovaInvioBtn').addEventListener('click', function(){
+      submitAnswer(sessionId, slideIndex, value, spezzaSuVirgola);
+    });
+  }
+}
+
+/* ============================================================
+   INVIO VOTO CON TENTATIVI
+   ============================================================ */
+async function inviaVotoConTentativi(sessionId, slideIndex, valore, indiceParola, tentativo){
+  tentativo = tentativo || 1;
+  try{
+    var chiave = CLIENT_ID + (indiceParola ? '__w' + indiceParola : '');
+    await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/votes/' + slideIndex + '/' + chiave).set(valore);
+    return true;
+  } catch(err){
+    if(tentativo < 4){
+      await new Promise(function(r){ setTimeout(r, 1200 * tentativo); });
+      return inviaVotoConTentativi(sessionId, slideIndex, valore, indiceParola, tentativo + 1);
+    }
+    return false;
+  }
+}
+
+var lastCorso   = null;
+var pageHeader  = document.getElementById('pageHeader');
+var slideCounter= document.getElementById('slideCounter');
+
+/* ============================================================
+   PRESENZA
+   ============================================================ */
+var presenceStatsRef = null;
+function ascoltaConnessi(sid){
+  if(presenceStatsRef) presenceStatsRef.off();
+  presenceStatsRef = db.ref(DB_PREFIX + '/sessions/' + sid + '/presence');
+  presenceStatsRef.on('value', function(snap){
+    var n = snap.exists() ? Object.keys(snap.val()).length : 0;
+    statsBar.style.display = 'flex';
+    statConnessi.textContent = n;
+    if(myNick) statNick.textContent = myNick;
+  });
+}
+
+function contaRispondentiUnici(oggettoVoti){
+  var base = new Set();
+  Object.keys(oggettoVoti).forEach(function(chiave){
+    base.add(chiave.replace(/__w\d+$/, ''));
+  });
+  return base.size;
+}
+
+var votesStatsRef = null;
+function ascoltaRisposte(sid, slideIdx){
+  if(votesStatsRef) votesStatsRef.off();
+  votesStatsRef = db.ref(DB_PREFIX + '/sessions/' + sid + '/votes/' + slideIdx);
+  votesStatsRef.on('value', function(snap){
+    var n = snap.exists() ? contaRispondentiUnici(snap.val()) : 0;
+    statRisposte.textContent = n;
+  });
+}
+
+function registraPresenza(sid){
+  var ref = db.ref(DB_PREFIX + '/sessions/' + sid + '/presence/' + CLIENT_ID);
+  ref.set(true);
+  ref.onDisconnect().remove();
+}
+
+/* ============================================================
+   ASCOLTO SESSIONE
+   ============================================================ */
+var sessionRef    = null;
+var lastResetSeen = 0; // timestamp dell'ultimo reset già gestito, evita loop su reconnect
+function ascoltaSessione(sid){
+  if(sessionRef) sessionRef.off();
+  sessionRef = db.ref(DB_PREFIX + '/sessions/' + sid);
+  sessionRef.on('value', function(snap){
+    var data = snap.val() || {};
+    if(data.countdown !== undefined && data.countdown !== null){
+      countdownSeconds = Number(data.countdown);
+    }
+    if(data.corso && data.corso !== lastCorso){
+      lastCorso = data.corso;
+      pageHeader.textContent  = 'SILP CGIL · ' + lastCorso + '° Corso Allievi Agenti';
+      document.title          = lastCorso + '° Corso Allievi Agenti — Partecipa';
+    }
+    if(data.terzoNome !== undefined){
+      localStorage.setItem('terzoNome',   data.terzoNome   || '');
+      localStorage.setItem('terzoNumero', data.terzoNumero || '');
+    }
+    var nuovaSlide = data.slide || 0;
+    if(nuovaSlide !== lastSlide){
+      lastSlide = nuovaSlide;
+      if(slideCounter) slideCounter.textContent = 'Slide ' + (nuovaSlide + 1) + ' di ' + slides.length;
+      renderSlide(sid, nuovaSlide);
+      ascoltaRisposte(sid, nuovaSlide);
+      var sl      = slides[nuovaSlide];
+      var already = sl ? localStorage.getItem(storageKey(sid, nuovaSlide)) : null;
+      if(sl && (sl.type === 'quiz' || sl.type === 'sondaggio' || sl.type === 'wordcloud') && already === null){
+        startCountdown();
+      } else {
+        hideCountdown();
+      }
+    }
+    // Reset da relatore: cancella risposta locale e ripresenta la domanda
+    if(data.resetSlide && data.resetSlide.ts > lastResetSeen){
+      var ridx = data.resetSlide.idx;
+      lastResetSeen = data.resetSlide.ts;
+      if(ridx === lastSlide){
+        localStorage.removeItem(storageKey(sid, ridx));
+        renderSlide(sid, ridx);
+        ascoltaRisposte(sid, ridx);
+        var slReset = slides[ridx];
+        if(slReset && (slReset.type === 'quiz' || slReset.type === 'sondaggio' || slReset.type === 'wordcloud')){
+          startCountdown();
+        }
+      }
+    }
+  });
+}
+
+/* ============================================================
+   AVVIO
+   ============================================================ */
+function avvia(){
+  if(FIREBASE_CONFIG.apiKey.indexOf('INSERIRE') === 0){
+    main.innerHTML = '<div class="config-warning">Il sistema non è ancora configurato. Manca la configurazione Firebase in config.js.</div>';
+    return;
+  }
+  db.ref(DB_PREFIX + '/config/currentSession').on('value', function(snap){
+    var sid = snap.val();
+    if(!sid || sid === lastSessionId) return;
+    lastSessionId = sid;
+    currentSid    = sid;
+    lastSlide     = null;
+
+    // Se la sessione è cambiata rispetto all'ultima memorizzata, azzera il nick
+    // così l'utente è costretto a reinserirlo (no cache tra sessioni diverse)
+    var prevSid = localStorage.getItem('silpLastSid');
+    if(prevSid !== null && prevSid !== sid){
+      myNick = null;
+      localStorage.removeItem('silpNick');
+      var ls = document.getElementById('loginScreen');
+      if(ls){
+        ls.style.display = 'flex';
+        ls.classList.remove('hidden');
+        var ni = document.getElementById('nickInput');
+        if(ni){ ni.value = ''; ni.focus(); }
+      }
+    }
+    localStorage.setItem('silpLastSid', sid);
+
+    // Registra il nick per questa sessione (se già noto)
+    if(myNick) registraNick(sid, myNick);
+    // La presenza si registra solo se il nick è già stato inserito;
+    // altrimenti viene registrata nel submit() del login
+    if(myNick) registraPresenza(sid);
+    ascoltaConnessi(sid);
+    ascoltaSessione(sid);
+  });
+}
+
+// Carica la configurazione slide custom da Firebase prima di avviare il listener.
+// Se presente, sovrascrive l'array slides[] caricato da slides_data.js.
+async function loadSlidesConfig(){
+  try{
+    var snap = await db.ref(DB_PREFIX + '/slides_config/custom').once('value');
+    if(snap.exists()){
+      var all = snap.val();
+      if(Array.isArray(all) && all.length > 0){
+        slides = all.filter(function(s){ return !s.disabled; });
+      }
+    }
+  }catch(e){
+    // Fallback silenzioso: restano le slide di default da slides_data.js
+  }
+}
+
+// Piccolo ritardo casuale per non sovraccaricare Firebase all'ingresso di massa.
+// Prima di avviare il listener carichiamo l'eventuale config custom.
+setTimeout(function(){
+  loadSlidesConfig().then(avvia);
+}, Math.floor(Math.random() * 1500));
+
+// Quando il telefono si riaccende, ripresenta subito la presenza
+document.addEventListener('visibilitychange', function(){
+  if(document.visibilityState === 'visible' && lastSessionId){
+    registraPresenza(lastSessionId);
+  }
+});
+
+// Re-registra la presenza ogni volta che Firebase riconnette il WebSocket.
+// Senza questo, un micro-drop di rete mobile cancella la presenza via onDisconnect
+// e non viene mai ripristinata finché l'utente non ricarica la pagina.
+db.ref('.info/connected').on('value', function(snap){
+  if(snap.val() === true && lastSessionId){
+    registraPresenza(lastSessionId);
+  }
+});
+</script>
+<div class="rev-tag">partecipa · rev 5 · 14.07.2026</div>
+</body>
+</html>

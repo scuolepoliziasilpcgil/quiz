@@ -1,0 +1,4772 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corso Allievi Agenti — Presentazione SILP CGIL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;700;900&family=IBM+Plex+Mono:wght@500&family=Nunito:wght@900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blu-deep:#234C72;
+    --blu:#3A6CA0;
+    --rosso:#C8102E;
+    --giallo:#FFE699;
+    --verde:#4FA66B;
+    --crema:#F7F3E8;
+    --accent-p1:#9FD8FF;
+    --accent-p2:#FFD27A;
+    --accent-p3:#B6E3C0;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;height:100%;}
+  body{
+    font-family:'Inter',sans-serif;
+    background:var(--blu-deep);
+    color:var(--crema);
+    overflow:hidden;
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  /* TOPBAR */
+  .topbar{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    padding:1.1rem 1.6rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.78rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--crema);
+    opacity:.85;
+    flex:0 0 auto;
+    gap:1rem;
+  }
+  .topbar-brand{display:flex; align-items:center; gap:.6rem; font-weight:600;letter-spacing:.18em; justify-self:start;}
+  .topbar-right{display:flex; align-items:center; gap:1rem; justify-self:end;}
+  .rev-tag{
+    position:fixed;
+    bottom:.5rem;
+    right:.7rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.62rem;
+    letter-spacing:.05em;
+    color:var(--crema);
+    opacity:.35;
+    z-index:40;
+    pointer-events:none;
+  }
+  .rejoin-qr{
+    position:fixed;
+    top:6.1rem;
+    right:.9rem;
+    z-index:25;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.35rem;
+    background:rgba(20,35,63,.75);
+    border:1px solid rgba(247,243,232,.25);
+    border-radius:12px;
+    padding:.55rem .7rem;
+  }
+  .rejoin-qr-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.64rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--crema);
+    opacity:.8;
+    text-align:center;
+  }
+  .rejoin-qr img{border-radius:8px; background:var(--crema); display:block;}
+  .logo-mark{width:3.4rem; height:3.4rem; flex:0 0 auto; border-radius:8px; object-fit:cover;}
+  .logo-flank{
+    width:clamp(9rem,34vmin,24rem);
+    height:auto;
+    flex:0 0 auto;
+    border-radius:14px;
+    box-shadow:0 10px 28px rgba(0,0,0,.32);
+  }
+  .topbar-section{text-align:center;}
+  .topbar-counter{font-weight:500;}
+  .stats-badge{display:flex; gap:1.2rem; align-items:center; flex:0 0 auto;}
+  .stat-pill{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.1rem;
+    font-family:'IBM Plex Mono',monospace;
+  }
+  .stat-pill-num{
+    font-size:1.15rem;
+    font-weight:700;
+    line-height:1;
+  }
+  .stat-pill-label{
+    font-size:.58rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.65;
+  }
+  .icon-btn{
+    background:transparent;
+    border:1px solid rgba(247,243,232,.35);
+    color:var(--crema);
+    width:2.2rem;
+    height:2.2rem;
+    border-radius:50%;
+    cursor:pointer;
+    flex:0 0 auto;
+    font-size:1rem;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .icon-btn:hover{background:rgba(247,243,232,.15);}
+  /* STAGE */
+  .stage{
+    flex:1 1 auto;
+    position:relative;
+    overflow:hidden;
+  }
+  .slide{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:2rem 6vw 4rem;
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .35s ease, transform .35s ease;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .slide.active{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+  /* entrata animata del contenuto della slide attiva */
+  .slide.active > *{
+    animation:slideInUp .5s cubic-bezier(.16,.84,.44,1) both;
+  }
+  @keyframes slideInUp{
+    from{opacity:0; transform:translateY(22px);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .slide[data-bg="deep"]{background:radial-gradient(circle at 50% 30%, var(--blu) 0%, var(--blu-deep) 70%);}
+  .slide[data-bg="blu"]{background:var(--blu);}
+  .slide[data-bg="giallo"]{background:var(--giallo); color:var(--blu-deep);}
+  /* accento colore per periodo: alone radiale dietro le domande */
+  .slide[data-accent="p1"]{background:radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--accent-p1) 55%, var(--blu)) 0%, var(--blu-deep) 78%);}
+  .slide[data-accent="p2"]{background:radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--accent-p2) 52%, var(--blu)) 0%, var(--blu-deep) 78%);}
+  .slide[data-accent="p3"]{background:radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--accent-p3) 55%, var(--blu)) 0%, var(--blu-deep) 78%);}
+  /* NARRAZIONE */
+  .narrazione-motivo{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.78rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    opacity:.55;
+    margin-bottom:.8rem;
+  }
+  .narrazione-titolo{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:800;
+    font-size:clamp(2rem,5vw,3.4rem);
+    line-height:1.12;
+    margin-bottom:1.4rem;
+    color:var(--crema);
+  }
+  .narrazione-testo{
+    font-size:clamp(1.1rem,2.6vw,1.5rem);
+    line-height:1.6;
+    max-width:52ch;
+    opacity:.9;
+  }
+  .narrazione-logo{
+    width:clamp(3rem,6vw,5rem);
+    height:auto;
+    border-radius:10px;
+    margin-bottom:1.2rem;
+    box-shadow:0 6px 18px rgba(0,0,0,.25);
+  }
+  .narrazione-num{
+    position:absolute;
+    right:3vw;
+    bottom:3vh;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:900;
+    font-size:clamp(5rem,14vw,11rem);
+    color:var(--rosso);
+    opacity:.18;
+    line-height:1;
+    user-select:none;
+    pointer-events:none;
+    z-index:0;
+  }
+  /* TITLE SLIDE */
+  .eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    opacity:.75;
+    margin-bottom:1.2rem;
+  }
+  .title-big{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(4.5rem,16vmin,10rem);
+    line-height:1;
+    margin:0 0 .3rem;
+    background:linear-gradient(180deg, var(--crema) 15%, var(--giallo) 100%);
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    filter:drop-shadow(0 0 46px rgba(255,230,153,.4));
+  }
+  .title-sub{
+    font-size:clamp(1.2rem,2.8vw,1.8rem);
+    font-weight:600;
+    max-width:38ch;
+    margin-left:auto;
+    margin-right:auto;
+    opacity:.95;
+  }
+  .title-meta{
+    margin-top:.9rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.9rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    opacity:.65;
+  }
+  .title-accent-line{
+    width:4.5rem;
+    height:4px;
+    border-radius:2px;
+    background:linear-gradient(90deg, var(--rosso), var(--giallo));
+    margin:1.3rem auto;
+  }
+  .title-date-corner{
+    position:absolute !important;
+    top:1.6rem;
+    right:2rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    font-size:clamp(1.1rem,2.6vmin,1.6rem);
+    letter-spacing:.05em;
+    color:var(--giallo);
+    text-transform:uppercase;
+    z-index:2;
+  }
+  .title-columns{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    gap:1.5rem;
+  }
+  .title-col-side{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .title-col-center{
+    flex:1 1 auto;
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+  }
+  .title-logo-col{
+    width:min(24vw,58vh);
+    height:auto;
+    border-radius:14px;
+    box-shadow:0 10px 28px rgba(0,0,0,.32);
+    animation:heartbeat 1.8s ease-in-out infinite;
+  }
+  .qr-join-img{
+    border-radius:22px;
+  }
+  .title-scuola-badge{
+    display:inline-block;
+    margin:0 0 .8rem;
+    padding:.75rem 2rem;
+    background:linear-gradient(90deg, var(--rosso), #a80d24);
+    color:var(--crema);
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(1.4rem,3.6vmin,2.2rem);
+    border-radius:999px;
+    box-shadow:0 10px 30px rgba(200,16,46,.45);
+    letter-spacing:.01em;
+    max-width:80vw;
+  }
+  .slide[data-bg="titlehero"]{
+    overflow:hidden;
+    background:radial-gradient(circle at 50% 18%, var(--blu) 0%, var(--blu-deep) 62%, #0c1730 100%);
+  }
+  .slide[data-bg="titlehero"]::before,
+  .slide[data-bg="titlehero"]::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    filter:blur(95px);
+    opacity:.32;
+    pointer-events:none;
+    z-index:0;
+  }
+  .slide[data-bg="titlehero"]::before{
+    width:34rem; height:34rem;
+    background:var(--rosso);
+    top:-15rem; left:-11rem;
+    animation:titleGlow1 17s ease-in-out infinite;
+  }
+  .slide[data-bg="titlehero"]::after{
+    width:30rem; height:30rem;
+    background:var(--giallo);
+    bottom:-13rem; right:-9rem;
+    animation:titleGlow2 19s ease-in-out infinite;
+  }
+  @keyframes titleGlow1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(3rem,2rem) scale(1.18);}
+  }
+  @keyframes titleGlow2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-2.5rem,-2rem) scale(1.12);}
+  }
+  .slide[data-bg="titlehero"] > *{position:relative; z-index:1;}
+  .title-scuola{
+    margin-top:1rem;
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(1.3rem,3.2vw,2rem);
+    color:var(--giallo);
+    max-width:34ch;
+  }
+  .title-note{
+    margin-top:1.4rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    opacity:.55;
+    max-width:40ch;
+  }
+  .qr-block{
+    margin-top:2rem;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.6rem;
+  }
+  .qr-row{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:4rem;
+  }
+  .closing-logos{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:5rem;
+    flex-wrap:wrap;
+    margin-bottom:3rem;
+  }
+  /* SLIDE FINALE */
+  .closing-grid{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    gap:2rem;
+    width:100%;
+  }
+  .closing-side{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.9rem;
+  }
+  .closing-side .logo-flank{
+    width:clamp(10rem,20vw,18rem);
+    height:auto;
+    border-radius:14px;
+    box-shadow:0 10px 28px rgba(0,0,0,.32);
+  }
+  .closing-side img.qr-contact{
+    border-radius:10px;
+  }
+  .closing-side-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.6;
+  }
+  .closing-center{
+    text-align:center;
+  }
+  .qr-block img{
+    border-radius:14px;
+    border:6px solid var(--crema);
+    background:var(--crema);
+  }
+  .qr-block .logo-flank{
+    border:none;
+    background:none;
+  }
+  .qr-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.7;
+  }
+  .qr-url{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    opacity:.8;
+    word-break:break-all;
+    max-width:34ch;
+  }
+  /* BADGE */
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.5rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    padding:.35rem .9rem;
+    border-radius:999px;
+    border:1px solid currentColor;
+    opacity:.85;
+    margin-bottom:.6rem;
+  }
+  .badge.wordcloud{color:#9FD8FF;}
+  .badge.sondaggio{color:#FFD27A;}
+  .badge.quiz{color:#FF9AA8;}
+  /* QUESTION */
+  .question{
+    font-family:'Inter',sans-serif;
+    font-weight:900;
+    font-size:clamp(1.7rem,3.8vw,2.8rem);
+    line-height:1.18;
+    max-width:34ch;
+    margin:0 0 .8rem;
+  }
+  .question .hl{color:var(--giallo);}
+  .slide[data-bg="giallo"] .question .hl{color:var(--rosso);}
+  .hint{
+    font-size:1rem;
+    opacity:.7;
+    max-width:34ch;
+    margin-bottom:1.4rem;
+  }
+  /* OPTIONS + RESULTS */
+  .options{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:clamp(.6rem,1.2vw,1.1rem);
+    width:100%;
+    max-width:1200px;
+    margin-bottom:.8rem;
+    flex:1 1 auto;
+    align-content:stretch;
+  }
+  /* colonne adattive per numero di risposte */
+  .options[data-count="2"]{ grid-template-columns:repeat(2,1fr); }
+  .options[data-count="3"]{ grid-template-columns:repeat(3,1fr); }
+  .options[data-count="4"]{ grid-template-columns:repeat(2,1fr); }
+
+  /* slide con opzioni: parte dall'alto per dare tutto lo spazio alle risposte */
+  .slide:has(.options){
+    justify-content:flex-start;
+    padding-top:clamp(1rem,2.5vh,2rem);
+  }
+
+  .option{
+    position:relative;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    gap:clamp(.6rem,1.2vw,1.1rem);
+    background:rgba(247,243,232,.08);
+    border:1px solid rgba(247,243,232,.18);
+    border-radius:18px;
+    padding:clamp(1rem,2.5vw,2rem) clamp(1.1rem,2.8vw,2.2rem);
+    font-size:clamp(1.15rem,2.6vw,2rem);
+    font-weight:700;
+    text-align:left;
+    min-height:clamp(3.8rem,9vh,7rem);
+  }
+  .slide[data-bg="giallo"] .option{
+    background:rgba(20,35,63,.06);
+    border-color:rgba(20,35,63,.18);
+  }
+  .option .letter{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(.95rem,1.8vw,1.4rem);
+    opacity:.6;
+    border:1px solid currentColor;
+    border-radius:10px;
+    width:clamp(2.1rem,3.8vw,3rem);
+    height:clamp(2.1rem,3.8vw,3rem);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex:0 0 auto;
+    z-index:1;
+  }
+  .option .opt-text{z-index:1; flex:1; line-height:1.3; text-align:center; font-weight:700;}
+  .option .opt-count{
+    z-index:1;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:clamp(.9rem,1.5vw,1.2rem);
+    font-weight:700;
+    opacity:.8;
+    min-width:2.5rem;
+    text-align:right;
+  }
+  .option .bar-fill{
+    position:absolute;
+    left:0; top:0; bottom:0;
+    width:0%;
+    background:rgba(79,166,107,.35);
+    transition:width .9s cubic-bezier(.22,.86,.4,1);
+  }
+  .slide[data-accent="p1"] .option .bar-fill{background:color-mix(in srgb, var(--accent-p1) 40%, transparent);}
+  .slide[data-accent="p2"] .option .bar-fill{background:color-mix(in srgb, var(--accent-p2) 42%, transparent);}
+  .slide[data-accent="p3"] .option .bar-fill{background:color-mix(in srgb, var(--accent-p3) 42%, transparent);}
+  /* COUNTDOWN VISIVO */
+  .countdown-bar{
+    position:absolute;
+    top:0; left:0;
+    height:5px;
+    width:100%;
+    background:var(--giallo);
+    transform-origin:left center;
+    z-index:5;
+    opacity:.9;
+  }
+  .slide[data-bg="deep"] .countdown-bar, .slide[data-accent] .countdown-bar{background:var(--giallo);}
+  .countdown-bar.running{
+    animation:countdownShrink linear forwards;
+  }
+  @keyframes countdownShrink{
+    from{transform:scaleX(1);}
+    to{transform:scaleX(0);}
+  }
+  /* OVERLAY 3 2 1 VIA! */
+  #cdCountdown{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:20;
+    pointer-events:none;
+    background:rgba(0,0,0,.28);
+    opacity:0;
+    transition:opacity .22s;
+  }
+  #cdCountdown.visible{ opacity:1; }
+  #cdNumber{
+    font-family:'Nunito',sans-serif;
+    font-weight:900;
+    font-size:clamp(7rem,22vw,16rem);
+    color:var(--crema);
+    line-height:1;
+    text-shadow:0 0 60px rgba(255,230,153,.5), 0 4px 24px rgba(0,0,0,.5);
+    animation:cdPop .85s ease both;
+  }
+  #cdNumber.via-text{
+    font-size:clamp(4rem,14vw,10rem);
+    color:var(--giallo);
+    letter-spacing:.04em;
+  }
+  @keyframes cdPop{
+    0%  { transform:scale(2.2); opacity:0; }
+    25% { transform:scale(1);   opacity:1; }
+    75% { transform:scale(1);   opacity:1; }
+    100%{ transform:scale(.5);  opacity:0; }
+  }
+  /* Numero grande semitrasparente durante il conto alla rovescia */
+  .cd-big-num{
+    position:absolute;
+    right:2.5vw;
+    bottom:5vh;
+    font-family:'Nunito',sans-serif;
+    font-weight:900;
+    font-size:clamp(5rem,14vw,11rem);
+    color:var(--crema);
+    opacity:.13;
+    line-height:1;
+    user-select:none;
+    pointer-events:none;
+    z-index:3;
+    transition:color .4s, opacity .4s;
+  }
+  .cd-big-num.urgent{ color:var(--rosso); opacity:.38; }
+  /* LOGHI PULSANTI sulla slide titolo */
+  .heartbeat-logo{
+    animation:heartbeat 1.8s ease-in-out infinite;
+  }
+  .qr-row .heartbeat-logo:last-child{animation-delay:.9s;}
+  .closing-grid .closing-side:last-child .heartbeat-logo{animation-delay:.9s;}
+  .title-slide-logos{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:3rem;
+    margin-bottom:2rem;
+    flex-wrap:wrap;
+  }
+  .title-slide-logos .logo-flank{
+    width:clamp(7rem,14vw,12rem);
+    height:auto;
+    animation:heartbeat 1.8s ease-in-out infinite;
+  }
+  .title-slide-logos .logo-flank:nth-child(2){animation-delay:.9s;}
+  @keyframes heartbeat{
+    0%, 100%{transform:scale(1);}
+    15%{transform:scale(1.08);}
+    30%{transform:scale(1);}
+    45%{transform:scale(1.05);}
+    60%{transform:scale(1);}
+  }
+  /* SCHERMATA ATTESA VIVA (tra le slide, lato relatore non serve, qui per coerenza) */
+  /* TOOLBAR (reveal + results) */
+  .toolbar{
+    display:flex;
+    gap:.7rem;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:1rem;
+  }
+  .ghost-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid var(--crema);
+    color:var(--crema);
+    border-radius:999px;
+    padding:.7rem 1.6rem;
+    cursor:pointer;
+    transition:background .2s, color .2s;
+  }
+  .slide[data-bg="giallo"] .ghost-btn{border-color:var(--blu-deep); color:var(--blu-deep);}
+  .ghost-btn:hover{background:var(--crema); color:var(--blu-deep);}
+  .slide[data-bg="giallo"] .ghost-btn:hover{background:var(--blu-deep); color:var(--giallo);}
+  .answer-panel{
+    display:none;
+    margin-top:.6rem;
+    max-width:640px;
+    background:rgba(79,166,107,.16);
+    border:1px solid var(--verde);
+    border-radius:16px;
+    padding:1.1rem 1.4rem;
+    font-size:1.05rem;
+    line-height:1.5;
+  }
+  .answer-panel.open{display:block; animation:fadein .3s ease;}
+
+  /* ===== CLASSIFICA OVERLAY panquiz-style ===== */
+  #classificaOverlay{
+    display:none;
+    position:fixed;
+    inset:0;
+    z-index:200;
+    background:rgba(18,32,50,.97);
+    flex-direction:column;
+    align-items:center;
+    padding:2rem 2.5rem 1.5rem;
+    animation:overlayIn .35s ease both;
+  }
+  #classificaOverlay.open{ display:flex; }
+  @keyframes overlayIn{
+    from{opacity:0; transform:scale(.96);}
+    to{opacity:1; transform:scale(1);}
+  }
+  .clov-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    width:100%;
+    max-width:900px;
+    margin-bottom:1.2rem;
+    flex:0 0 auto;
+  }
+  .clov-titolo{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.28em;
+    text-transform:uppercase;
+    opacity:.6;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+  }
+  .class-live-dot{
+    display:inline-block;
+    width:.48rem; height:.48rem;
+    border-radius:50%;
+    background:var(--verde);
+    flex:0 0 auto;
+    animation:dotPulse 1.4s ease-in-out infinite;
+  }
+  .clov-fase{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.45;
+    transition:opacity .3s;
+  }
+  .clov-close{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    background:transparent;
+    border:1px solid rgba(247,243,232,.3);
+    color:var(--crema);
+    padding:.45rem 1.4rem;
+    border-radius:999px;
+    cursor:pointer;
+    transition:border-color .15s;
+  }
+  .clov-close:hover{ border-color:var(--crema); }
+  .clov-lista{
+    width:100%;
+    max-width:900px;
+    flex:1 1 0;
+    overflow:hidden;
+    position:relative;
+  }
+  .clov-empty{
+    opacity:.4;
+    font-size:1rem;
+    text-align:center;
+    padding:3rem;
+  }
+  .clov-riga{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    padding:.75rem 1.2rem;
+    border-radius:14px;
+    margin-bottom:.4rem;
+    background:rgba(247,243,232,.07);
+    font-size:1.15rem;
+    will-change:transform;
+  }
+  .clov-riga.top1{background:rgba(255,210,0,.2); border:1px solid rgba(255,210,0,.4);}
+  .clov-riga.top2{background:rgba(192,192,192,.15); border:1px solid rgba(192,192,192,.3);}
+  .clov-riga.top3{background:rgba(205,127,50,.15); border:1px solid rgba(205,127,50,.3);}
+  .clov-riga.gained{ animation:gainedPulse 1s ease .2s both; }
+  @keyframes gainedPulse{
+    0%{ box-shadow:0 0 0 0 rgba(79,166,107,.6); }
+    50%{ box-shadow:0 0 0 8px rgba(79,166,107,0); background:rgba(79,166,107,.25); }
+    100%{ box-shadow:none; }
+  }
+  .clov-pos{ font-family:'IBM Plex Mono',monospace; font-size:.9rem; min-width:2.4rem; text-align:center; flex:0 0 auto; }
+  .clov-nick{ flex:1; font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .clov-pts{ font-family:'IBM Plex Mono',monospace; font-size:1rem; font-weight:700; flex:0 0 auto; letter-spacing:.02em; }
+  .clov-delta{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.78rem;
+    min-width:3.2rem;
+    text-align:right;
+    flex:0 0 auto;
+    font-weight:700;
+  }
+  .clov-delta.su{ color:#4FA66B; }
+  .clov-delta.giu{ color:#C8102E; opacity:.8; }
+  .clov-delta.zero{ opacity:.22; }
+
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  .update-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:.35rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--verde);
+    opacity:0;
+    margin-left:.7rem;
+    transition:opacity .4s ease;
+  }
+  .update-badge::before{
+    content:"";
+    width:.45rem;
+    height:.45rem;
+    border-radius:50%;
+    background:var(--verde);
+    flex:0 0 auto;
+  }
+  .update-badge.visibile{opacity:1;}
+  .answer-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.75rem;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--verde);
+    display:block;
+    margin-bottom:.4rem;
+  }
+  /* WORD CLOUD RESULTS */
+  .cloud-wrap{
+    display:none;
+    position:relative;
+    width:100%;
+    max-width:680px;
+    height:min(38vh,320px);
+    margin-top:.4rem;
+  }
+  .cloud-wrap.open{display:block; animation:fadein .3s ease;}
+  .cloud-canvas{width:100%; height:100%; display:block;}
+  .cloud-empty{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.85rem;
+    opacity:.6;
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  /* PAUSA */
+  .slide[data-bg="verde"]{
+    overflow:hidden;
+    color:var(--crema);
+    background:linear-gradient(120deg, #2E6B45, var(--verde), #245C3A, var(--verde));
+    background-size:300% 300%;
+    animation:pausaGradiente 12s ease infinite;
+  }
+  @keyframes pausaGradiente{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+  .slide[data-bg="verde"]::before,
+  .slide[data-bg="verde"]::after{
+    content:"";
+    position:absolute;
+    border-radius:50%;
+    filter:blur(60px);
+    opacity:.35;
+    pointer-events:none;
+    z-index:0;
+  }
+  .slide[data-bg="verde"]::before{
+    width:26rem; height:26rem;
+    background:var(--giallo);
+    top:-10rem; left:-8rem;
+    animation:pausaBlob1 14s ease-in-out infinite;
+  }
+  .slide[data-bg="verde"]::after{
+    width:22rem; height:22rem;
+    background:var(--crema);
+    bottom:-9rem; right:-7rem;
+    animation:pausaBlob2 16s ease-in-out infinite;
+  }
+  @keyframes pausaBlob1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(3rem,2rem) scale(1.2);}
+  }
+  @keyframes pausaBlob2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-2.5rem,-2rem) scale(1.15);}
+  }
+  .slide[data-bg="verde"] > *{position:relative; z-index:1;}
+  .pausa-title{
+    font-family:'Space Grotesk',sans-serif;
+    font-weight:700;
+    font-size:clamp(2.6rem,7vw,5rem);
+    text-transform:uppercase;
+    letter-spacing:.06em;
+    margin:0 0 .3rem;
+    background:linear-gradient(90deg, var(--crema), var(--giallo), var(--crema));
+    background-size:220% auto;
+    -webkit-background-clip:text;
+    background-clip:text;
+    -webkit-text-fill-color:transparent;
+    animation:pausaTitoloShine 3.5s linear infinite, pausaTitoloIn .7s ease both;
+  }
+  @keyframes pausaTitoloShine{
+    to{background-position:-220% center;}
+  }
+  @keyframes pausaTitoloIn{
+    from{opacity:0; transform:scale(.85) translateY(-.6rem);}
+    to{opacity:1; transform:scale(1) translateY(0);}
+  }
+  .pausa-sub{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.95rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.6;
+    margin-bottom:2rem;
+  }
+  .pausa-list{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:flex;
+    flex-direction:column;
+    gap:.8rem;
+    text-align:left;
+  }
+  .pausa-list li{
+    font-size:1.2rem;
+    font-weight:600;
+    display:flex;
+    align-items:flex-start;
+    gap:.7rem;
+  }
+  .pausa-list li::before{
+    content:"★";
+    font-weight:700;
+    color:var(--giallo);
+    flex:0 0 auto;
+    animation:pausaStellaPulse 1.6s ease-in-out infinite;
+  }
+  @keyframes pausaStellaPulse{
+    0%,100%{transform:scale(1); opacity:.85;}
+    50%{transform:scale(1.35); opacity:1;}
+  }
+  .pausa-list li{
+    opacity:0;
+    animation:pausaRigaIn .7s cubic-bezier(.34,1.56,.64,1) forwards;
+  }
+  @keyframes pausaRigaIn{
+    from{opacity:0; transform:translateX(-2.2rem) scale(.9);}
+    60%{opacity:1;}
+    to{opacity:1; transform:translateX(0) scale(1);}
+  }
+  .pausa-icon{
+    display:inline-block;
+    margin-bottom:.6rem;
+    animation:pausaIconDondolo 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 0 18px rgba(255,230,153,.55));
+  }
+  .pausa-icon svg{width:4rem; height:4rem;}
+  .steam-line{
+    transform-origin:center bottom;
+    opacity:0;
+    animation:pausaSteamRise 2.6s ease-in-out infinite;
+  }
+  .steam-2{animation-delay:.9s;}
+  @keyframes pausaSteamRise{
+    0%{opacity:0; transform:translateY(4px) scaleY(.8);}
+    30%{opacity:.9;}
+    80%{opacity:0; transform:translateY(-10px) scaleY(1.1);}
+    100%{opacity:0; transform:translateY(-10px) scaleY(1.1);}
+  }
+  @keyframes pausaIconDondolo{
+    0%,100%{transform:rotate(-4deg);}
+    50%{transform:rotate(4deg);}
+  }
+  .contact-chips{
+    opacity:0;
+    animation:pausaChipsIn .8s ease forwards;
+    animation-delay:1.5s;
+  }
+  @keyframes pausaChipsIn{
+    from{opacity:0; transform:translateY(1rem);}
+    to{opacity:1; transform:translateY(0);}
+  }
+  .closing-center .contact-chips,
+  .slide[data-bg="verde"] .contact-chips{
+    margin-top:0;
+    margin-bottom:1.8rem;
+  }
+  /* CHIP CONTATTI, riusato in pausa, closing e widget fisso */
+  .contact-chips{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:1.1rem;
+    margin-top:1.8rem;
+  }
+  .contact-chip{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.4rem;
+    background:rgba(20,35,63,.2);
+    border:1px solid rgba(247,243,232,.3);
+    border-radius:14px;
+    padding:.9rem 1.1rem;
+  }
+  .contact-chip img{border-radius:8px; background:var(--crema);}
+  .contact-chip-name{
+    font-weight:700;
+    font-size:1.05rem;
+    text-align:center;
+  }
+  .contact-chip-numero{
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700;
+    font-size:1.35rem;
+    letter-spacing:.03em;
+    opacity:1;
+  }
+  /* BOTTOMBAR */
+  .bottombar{
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    padding:1rem 1.6rem 1.3rem;
+  }
+  .nav-btn{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:1.3rem;
+    background:transparent;
+    border:1px solid rgba(247,243,232,.35);
+    color:var(--crema);
+    width:2.6rem;
+    height:2.6rem;
+    border-radius:50%;
+    cursor:pointer;
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition:background .2s;
+  }
+  .nav-btn:hover{background:rgba(247,243,232,.15);}
+  .nav-btn:focus-visible, .ghost-btn:focus-visible, .track-dot:focus-visible, .icon-btn:focus-visible{
+    outline:2px solid var(--giallo);
+    outline-offset:2px;
+  }
+  .track{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    gap:.35rem;
+    overflow-x:auto;
+    padding:.3rem 0;
+  }
+  .track-group{
+    display:flex;
+    gap:.35rem;
+    padding:0 .35rem;
+    border-radius:999px;
+  }
+  .track-group.g-p1, .track-group.g-p3{background:rgba(31,56,100,.5);}
+  .track-group.g-pausa{background:rgba(255,230,153,.18);}
+  .track-group.g-p2{background:rgba(200,16,46,.18);}
+  .track-dot.narrazione{opacity:.5;}
+  .track-dot{
+    width:.55rem;
+    height:.55rem;
+    border-radius:50%;
+    background:rgba(247,243,232,.3);
+    border:none;
+    cursor:pointer;
+    margin:.45rem 0;
+    flex:0 0 auto;
+    transition:background .2s, transform .2s;
+  }
+  .track-dot:hover{background:rgba(247,243,232,.6);}
+  .track-dot.active{
+    background:var(--crema);
+    transform:scale(1.6);
+    box-shadow:0 0 0 3px rgba(247,243,232,.35), 0 0 10px 2px rgba(247,243,232,.7);
+  }
+  .track-dot.narrazione.active{opacity:1;}
+  .track-group.g-pausa .track-dot{width:1.3rem; border-radius:4px;}
+  /* WIDGET CONTATTI FISSO */
+  .contact-corner{
+    position:fixed;
+    left:.9rem;
+    bottom:5.6rem;
+    z-index:30;
+    display:grid;
+    grid-template-columns:repeat(2, auto);
+    gap:.6rem;
+    pointer-events:none;
+  }
+  .contact-corner .contact-chip{
+    padding:.55rem .7rem;
+    background:rgba(20,35,63,.72);
+    border-color:rgba(247,243,232,.25);
+    gap:.35rem;
+  }
+  .contact-corner .contact-chip img{width:170px; height:170px;}
+  .contact-corner .contact-chip-name{font-size:.9rem;}
+  .contact-corner .contact-chip-numero{font-size:1.05rem;}
+  /* CORNER BADGE — "X DI Y" a nastro diagonale in alto a sinistra dello stage */
+  #cornerBadge{
+    position:absolute;
+    top:3.4rem;
+    left:-5rem;
+    width:17rem;
+    padding:.75rem 0;
+    background:var(--giallo);
+    color:var(--blu-deep);
+    text-align:center;
+    transform:rotate(-45deg);
+    font-family:'Nunito',sans-serif;
+    font-weight:900;
+    font-size:1.45rem;
+    letter-spacing:.05em;
+    z-index:6;
+    pointer-events:none;
+    box-shadow:0 3px 16px rgba(0,0,0,.35);
+  }
+  /* SETTINGS PANEL */
+  .overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(20,35,63,.85);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:50;
+  }
+  .overlay.open{display:flex;}
+  .panel{
+    background:var(--blu);
+    border:1px solid rgba(247,243,232,.2);
+    border-radius:18px;
+    padding:1.8rem 2rem;
+    max-width:760px;
+    width:92vw;
+    max-height:90vh;
+    overflow-y:auto;
+    text-align:left;
+  }
+  .panel-columns{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 2.2rem;
+    align-items:start;
+  }
+  @media (max-width:640px){
+    .panel-columns{grid-template-columns:1fr;}
+  }
+  .panel h2{
+    font-family:'Space Grotesk',sans-serif;
+    margin:0 0 1rem;
+    font-size:1.3rem;
+  }
+  .panel label{
+    display:block;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.75rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    opacity:.7;
+    margin-bottom:.4rem;
+  }
+  .panel input,
+  .panel select{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:1rem;
+    padding:.7rem .9rem;
+    border-radius:10px;
+    border:1px solid rgba(247,243,232,.3);
+    background:rgba(247,243,232,.08);
+    color:var(--crema);
+    margin-bottom:1rem;
+  }
+  .panel select option{color:#1a1a1a;}
+  .panel input::placeholder{
+    color:var(--crema);
+    opacity:.5;
+  }
+  .panel .row{
+    display:flex;
+    gap:.6rem;
+    flex-wrap:wrap;
+    margin-bottom:1rem;
+  }
+  .panel-section{
+    padding-bottom:1.1rem;
+    margin-bottom:1.1rem;
+    border-bottom:1px solid rgba(247,243,232,.14);
+  }
+  .panel-section-last{border-bottom:none; margin-bottom:.4rem; padding-bottom:0;}
+  .panel-section-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    opacity:.55;
+    margin:0 0 .8rem;
+    font-weight:400;
+  }
+  .contact-fields-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 .7rem;
+  }
+  .contact-field-col-title{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.72rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.6;
+    margin-bottom:.5rem;
+  }
+  .contact-field-col input{
+    padding:.55rem .6rem;
+    font-size:.88rem;
+    margin-bottom:.55rem;
+  }
+  .contact-field-col .ghost-btn{
+    width:100%;
+    font-size:.78rem;
+    padding:.5rem .6rem;
+  }
+  .panel .status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.8rem;
+    opacity:.7;
+    margin-top:.6rem;
+    line-height:1.5;
+  }
+  .panel .close-row{
+    text-align:right;
+    margin-top:.6rem;
+  }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="topbar-brand">
+    <img class="logo-mark" src="logo.jpg" alt="SILP CGIL">
+    <span>SILP CGIL</span>
+  </span>
+  <span class="topbar-section" id="sectionLabel"></span>
+  <span class="topbar-right">
+    <span class="topbar-counter" id="counter"></span>
+    <span class="stats-badge" id="statsBadge" style="display:none">
+      <div class="stat-pill" id="pillConnessi">
+        <span class="stat-pill-num">🟢 <span id="pConnessi">—</span></span>
+        <span class="stat-pill-label">connessi</span>
+      </div>
+      <div class="stat-pill" id="pillRisposte">
+        <span class="stat-pill-num">✅ <span id="pRisposte">—</span></span>
+        <span class="stat-pill-label">risposte</span>
+      </div>
+    </span>
+    <button class="icon-btn" id="settingsBtn" aria-label="Impostazioni" title="Impostazioni e QR code">⚙</button>
+  </span>
+</div>
+<div class="rejoin-qr" id="rejoinQr">
+  <div class="rejoin-qr-label">Rientra qui</div>
+  <img id="rejoinQrImg" width="100" height="100" alt="QR per tornare alla pagina allievi">
+</div>
+
+<div class="stage" id="stage"></div>
+<div class="contact-corner" id="contactCorner"></div>
+
+<div class="bottombar">
+  <button class="nav-btn" id="prevBtn" aria-label="Slide precedente">‹</button>
+  <div class="track" id="track"></div>
+  <button class="nav-btn" id="nextBtn" aria-label="Slide successiva">›</button>
+  <button class="nav-btn" id="fsBtn" aria-label="Schermo intero" title="Schermo intero (F)">⛶</button>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="panel">
+    <div id="panelGate">
+      <h2>Accesso relatore</h2>
+      <label for="gatePinInput">PIN</label>
+      <input type="password" id="gatePinInput" placeholder="Inserisci il PIN" autocomplete="off">
+      <div class="row">
+        <button class="ghost-btn" id="gateEnterBtn" style="border-color:var(--crema); color:var(--crema);">Entra</button>
+      </div>
+      <div class="status" id="gateStatus"></div>
+      <div class="close-row">
+        <button class="ghost-btn" id="gateCloseBtn" style="border-color:var(--crema); color:var(--crema);">Chiudi</button>
+      </div>
+    </div>
+
+    <div id="panelBody" style="display:none;">
+    <h2>Impostazioni relatore</h2>
+
+    <div class="panel-columns">
+      <div class="panel-col-left">
+        <div class="panel-section panel-section-last">
+          <h3 class="panel-section-title">Corso e sessione</h3>
+          <label for="corsoInput">Numero del corso</label>
+          <input type="text" id="corsoInput" placeholder="Esempio: 234">
+          <div class="row">
+            <button class="ghost-btn" id="saveCorsoBtn" style="border-color:var(--crema); color:var(--crema);">Salva numero corso</button>
+          </div>
+          <div class="row">
+            <button class="ghost-btn" id="newSessionBtn" style="border-color:var(--crema); color:var(--crema);">Nuova sessione</button>
+          </div>
+          <label for="countdownInput">Durata countdown (secondi)</label>
+          <input type="number" id="countdownInput" min="0" placeholder="15" value="15">
+          <div class="row">
+            <button class="ghost-btn" id="saveCountdownBtn" style="border-color:var(--crema); color:var(--crema);">Salva durata</button>
+          </div>
+          <label for="scuolaSelect">Scuola di questa conferenza</label>
+          <select id="scuolaSelect">
+            <option value="">Nessuna selezionata</option>
+          </select>
+          <div class="row">
+            <button class="ghost-btn" id="saveScuolaBtn" style="border-color:var(--crema); color:var(--crema);">Salva scuola</button>
+            <button class="ghost-btn" id="clearScuolaBtn" style="border-color:var(--rosso); color:var(--rosso); margin-left:.5rem;">✕ Svuota</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-col-right">
+        <div class="panel-section panel-section-last">
+          <h3 class="panel-section-title">Terzo e quarto contatto WhatsApp</h3>
+          <div class="contact-fields-grid">
+            <div class="contact-field-col">
+              <div class="contact-field-col-title">Terzo</div>
+              <input type="text" id="terzoNomeInput" placeholder="Nome">
+              <input type="text" id="terzoCognomeInput" placeholder="Cognome">
+              <input type="tel" id="terzoNumeroInput" placeholder="Numero, es. 3331234567">
+              <button class="ghost-btn" id="saveTerzoBtn" style="border-color:var(--crema); color:var(--crema);">Salva terzo</button>
+              <button class="ghost-btn" id="clearTerzoBtn" style="border-color:var(--rosso); color:var(--rosso); margin-top:.3rem;">✕ Svuota</button>
+            </div>
+            <div class="contact-field-col">
+              <div class="contact-field-col-title">Quarto</div>
+              <input type="text" id="quartoNomeInput" placeholder="Nome">
+              <input type="text" id="quartoCognomeInput" placeholder="Cognome">
+              <input type="tel" id="quartoNumeroInput" placeholder="Numero, es. 3331234567">
+              <button class="ghost-btn" id="saveQuartoBtn" style="border-color:var(--crema); color:var(--crema);">Salva quarto</button>
+              <button class="ghost-btn" id="clearQuartoBtn" style="border-color:var(--rosso); color:var(--rosso); margin-top:.3rem;">✕ Svuota</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-section" style="margin-top:1rem;">
+      <h3 class="panel-section-title">Domande e contenuti</h3>
+      <div class="row">
+        <button class="ghost-btn" id="openEditorBtn" style="border-color:var(--accent-p3); color:var(--accent-p3);">✎ Modifica domande</button>
+      </div>
+    </div>
+
+    <div class="status" id="panelStatus">Sessione non verificata.</div>
+    <div class="close-row">
+      <button class="ghost-btn" id="closeSettingsBtn" style="border-color:var(--crema); color:var(--crema);">Chiudi</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/*!
+ * wordcloud2.js
+ * http://timdream.org/wordcloud2.js/
+ *
+ * Copyright 2011 - 2019 Tim Guan-tin Chien and contributors.
+ * Released under the MIT license
+ */
+
+'use strict'
+
+// setImmediate
+if (!window.setImmediate) {
+  window.setImmediate = (function setupSetImmediate () {
+    return window.msSetImmediate ||
+    window.webkitSetImmediate ||
+    window.mozSetImmediate ||
+    window.oSetImmediate ||
+    (function setupSetZeroTimeout () {
+      if (!window.postMessage || !window.addEventListener) {
+        return null
+      }
+
+      var callbacks = [undefined]
+      var message = 'zero-timeout-message'
+
+      // Like setTimeout, but only takes a function argument.  There's
+      // no time argument (always zero) and no arguments (you have to
+      // use a closure).
+      var setZeroTimeout = function setZeroTimeout (callback) {
+        var id = callbacks.length
+        callbacks.push(callback)
+        window.postMessage(message + id.toString(36), '*')
+
+        return id
+      }
+
+      window.addEventListener('message', function setZeroTimeoutMessage (evt) {
+        // Skipping checking event source, retarded IE confused this window
+        // object with another in the presence of iframe
+        if (typeof evt.data !== 'string' ||
+            evt.data.substr(0, message.length) !== message/* ||
+            evt.source !== window */) {
+          return
+        }
+
+        evt.stopImmediatePropagation()
+
+        var id = parseInt(evt.data.substr(message.length), 36)
+        if (!callbacks[id]) {
+          return
+        }
+
+        callbacks[id]()
+        callbacks[id] = undefined
+      }, true)
+
+      /* specify clearImmediate() here since we need the scope */
+      window.clearImmediate = function clearZeroTimeout (id) {
+        if (!callbacks[id]) {
+          return
+        }
+
+        callbacks[id] = undefined
+      }
+
+      return setZeroTimeout
+    })() ||
+    // fallback
+    function setImmediateFallback (fn) {
+      window.setTimeout(fn, 0)
+    }
+  })()
+}
+
+if (!window.clearImmediate) {
+  window.clearImmediate = (function setupClearImmediate () {
+    return window.msClearImmediate ||
+    window.webkitClearImmediate ||
+    window.mozClearImmediate ||
+    window.oClearImmediate ||
+    // "clearZeroTimeout" is implement on the previous block ||
+    // fallback
+    function clearImmediateFallback (timer) {
+      window.clearTimeout(timer)
+    }
+  })()
+}
+
+(function (global) {
+  // Check if WordCloud can run on this browser
+  var isSupported = (function isSupported () {
+    var canvas = document.createElement('canvas')
+    if (!canvas || !canvas.getContext) {
+      return false
+    }
+
+    var ctx = canvas.getContext('2d')
+    if (!ctx) {
+      return false
+    }
+    if (!ctx.getImageData) {
+      return false
+    }
+    if (!ctx.fillText) {
+      return false
+    }
+
+    if (!Array.prototype.some) {
+      return false
+    }
+    if (!Array.prototype.push) {
+      return false
+    }
+
+    return true
+  }())
+
+  // Find out if the browser impose minium font size by
+  // drawing small texts on a canvas and measure it's width.
+  var minFontSize = (function getMinFontSize () {
+    if (!isSupported) {
+      return
+    }
+
+    var ctx = document.createElement('canvas').getContext('2d')
+
+    // start from 20
+    var size = 20
+
+    // two sizes to measure
+    var hanWidth, mWidth
+
+    while (size) {
+      ctx.font = size.toString(10) + 'px sans-serif'
+      if ((ctx.measureText('\uFF37').width === hanWidth) &&
+          (ctx.measureText('m').width) === mWidth) {
+        return (size + 1)
+      }
+
+      hanWidth = ctx.measureText('\uFF37').width
+      mWidth = ctx.measureText('m').width
+
+      size--
+    }
+
+    return 0
+  })()
+
+  var getItemExtraData = function (item) {
+    if (Array.isArray(item)) {
+      var itemCopy = item.slice()
+      // remove data we already have (word and weight)
+      itemCopy.splice(0, 2)
+      return itemCopy
+    } else {
+      return []
+    }
+  }
+
+  // Based on http://jsfromhell.com/array/shuffle
+  var shuffleArray = function shuffleArray (arr) {
+    for (var j, x, i = arr.length; i;) {
+      j = Math.floor(Math.random() * i)
+      x = arr[--i]
+      arr[i] = arr[j]
+      arr[j] = x
+    }
+    return arr
+  }
+
+  var timer = {};
+  var WordCloud = function WordCloud (elements, options) {
+    if (!isSupported) {
+      return
+    }
+
+    var timerId = Math.floor(Math.random() * Date.now())
+
+    if (!Array.isArray(elements)) {
+      elements = [elements]
+    }
+
+    elements.forEach(function (el, i) {
+      if (typeof el === 'string') {
+        elements[i] = document.getElementById(el)
+        if (!elements[i]) {
+          throw new Error('The element id specified is not found.')
+        }
+      } else if (!el.tagName && !el.appendChild) {
+        throw new Error('You must pass valid HTML elements, or ID of the element.')
+      }
+    })
+
+    /* Default values to be overwritten by options object */
+    var settings = {
+      list: [],
+      fontFamily: '"Trebuchet MS", "Heiti TC", "微軟正黑體", ' +
+                  '"Arial Unicode MS", "Droid Fallback Sans", sans-serif',
+      fontWeight: 'normal',
+      color: 'random-dark',
+      minSize: 0, // 0 to disable
+      weightFactor: 1,
+      clearCanvas: true,
+      backgroundColor: '#fff', // opaque white = rgba(255, 255, 255, 1)
+
+      gridSize: 8,
+      drawOutOfBound: false,
+      shrinkToFit: false,
+      origin: null,
+
+      drawMask: false,
+      maskColor: 'rgba(255,0,0,0.3)',
+      maskGapWidth: 0.3,
+
+      wait: 0,
+      abortThreshold: 0, // disabled
+      abort: function noop () {},
+
+      minRotation: -Math.PI / 2,
+      maxRotation: Math.PI / 2,
+      rotationSteps: 0,
+
+      shuffle: true,
+      rotateRatio: 0.1,
+
+      shape: 'circle',
+      ellipticity: 0.65,
+
+      classes: null,
+
+      hover: null,
+      click: null
+    }
+
+    if (options) {
+      for (var key in options) {
+        if (key in settings) {
+          settings[key] = options[key]
+        }
+      }
+    }
+
+    /* Convert weightFactor into a function */
+    if (typeof settings.weightFactor !== 'function') {
+      var factor = settings.weightFactor
+      settings.weightFactor = function weightFactor (pt) {
+        return pt * factor // in px
+      }
+    }
+
+    /* Convert shape into a function */
+    if (typeof settings.shape !== 'function') {
+      switch (settings.shape) {
+        case 'circle':
+        /* falls through */
+        default:
+          // 'circle' is the default and a shortcut in the code loop.
+          settings.shape = 'circle'
+          break
+
+        case 'cardioid':
+          settings.shape = function shapeCardioid (theta) {
+            return 1 - Math.sin(theta)
+          }
+          break
+
+          /*
+          To work out an X-gon, one has to calculate "m",
+          where 1/(cos(2*PI/X)+m*sin(2*PI/X)) = 1/(cos(0)+m*sin(0))
+          http://www.wolframalpha.com/input/?i=1%2F%28cos%282*PI%2FX%29%2Bm*sin%28
+          2*PI%2FX%29%29+%3D+1%2F%28cos%280%29%2Bm*sin%280%29%29
+          Copy the solution into polar equation r = 1/(cos(t') + m*sin(t'))
+          where t' equals to mod(t, 2PI/X)
+         */
+
+        case 'diamond':
+          // http://www.wolframalpha.com/input/?i=plot+r+%3D+1%2F%28cos%28mod+
+          // %28t%2C+PI%2F2%29%29%2Bsin%28mod+%28t%2C+PI%2F2%29%29%29%2C+t+%3D
+          // +0+..+2*PI
+          settings.shape = function shapeSquare (theta) {
+            var thetaPrime = theta % (2 * Math.PI / 4)
+            return 1 / (Math.cos(thetaPrime) + Math.sin(thetaPrime))
+          }
+          break
+
+        case 'square':
+          // http://www.wolframalpha.com/input/?i=plot+r+%3D+min(1%2Fabs(cos(t
+          // )),1%2Fabs(sin(t)))),+t+%3D+0+..+2*PI
+          settings.shape = function shapeSquare (theta) {
+            return Math.min(
+              1 / Math.abs(Math.cos(theta)),
+              1 / Math.abs(Math.sin(theta))
+            )
+          }
+          break
+
+        case 'triangle-forward':
+          // http://www.wolframalpha.com/input/?i=plot+r+%3D+1%2F%28cos%28mod+
+          // %28t%2C+2*PI%2F3%29%29%2Bsqrt%283%29sin%28mod+%28t%2C+2*PI%2F3%29
+          // %29%29%2C+t+%3D+0+..+2*PI
+          settings.shape = function shapeTriangle (theta) {
+            var thetaPrime = theta % (2 * Math.PI / 3)
+            return 1 / (Math.cos(thetaPrime) +
+                        Math.sqrt(3) * Math.sin(thetaPrime))
+          }
+          break
+
+        case 'triangle':
+        case 'triangle-upright':
+          settings.shape = function shapeTriangle (theta) {
+            var thetaPrime = (theta + Math.PI * 3 / 2) % (2 * Math.PI / 3)
+            return 1 / (Math.cos(thetaPrime) +
+                        Math.sqrt(3) * Math.sin(thetaPrime))
+          }
+          break
+
+        case 'pentagon':
+          settings.shape = function shapePentagon (theta) {
+            var thetaPrime = (theta + 0.955) % (2 * Math.PI / 5)
+            return 1 / (Math.cos(thetaPrime) +
+                        0.726543 * Math.sin(thetaPrime))
+          }
+          break
+
+        case 'star':
+          settings.shape = function shapeStar (theta) {
+            var thetaPrime = (theta + 0.955) % (2 * Math.PI / 10)
+            if ((theta + 0.955) % (2 * Math.PI / 5) - (2 * Math.PI / 10) >= 0) {
+              return 1 / (Math.cos((2 * Math.PI / 10) - thetaPrime) +
+                          3.07768 * Math.sin((2 * Math.PI / 10) - thetaPrime))
+            } else {
+              return 1 / (Math.cos(thetaPrime) +
+                          3.07768 * Math.sin(thetaPrime))
+            }
+          }
+          break
+      }
+    }
+
+    /* Make sure gridSize is a whole number and is not smaller than 4px */
+    settings.gridSize = Math.max(Math.floor(settings.gridSize), 4)
+
+    /* shorthand */
+    var g = settings.gridSize
+    var maskRectWidth = g - settings.maskGapWidth
+
+    /* normalize rotation settings */
+    var rotationRange = Math.abs(settings.maxRotation - settings.minRotation)
+    var rotationSteps = Math.abs(Math.floor(settings.rotationSteps))
+    var minRotation = Math.min(settings.maxRotation, settings.minRotation)
+
+    /* information/object available to all functions, set when start() */
+    var grid, // 2d array containing filling information
+      ngx, ngy, // width and height of the grid
+      center, // position of the center of the cloud
+      maxRadius
+
+    /* timestamp for measuring each putWord() action */
+    var escapeTime
+
+    /* function for getting the color of the text */
+    var getTextColor
+    function randomHslColor (min, max) {
+      return 'hsl(' +
+        (Math.random() * 360).toFixed() + ',' +
+        (Math.random() * 30 + 70).toFixed() + '%,' +
+        (Math.random() * (max - min) + min).toFixed() + '%)'
+    }
+    switch (settings.color) {
+      case 'random-dark':
+        getTextColor = function getRandomDarkColor () {
+          return randomHslColor(10, 50)
+        }
+        break
+
+      case 'random-light':
+        getTextColor = function getRandomLightColor () {
+          return randomHslColor(50, 90)
+        }
+        break
+
+      default:
+        if (typeof settings.color === 'function') {
+          getTextColor = settings.color
+        }
+        break
+    }
+
+    /* function for getting the font-weight of the text */
+    var getTextFontWeight
+    if (typeof settings.fontWeight === 'function') {
+      getTextFontWeight = settings.fontWeight
+    }
+
+    /* function for getting the classes of the text */
+    var getTextClasses = null
+    if (typeof settings.classes === 'function') {
+      getTextClasses = settings.classes
+    }
+
+    /* Interactive */
+    var interactive = false
+    var infoGrid = []
+    var hovered
+
+    var getInfoGridFromMouseTouchEvent =
+    function getInfoGridFromMouseTouchEvent (evt) {
+      var canvas = evt.currentTarget
+      var rect = canvas.getBoundingClientRect()
+      var clientX
+      var clientY
+      /** Detect if touches are available */
+      if (evt.touches) {
+        clientX = evt.touches[0].clientX
+        clientY = evt.touches[0].clientY
+      } else {
+        clientX = evt.clientX
+        clientY = evt.clientY
+      }
+
+      var eventXvalue = clientX - rect.left
+      var eventX = eventXvalue < 0 ? 0 : eventXvalue
+      var eventY = clientY - rect.top
+
+      var x = Math.floor(eventX * ((canvas.width / rect.width) || 1) / g)
+      var y = Math.floor(eventY * ((canvas.height / rect.height) || 1) / g)
+      
+      if (!infoGrid[x]) {
+        return null
+      }
+
+      return infoGrid[x][y]
+    }
+
+    var wordcloudhover = function wordcloudhover (evt) {
+      var info = getInfoGridFromMouseTouchEvent(evt)
+
+      if (hovered === info) {
+        return
+      }
+
+      hovered = info
+      if (!info) {
+        settings.hover(undefined, undefined, evt)
+
+        return
+      }
+
+      settings.hover(info.item, info.dimension, evt)
+    }
+
+    var wordcloudclick = function wordcloudclick (evt) {
+      var info = getInfoGridFromMouseTouchEvent(evt)
+      if (!info) {
+        return
+      }
+
+      settings.click(info.item, info.dimension, evt)
+      evt.preventDefault()
+    }
+
+    /* Get points on the grid for a given radius away from the center */
+    var pointsAtRadius = []
+    var getPointsAtRadius = function getPointsAtRadius (radius) {
+      if (pointsAtRadius[radius]) {
+        return pointsAtRadius[radius]
+      }
+
+      // Look for these number of points on each radius
+      var T = radius * 8
+
+      // Getting all the points at this radius
+      var t = T
+      var points = []
+
+      if (radius === 0) {
+        points.push([center[0], center[1], 0])
+      }
+
+      while (t--) {
+        // distort the radius to put the cloud in shape
+        var rx = 1
+        if (settings.shape !== 'circle') {
+          rx = settings.shape(t / T * 2 * Math.PI) // 0 to 1
+        }
+
+        // Push [x, y, t] t is used solely for getTextColor()
+        points.push([
+          center[0] + radius * rx * Math.cos(-t / T * 2 * Math.PI),
+          center[1] + radius * rx * Math.sin(-t / T * 2 * Math.PI) *
+            settings.ellipticity,
+          t / T * 2 * Math.PI])
+      }
+
+      pointsAtRadius[radius] = points
+      return points
+    }
+
+    /* Return true if we had spent too much time */
+    var exceedTime = function exceedTime () {
+      return ((settings.abortThreshold > 0) &&
+        ((new Date()).getTime() - escapeTime > settings.abortThreshold))
+    }
+
+    /* Get the deg of rotation according to settings, and luck. */
+    var getRotateDeg = function getRotateDeg () {
+      if (settings.rotateRatio === 0) {
+        return 0
+      }
+
+      if (Math.random() > settings.rotateRatio) {
+        return 0
+      }
+
+      if (rotationRange === 0) {
+        return minRotation
+      }
+
+      if (rotationSteps > 0) {
+        // Min rotation + zero or more steps * span of one step
+        return minRotation +
+          Math.floor(Math.random() * rotationSteps) *
+          rotationRange / (rotationSteps - 1)
+      } else {
+        return minRotation + Math.random() * rotationRange
+      }
+    }
+
+    var getTextInfo = function getTextInfo (word, weight, rotateDeg, extraDataArray) {
+      // calculate the acutal font size
+      // fontSize === 0 means weightFactor function wants the text skipped,
+      // and size < minSize means we cannot draw the text.
+      var debug = false
+      var fontSize = settings.weightFactor(weight)
+      if (fontSize <= settings.minSize) {
+        return false
+      }
+
+      // Scale factor here is to make sure fillText is not limited by
+      // the minium font size set by browser.
+      // It will always be 1 or 2n.
+      var mu = 1
+      if (fontSize < minFontSize) {
+        mu = (function calculateScaleFactor () {
+          var mu = 2
+          while (mu * fontSize < minFontSize) {
+            mu += 2
+          }
+          return mu
+        })()
+      }
+
+      // Get fontWeight that will be used to set fctx.font
+      var fontWeight
+      if (getTextFontWeight) {
+        fontWeight = getTextFontWeight(word, weight, fontSize, extraDataArray)
+      } else {
+        fontWeight = settings.fontWeight
+      }
+
+      var fcanvas = document.createElement('canvas')
+      var fctx = fcanvas.getContext('2d', { willReadFrequently: true })
+
+      fctx.font = fontWeight + ' ' +
+        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily
+
+      // Estimate the dimension of the text with measureText().
+      var fw = fctx.measureText(word).width / mu
+      var fh = Math.max(fontSize * mu,
+        fctx.measureText('m').width,
+        fctx.measureText('\uFF37').width
+      ) / mu
+
+      // Create a boundary box that is larger than our estimates,
+      // so text don't get cut of (it sill might)
+      var boxWidth = fw + fh * 2
+      var boxHeight = fh * 3
+      var fgw = Math.ceil(boxWidth / g)
+      var fgh = Math.ceil(boxHeight / g)
+      boxWidth = fgw * g
+      boxHeight = fgh * g
+
+      // Calculate the proper offsets to make the text centered at
+      // the preferred position.
+
+      // This is simply half of the width.
+      var fillTextOffsetX = -fw / 2
+      // Instead of moving the box to the exact middle of the preferred
+      // position, for Y-offset we move 0.4 instead, so Latin alphabets look
+      // vertical centered.
+      var fillTextOffsetY = -fh * 0.4
+
+      // Calculate the actual dimension of the canvas, considering the rotation.
+      var cgh = Math.ceil((boxWidth * Math.abs(Math.sin(rotateDeg)) +
+                           boxHeight * Math.abs(Math.cos(rotateDeg))) / g)
+      var cgw = Math.ceil((boxWidth * Math.abs(Math.cos(rotateDeg)) +
+                           boxHeight * Math.abs(Math.sin(rotateDeg))) / g)
+      var width = cgw * g
+      var height = cgh * g
+
+      fcanvas.setAttribute('width', width)
+      fcanvas.setAttribute('height', height)
+
+      if (debug) {
+        // Attach fcanvas to the DOM
+        document.body.appendChild(fcanvas)
+        // Save it's state so that we could restore and draw the grid correctly.
+        fctx.save()
+      }
+
+      // Scale the canvas with |mu|.
+      fctx.scale(1 / mu, 1 / mu)
+      fctx.translate(width * mu / 2, height * mu / 2)
+      fctx.rotate(-rotateDeg)
+
+      // Once the width/height is set, ctx info will be reset.
+      // Set it again here.
+      fctx.font = fontWeight + ' ' +
+        (fontSize * mu).toString(10) + 'px ' + settings.fontFamily
+
+      // Fill the text into the fcanvas.
+      // XXX: We cannot because textBaseline = 'top' here because
+      // Firefox and Chrome uses different default line-height for canvas.
+      // Please read https://bugzil.la/737852#c6.
+      // Here, we use textBaseline = 'middle' and draw the text at exactly
+      // 0.5 * fontSize lower.
+      fctx.fillStyle = '#000'
+      fctx.textBaseline = 'middle'
+      fctx.fillText(
+        word, fillTextOffsetX * mu,
+        (fillTextOffsetY + fontSize * 0.5) * mu
+      )
+
+      // Get the pixels of the text
+      var imageData = fctx.getImageData(0, 0, width, height).data
+
+      if (exceedTime()) {
+        return false
+      }
+
+      if (debug) {
+        // Draw the box of the original estimation
+        fctx.strokeRect(
+          fillTextOffsetX * mu,
+          fillTextOffsetY, fw * mu, fh * mu
+        )
+        fctx.restore()
+      }
+
+      // Read the pixels and save the information to the occupied array
+      var occupied = []
+      var gx = cgw
+      var gy, x, y
+      var bounds = [cgh / 2, cgw / 2, cgh / 2, cgw / 2]
+      while (gx--) {
+        gy = cgh
+        while (gy--) {
+          y = g
+          /* eslint no-labels: ["error", { "allowLoop": true }] */
+          singleGridLoop: while (y--) {
+            x = g
+            while (x--) {
+              if (imageData[((gy * g + y) * width +
+                (gx * g + x)) * 4 + 3]) {
+                occupied.push([gx, gy])
+
+                if (gx < bounds[3]) {
+                  bounds[3] = gx
+                }
+                if (gx > bounds[1]) {
+                  bounds[1] = gx
+                }
+                if (gy < bounds[0]) {
+                  bounds[0] = gy
+                }
+                if (gy > bounds[2]) {
+                  bounds[2] = gy
+                }
+
+                if (debug) {
+                  fctx.fillStyle = 'rgba(255, 0, 0, 0.5)'
+                  fctx.fillRect(gx * g, gy * g, g - 0.5, g - 0.5)
+                }
+                break singleGridLoop
+              }
+            }
+          }
+          if (debug) {
+            fctx.fillStyle = 'rgba(0, 0, 255, 0.5)'
+            fctx.fillRect(gx * g, gy * g, g - 0.5, g - 0.5)
+          }
+        }
+      }
+
+      if (debug) {
+        fctx.fillStyle = 'rgba(0, 255, 0, 0.5)'
+        fctx.fillRect(
+          bounds[3] * g,
+          bounds[0] * g,
+          (bounds[1] - bounds[3] + 1) * g,
+          (bounds[2] - bounds[0] + 1) * g
+        )
+      }
+
+      // Return information needed to create the text on the real canvas
+      return {
+        mu: mu,
+        occupied: occupied,
+        bounds: bounds,
+        gw: cgw,
+        gh: cgh,
+        fillTextOffsetX: fillTextOffsetX,
+        fillTextOffsetY: fillTextOffsetY,
+        fillTextWidth: fw,
+        fillTextHeight: fh,
+        fontSize: fontSize
+      }
+    }
+
+    /* Determine if there is room available in the given dimension */
+    var canFitText = function canFitText (gx, gy, gw, gh, occupied) {
+      // Go through the occupied points,
+      // return false if the space is not available.
+      var i = occupied.length
+      while (i--) {
+        var px = gx + occupied[i][0]
+        var py = gy + occupied[i][1]
+
+        if (px >= ngx || py >= ngy || px < 0 || py < 0) {
+          if (!settings.drawOutOfBound) {
+            return false
+          }
+          continue
+        }
+
+        if (!grid[px][py]) {
+          return false
+        }
+      }
+      return true
+    }
+
+    /* Actually draw the text on the grid */
+    var drawText = function drawText (gx, gy, info, word, weight, distance, theta, rotateDeg, attributes, extraDataArray) {
+      var fontSize = info.fontSize
+      var color
+      if (getTextColor) {
+        color = getTextColor(word, weight, fontSize, distance, theta, extraDataArray)
+      } else {
+        color = settings.color
+      }
+
+      // get fontWeight that will be used to set ctx.font and font style rule
+      var fontWeight
+      if (getTextFontWeight) {
+        fontWeight = getTextFontWeight(word, weight, fontSize, extraDataArray)
+      } else {
+        fontWeight = settings.fontWeight
+      }
+
+      var classes
+      if (getTextClasses) {
+        classes = getTextClasses(word, weight, fontSize, extraDataArray)
+      } else {
+        classes = settings.classes
+      }
+
+      elements.forEach(function (el) {
+        if (el.getContext) {
+          var ctx = el.getContext('2d')
+          var mu = info.mu
+
+          // Save the current state before messing it
+          ctx.save()
+          ctx.scale(1 / mu, 1 / mu)
+
+          ctx.font = fontWeight + ' ' +
+                     (fontSize * mu).toString(10) + 'px ' + settings.fontFamily
+          ctx.fillStyle = color
+
+          // Translate the canvas position to the origin coordinate of where
+          // the text should be put.
+          ctx.translate(
+            (gx + info.gw / 2) * g * mu,
+            (gy + info.gh / 2) * g * mu
+          )
+
+          if (rotateDeg !== 0) {
+            ctx.rotate(-rotateDeg)
+          }
+
+          // Finally, fill the text.
+
+          // XXX: We cannot because textBaseline = 'top' here because
+          // Firefox and Chrome uses different default line-height for canvas.
+          // Please read https://bugzil.la/737852#c6.
+          // Here, we use textBaseline = 'middle' and draw the text at exactly
+          // 0.5 * fontSize lower.
+          ctx.textBaseline = 'middle'
+          ctx.fillText(
+            word, info.fillTextOffsetX * mu,
+            (info.fillTextOffsetY + fontSize * 0.5) * mu
+          )
+
+          // The below box is always matches how <span>s are positioned
+          /* ctx.strokeRect(info.fillTextOffsetX, info.fillTextOffsetY,
+            info.fillTextWidth, info.fillTextHeight) */
+
+          // Restore the state.
+          ctx.restore()
+        } else {
+          // drawText on DIV element
+          var span = document.createElement('span')
+          var transformRule = ''
+          transformRule = 'rotate(' + (-rotateDeg / Math.PI * 180) + 'deg) '
+          if (info.mu !== 1) {
+            transformRule +=
+              'translateX(-' + (info.fillTextWidth / 4) + 'px) ' +
+              'scale(' + (1 / info.mu) + ')'
+          }
+          var styleRules = {
+            position: 'absolute',
+            display: 'block',
+            font: fontWeight + ' ' +
+              (fontSize * info.mu) + 'px ' + settings.fontFamily,
+            left: ((gx + info.gw / 2) * g + info.fillTextOffsetX) + 'px',
+            top: ((gy + info.gh / 2) * g + info.fillTextOffsetY) + 'px',
+            width: info.fillTextWidth + 'px',
+            height: info.fillTextHeight + 'px',
+            lineHeight: fontSize + 'px',
+            whiteSpace: 'nowrap',
+            transform: transformRule,
+            webkitTransform: transformRule,
+            msTransform: transformRule,
+            transformOrigin: '50% 40%',
+            webkitTransformOrigin: '50% 40%',
+            msTransformOrigin: '50% 40%'
+          }
+          if (color) {
+            styleRules.color = color
+          }
+          span.textContent = word
+          for (var cssProp in styleRules) {
+            span.style[cssProp] = styleRules[cssProp]
+          }
+          if (attributes) {
+            for (var attribute in attributes) {
+              span.setAttribute(attribute, attributes[attribute])
+            }
+          }
+          if (classes) {
+            span.className += classes
+          }
+          el.appendChild(span)
+        }
+      })
+    }
+
+    /* Help function to updateGrid */
+    var fillGridAt = function fillGridAt (x, y, drawMask, dimension, item) {
+      if (x >= ngx || y >= ngy || x < 0 || y < 0) {
+        return
+      }
+
+      grid[x][y] = false
+
+      if (drawMask) {
+        var ctx = elements[0].getContext('2d')
+        ctx.fillRect(x * g, y * g, maskRectWidth, maskRectWidth)
+      }
+
+      if (interactive) {
+        infoGrid[x][y] = { item: item, dimension: dimension }
+      }
+    }
+
+    /* Update the filling information of the given space with occupied points.
+       Draw the mask on the canvas if necessary. */
+    var updateGrid = function updateGrid (gx, gy, gw, gh, info, item) {
+      var occupied = info.occupied
+      var drawMask = settings.drawMask
+      var ctx
+      if (drawMask) {
+        ctx = elements[0].getContext('2d')
+        ctx.save()
+        ctx.fillStyle = settings.maskColor
+      }
+
+      var dimension
+      if (interactive) {
+        var bounds = info.bounds
+        dimension = {
+          x: (gx + bounds[3]) * g,
+          y: (gy + bounds[0]) * g,
+          w: (bounds[1] - bounds[3] + 1) * g,
+          h: (bounds[2] - bounds[0] + 1) * g
+        }
+      }
+
+      var i = occupied.length
+      while (i--) {
+        var px = gx + occupied[i][0]
+        var py = gy + occupied[i][1]
+
+        if (px >= ngx || py >= ngy || px < 0 || py < 0) {
+          continue
+        }
+
+        fillGridAt(px, py, drawMask, dimension, item)
+      }
+
+      if (drawMask) {
+        ctx.restore()
+      }
+    }
+
+    /* putWord() processes each item on the list,
+       calculate it's size and determine it's position, and actually
+       put it on the canvas. */
+    var putWord = function putWord (item) {
+      var word, weight, attributes
+      if (Array.isArray(item)) {
+        word = item[0]
+        weight = item[1]
+      } else {
+        word = item.word
+        weight = item.weight
+        attributes = item.attributes
+      }
+      var rotateDeg = getRotateDeg()
+
+      var extraDataArray = getItemExtraData(item)
+
+      // get info needed to put the text onto the canvas
+      var info = getTextInfo(word, weight, rotateDeg, extraDataArray)
+
+      // not getting the info means we shouldn't be drawing this one.
+      if (!info) {
+        return false
+      }
+
+      if (exceedTime()) {
+        return false
+      }
+
+      // If drawOutOfBound is set to false,
+      // skip the loop if we have already know the bounding box of
+      // word is larger than the canvas.
+      if (!settings.drawOutOfBound && !settings.shrinkToFit) {
+        var bounds = info.bounds;
+        if ((bounds[1] - bounds[3] + 1) > ngx ||
+          (bounds[2] - bounds[0] + 1) > ngy) {
+          return false
+        }
+      }
+
+      // Determine the position to put the text by
+      // start looking for the nearest points
+      var r = maxRadius + 1
+
+      var tryToPutWordAtPoint = function (gxy) {
+        var gx = Math.floor(gxy[0] - info.gw / 2)
+        var gy = Math.floor(gxy[1] - info.gh / 2)
+        var gw = info.gw
+        var gh = info.gh
+
+        // If we cannot fit the text at this position, return false
+        // and go to the next position.
+        if (!canFitText(gx, gy, gw, gh, info.occupied)) {
+          return false
+        }
+
+        // Actually put the text on the canvas
+        drawText(gx, gy, info, word, weight,
+          (maxRadius - r), gxy[2], rotateDeg, attributes, extraDataArray)
+
+        // Mark the spaces on the grid as filled
+        updateGrid(gx, gy, gw, gh, info, item)
+
+        // Return true so some() will stop and also return true.
+        return true
+      }
+
+      while (r--) {
+        var points = getPointsAtRadius(maxRadius - r)
+
+        if (settings.shuffle) {
+          points = [].concat(points)
+          shuffleArray(points)
+        }
+
+        // Try to fit the words by looking at each point.
+        // array.some() will stop and return true
+        // when putWordAtPoint() returns true.
+        // If all the points returns false, array.some() returns false.
+        var drawn = points.some(tryToPutWordAtPoint)
+
+        if (drawn) {
+          // leave putWord() and return true
+          return true
+        }
+      }
+      if (settings.shrinkToFit) {
+        if (Array.isArray(item)) {
+          item[1] = item[1] * 3 / 4
+        } else {
+          item.weight = item.weight * 3 / 4
+        }
+        return putWord(item)
+      }
+      // we tried all distances but text won't fit, return false
+      return false
+    }
+
+    /* Send DOM event to all elements. Will stop sending event and return
+       if the previous one is canceled (for cancelable events). */
+    var sendEvent = function sendEvent (type, cancelable, details) {
+      if (cancelable) {
+        return !elements.some(function (el) {
+          var event = new CustomEvent(type, {
+            detail: details || {}
+          })
+          return !el.dispatchEvent(event)
+        }, this)
+      } else {
+        elements.forEach(function (el) {
+          var event = new CustomEvent(type, {
+            detail: details || {}
+          })
+          el.dispatchEvent(event)
+        }, this)
+      }
+    }
+
+    /* Start drawing on a canvas */
+    var start = function start () {
+      // For dimensions, clearCanvas etc.,
+      // we only care about the first element.
+      var canvas = elements[0]
+
+      if (canvas.getContext) {
+        ngx = Math.ceil(canvas.width / g)
+        ngy = Math.ceil(canvas.height / g)
+      } else {
+        var rect = canvas.getBoundingClientRect()
+        ngx = Math.ceil(rect.width / g)
+        ngy = Math.ceil(rect.height / g)
+      }
+
+      // Sending a wordcloudstart event which cause the previous loop to stop.
+      // Do nothing if the event is canceled.
+      if (!sendEvent('wordcloudstart', true)) {
+        return
+      }
+
+      // Determine the center of the word cloud
+      center = (settings.origin)
+        ? [settings.origin[0] / g, settings.origin[1] / g]
+        : [ngx / 2, ngy / 2]
+
+      // Maxium radius to look for space
+      maxRadius = Math.floor(Math.sqrt(ngx * ngx + ngy * ngy))
+
+      /* Clear the canvas only if the clearCanvas is set,
+         if not, update the grid to the current canvas state */
+      grid = []
+
+      var gx, gy, i
+      if (!canvas.getContext || settings.clearCanvas) {
+        elements.forEach(function (el) {
+          if (el.getContext) {
+            var ctx = el.getContext('2d')
+            ctx.fillStyle = settings.backgroundColor
+            ctx.clearRect(0, 0, ngx * (g + 1), ngy * (g + 1))
+            ctx.fillRect(0, 0, ngx * (g + 1), ngy * (g + 1))
+          } else {
+            el.textContent = ''
+            el.style.backgroundColor = settings.backgroundColor
+            el.style.position = 'relative'
+          }
+        })
+
+        /* fill the grid with empty state */
+        gx = ngx
+        while (gx--) {
+          grid[gx] = []
+          gy = ngy
+          while (gy--) {
+            grid[gx][gy] = true
+          }
+        }
+      } else {
+        /* Determine bgPixel by creating
+           another canvas and fill the specified background color. */
+        var bctx = document.createElement('canvas').getContext('2d')
+
+        bctx.fillStyle = settings.backgroundColor
+        bctx.fillRect(0, 0, 1, 1)
+        var bgPixel = bctx.getImageData(0, 0, 1, 1).data
+
+        /* Read back the pixels of the canvas we got to tell which part of the
+           canvas is empty.
+           (no clearCanvas only works with a canvas, not divs) */
+        var imageData =
+          canvas.getContext('2d').getImageData(0, 0, ngx * g, ngy * g).data
+
+        gx = ngx
+        var x, y
+        while (gx--) {
+          grid[gx] = []
+          gy = ngy
+          while (gy--) {
+            y = g
+            /* eslint no-labels: ["error", { "allowLoop": true }] */
+            singleGridLoop: while (y--) {
+              x = g
+              while (x--) {
+                i = 4
+                while (i--) {
+                  if (imageData[((gy * g + y) * ngx * g +
+                                 (gx * g + x)) * 4 + i] !== bgPixel[i]) {
+                    grid[gx][gy] = false
+                    break singleGridLoop
+                  }
+                }
+              }
+            }
+            if (grid[gx][gy] !== false) {
+              grid[gx][gy] = true
+            }
+          }
+        }
+
+        imageData = bctx = bgPixel = undefined
+      }
+
+      // fill the infoGrid with empty state if we need it
+      if (settings.hover || settings.click) {
+        interactive = true
+
+        /* fill the grid with empty state */
+        gx = ngx + 1
+        while (gx--) {
+          infoGrid[gx] = []
+        }
+
+        if (settings.hover) {
+          canvas.addEventListener('mousemove', wordcloudhover)
+        }
+
+        if (settings.click) {
+          canvas.addEventListener('click', wordcloudclick)
+          canvas.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)'
+        }
+
+        canvas.addEventListener('wordcloudstart', function stopInteraction () {
+          canvas.removeEventListener('wordcloudstart', stopInteraction)
+          canvas.removeEventListener('mousemove', wordcloudhover)
+          canvas.removeEventListener('click', wordcloudclick)
+          hovered = undefined
+        })
+      }
+
+      i = 0
+      var loopingFunction, stoppingFunction
+      if (settings.wait !== 0) {
+        loopingFunction = window.setTimeout
+        stoppingFunction = window.clearTimeout
+      } else {
+        loopingFunction = window.setImmediate
+        stoppingFunction = window.clearImmediate
+      }
+
+      var addEventListener = function addEventListener (type, listener) {
+        elements.forEach(function (el) {
+          el.addEventListener(type, listener)
+        }, this)
+      }
+
+      var removeEventListener = function removeEventListener (type, listener) {
+        elements.forEach(function (el) {
+          el.removeEventListener(type, listener)
+        }, this)
+      }
+
+      var anotherWordCloudStart = function anotherWordCloudStart () {
+        removeEventListener('wordcloudstart', anotherWordCloudStart)
+        stoppingFunction(timer[timerId])
+      }
+
+      addEventListener('wordcloudstart', anotherWordCloudStart)
+      timer[timerId] = loopingFunction(function loop () {
+        if (i >= settings.list.length) {
+          stoppingFunction(timer[timerId])
+          sendEvent('wordcloudstop', false)
+          removeEventListener('wordcloudstart', anotherWordCloudStart)
+          delete timer[timerId];
+          return
+        }
+        escapeTime = (new Date()).getTime()
+        var drawn = putWord(settings.list[i])
+        var canceled = !sendEvent('wordclouddrawn', true, {
+          item: settings.list[i],
+          drawn: drawn
+        })
+        if (exceedTime() || canceled) {
+          stoppingFunction(timer[timerId])
+          settings.abort()
+          sendEvent('wordcloudabort', false)
+          sendEvent('wordcloudstop', false)
+          removeEventListener('wordcloudstart', anotherWordCloudStart)
+          delete timer[timerId]
+          return
+        }
+        i++
+        timer[timerId] = loopingFunction(loop, settings.wait)
+      }, settings.wait)
+    }
+
+    // All set, start the drawing
+    start()
+  }
+
+  WordCloud.isSupported = isSupported
+  WordCloud.minFontSize = minFontSize
+  WordCloud.stop = function stop () {
+    if (timer) {
+      for (var timerId in timer) {
+        window.clearImmediate(timer[timerId])
+      }
+    }
+  }
+
+  // Expose the library as an AMD module
+  if (typeof define === 'function' && define.amd) { // eslint-disable-line no-undef
+    global.WordCloud = WordCloud
+    define('wordcloud', [], function () { return WordCloud }) // eslint-disable-line no-undef
+  } else if (typeof module !== 'undefined' && module.exports) { // eslint-disable-line no-undef
+    module.exports = WordCloud // eslint-disable-line no-undef
+  } else {
+    global.WordCloud = WordCloud
+  }
+})(this) // jshint ignore:line
+
+</script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script src="slides_data.js?v=202607049"></script>
+<script src="config.js?v=202607049"></script>
+<script>
+let current = 0;
+let sessionId = null;
+
+// Inizializzazione Firebase, sostituisce il vecchio backend Google Apps Script
+firebase.initializeApp(FIREBASE_CONFIG);
+const db = firebase.database();
+let resultsTimer = null;
+let activeCloud = null;
+let courseNumber = localStorage.getItem('courseNumber') || '';
+let scuolaCorrente = localStorage.getItem('scuolaCorrente') || '';
+
+const ELENCO_SCUOLE = [
+  'Scuola Allievi Agenti di Alessandria',
+  'Scuola Allievi Agenti di Trieste',
+  'Scuola Allievi Agenti di Caserta',
+  'Scuola Allievi Agenti di Campobasso',
+  'Scuola Allievi Agenti di Peschiera del Garda',
+  'Scuola Allievi Agenti di Piacenza',
+  'Scuola Allievi Agenti di Vibo Valentia',
+  'Scuola Pol.G.A.I. di Brescia',
+  'Istituto per Ispettori di Nettuno',
+  'Istituto per Sovrintendenti di Spoleto',
+  'Scuola per il Controllo del Territorio di Pescara',
+  'C.A.I.P. di Abbasanta',
+  'C.A.P.S. di Cesena'
+];
+
+function dataOggiFormattata(){
+  const mesi = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+  const oggi = new Date();
+  return oggi.getDate() + ' ' + mesi[oggi.getMonth()] + ' ' + oggi.getFullYear();
+}
+let countdownSeconds = parseInt(localStorage.getItem('countdownSeconds') || '15', 10);
+let prevCloudWords = {};
+
+const stage = document.getElementById('stage');
+const sectionLabelEl = document.getElementById('sectionLabel');
+const counterEl = document.getElementById('counter');
+const trackEl = document.getElementById('track');
+const statsBadge = document.getElementById('statsBadge');
+const pConnessi = document.getElementById('pConnessi');
+const pRisposte = document.getElementById('pRisposte');
+const pillRisposte = document.getElementById('pillRisposte');
+let statsTimer = null;
+
+// Connessi: salita immediata, discesa progressiva.
+// Ogni 20 secondi scendiamo del 10% del divario tra mostrato e reale (minimo 1 unità),
+// così un crollo di massa non appare tutto in una volta ma si assorbe gradualmente.
+// Alla slide pausa azzeriamo il mostrato: lo vedremo risalire mentre la gente rientra.
+let connessiMostrati = 0;
+let connessiReale    = 0;
+let discesaConnessiTimer = null;
+const DISCESA_INTERVALLO_MS  = 20000; // un passo ogni 20 secondi
+const DISCESA_PERCENTUALE    = 0.10;  // 10% del divario per passo
+
+function aggiornaConnessi(nVero){
+  const tipoSlide = slides[current] && slides[current].type;
+  if(tipoSlide === 'closing'){ statsBadge.style.display = 'none'; return; }
+
+  connessiReale = nVero;
+
+  if(nVero > connessiMostrati){
+    // Salita: immediata, cancella qualsiasi timer di discesa in corso
+    connessiMostrati = nVero;
+    if(discesaConnessiTimer){ clearTimeout(discesaConnessiTimer); discesaConnessiTimer = null; }
+    if(tipoSlide === 'title') suonaConnessione();
+  } else if(nVero < connessiMostrati && !discesaConnessiTimer){
+    // Discesa: avvia il processo progressivo solo se non è già in corso
+    _scheduleDiscesa();
+  }
+
+  statsBadge.style.display = 'flex';
+  pConnessi.textContent = connessiMostrati;
+}
+
+function _scheduleDiscesa(){
+  discesaConnessiTimer = setTimeout(() => {
+    discesaConnessiTimer = null;
+    if(connessiReale >= connessiMostrati) return; // si sono riconnessi nel frattempo
+    const divario = connessiMostrati - connessiReale;
+    const calo    = Math.max(1, Math.floor(divario * DISCESA_PERCENTUALE));
+    connessiMostrati = Math.max(connessiReale, connessiMostrati - calo);
+    pConnessi.textContent = connessiMostrati;
+    if(connessiMostrati > connessiReale) _scheduleDiscesa(); // continua finché non allineato
+  }, DISCESA_INTERVALLO_MS);
+}
+
+function azzeraPeriodoConnessi(){
+  connessiMostrati = 0;
+  connessiReale    = 0;
+  if(discesaConnessiTimer){ clearTimeout(discesaConnessiTimer); discesaConnessiTimer = null; }
+}
+
+// ===== Suoni brevi, una sola nota, non invasivi =====
+let audioCtx = null;
+// I browser bloccano l'audio finché non parte da un'azione diretta della persona.
+// Il primo clic ovunque sulla pagina sblocca l'audio per tutto il resto della conferenza.
+function sbloccaAudio(){
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === 'suspended') audioCtx.resume();
+  document.removeEventListener('click', sbloccaAudio);
+}
+document.addEventListener('click', sbloccaAudio);
+
+function suonaTono(frequenza, durataMs, volume){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = frequenza;
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    const adesso = audioCtx.currentTime;
+    gain.gain.setValueAtTime(0.0001, adesso);
+    gain.gain.exponentialRampToValueAtTime(volume, adesso + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.0001, adesso + durataMs/1000);
+    osc.start(adesso);
+    osc.stop(adesso + durataMs/1000 + 0.03);
+  } catch(e){}
+}
+// Suono per un nuovo connesso, solo sulla slide iniziale
+function suonaConnessione(){ suonaTono(880, 130, 0.12); }
+// Suono per una nuova risposta, sulle slide con domanda
+// Suono per una nuova risposta, un campanellino con due toni invece di un tono secco
+function suonaRisposta(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const adesso = audioCtx.currentTime;
+    const durata = 0.32;
+
+    // Tono principale, la nota del campanello
+    const osc1 = audioCtx.createOscillator();
+    const gain1 = audioCtx.createGain();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(1318.5, adesso); // Mi acuto
+    gain1.gain.setValueAtTime(0.0001, adesso);
+    gain1.gain.exponentialRampToValueAtTime(0.11, adesso + 0.008);
+    gain1.gain.exponentialRampToValueAtTime(0.0001, adesso + durata);
+    osc1.connect(gain1);
+    gain1.connect(audioCtx.destination);
+    osc1.start(adesso);
+    osc1.stop(adesso + durata + 0.05);
+
+    // Armonica sopra, più debole e più breve, dà il timbro metallico del campanello
+    const osc2 = audioCtx.createOscillator();
+    const gain2 = audioCtx.createGain();
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(1318.5 * 2, adesso);
+    gain2.gain.setValueAtTime(0.0001, adesso);
+    gain2.gain.exponentialRampToValueAtTime(0.045, adesso + 0.008);
+    gain2.gain.exponentialRampToValueAtTime(0.0001, adesso + durata * 0.55);
+    osc2.connect(gain2);
+    gain2.connect(audioCtx.destination);
+    osc2.start(adesso);
+    osc2.stop(adesso + durata + 0.05);
+  } catch(e){}
+}
+
+// ===== COUNTDOWN 3 2 1 VIA! con musichetta =====
+let cdTimers   = [];   // setTimeout IDs per la fase 3-2-1
+let cdBarRAF   = null; // requestAnimationFrame per la barra
+let cdRunning  = false;
+let cdMasterGain = null; // gain globale per la musica — azzerarlo interrompe tutto
+
+function stopCountdown(){
+  cdTimers.forEach(t => clearTimeout(t));
+  cdTimers = [];
+  if(cdBarRAF){ cancelAnimationFrame(cdBarRAF); cdBarRAF = null; }
+  if(cdMasterGain){
+    try{ cdMasterGain.gain.setValueAtTime(0, audioCtx ? audioCtx.currentTime : 0); }catch(_){}
+    cdMasterGain = null;
+  }
+  cdRunning = false;
+  const ov = document.getElementById('cdCountdown');
+  if(ov) ov.remove();
+  document.querySelectorAll('.cd-big-num').forEach(e => e.remove());
+  document.querySelectorAll('.countdown-bar').forEach(bar => bar.remove());
+}
+
+function startCountdownOnSlide(slideEl){
+  if(!countdownSeconds || countdownSeconds <= 0) return;
+  stopCountdown();
+  cdRunning = true;
+
+  // — Fase 1: overlay 3 2 1 VIA! —
+  const ov = document.createElement('div');
+  ov.id = 'cdCountdown';
+  slideEl.appendChild(ov);
+  const numEl = document.createElement('div');
+  numEl.id = 'cdNumber';
+  ov.appendChild(numEl);
+
+  const steps = ['3','2','1','VIA!'];
+  steps.forEach((txt, idx) => {
+    const t = setTimeout(() => {
+      if(!cdRunning) return;
+      ov.classList.add('visible');
+      numEl.className = txt === 'VIA!' ? 'via-text' : '';
+      numEl.textContent = txt;
+      // forza il riavvio dell'animazione
+      numEl.style.animation = 'none';
+      numEl.offsetHeight; // reflow
+      numEl.style.animation = '';
+      if(txt !== 'VIA!') playCountdownBeep(parseInt(txt));
+      else                playCountdownGo();
+    }, idx * 1000);
+    cdTimers.push(t);
+  });
+
+  // — Fase 2: dopo 4 s nasconde overlay e avvia barra + musica —
+  const tStart = setTimeout(() => {
+    if(!cdRunning) return;
+    ov.classList.remove('visible');
+    setTimeout(() => { if(ov.parentNode) ov.remove(); }, 300);
+
+    // Barra in cima alla slide
+    const bar = document.createElement('div');
+    bar.className = 'countdown-bar';
+    slideEl.insertBefore(bar, slideEl.firstChild);
+
+    // Numero grande in basso a destra
+    const bigNum = document.createElement('div');
+    bigNum.className = 'cd-big-num';
+    bigNum.textContent = countdownSeconds;
+    slideEl.appendChild(bigNum);
+
+    // Musica
+    startCountdownMusic(countdownSeconds);
+
+    // Animazione barra + aggiornamento numero
+    const t0  = performance.now();
+    const totMs = countdownSeconds * 1000;
+    function animBar(now){
+      const elapsed  = now - t0;
+      const frac     = Math.max(0, 1 - elapsed / totMs);
+      bar.style.transform       = `scaleX(${frac})`;
+      bar.style.transformOrigin = 'left center';
+      const secLeft = Math.max(0, Math.ceil((totMs - elapsed) / 1000));
+      bigNum.textContent = secLeft;
+      const urgent = secLeft <= 5;
+      bigNum.classList.toggle('urgent', urgent);
+      if(elapsed < totMs){
+        cdBarRAF = requestAnimationFrame(animBar);
+      } else {
+        bar.style.transform = 'scaleX(0)';
+      }
+    }
+    cdBarRAF = requestAnimationFrame(animBar);
+  }, 4000);
+  cdTimers.push(tStart);
+}
+
+// Suono per 3, 2, 1 — pitch cresce avvicinandosi all'inizio
+function playCountdownBeep(num){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const freq = [0, 780, 650, 520][num] || 600;
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'sine'; o.frequency.value = freq;
+    o.connect(g); g.connect(audioCtx.destination);
+    const t = audioCtx.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.18, t + 0.012);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.38);
+    o.start(t); o.stop(t + 0.42);
+  }catch(_){}
+}
+
+// Accordo ascendente per "VIA!"
+function playCountdownGo(){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    [523, 659, 784, 1047].forEach((f, i) => {
+      const o = audioCtx.createOscillator();
+      const g = audioCtx.createGain();
+      o.type = 'sine'; o.frequency.value = f;
+      o.connect(g); g.connect(audioCtx.destination);
+      const t = audioCtx.currentTime + i * 0.07;
+      g.gain.setValueAtTime(0, t);
+      g.gain.linearRampToValueAtTime(0.13 - i * 0.018, t + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.001, t + 0.58);
+      o.start(t); o.stop(t + 0.65);
+    });
+  }catch(_){}
+}
+
+// Musica durante il conto alla rovescia: tick che accelerano e salgono di pitch
+function startCountdownMusic(seconds){
+  try{
+    if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    const ac  = audioCtx;
+    cdMasterGain = ac.createGain();
+    cdMasterGain.connect(ac.destination);
+    cdMasterGain.gain.setValueAtTime(1, ac.currentTime);
+    const now = ac.currentTime;
+
+    for(let i = 0; i < seconds; i++){
+      const progress  = i / seconds;
+      const secsLeft  = seconds - i;
+      const freq      = 280 + progress * 520;   // 280 → 800 Hz
+      const vol       = 0.065 + progress * 0.07; // volume cresce leggermente
+      _schedTick(ac, now + i, freq, vol);
+      // battute intermedie negli ultimi 5 s
+      if(secsLeft <= 5) _schedTick(ac, now + i + 0.5, freq * 0.72, vol * 0.5);
+      // quarti di battuta negli ultimi 2 s
+      if(secsLeft <= 2){
+        _schedTick(ac, now + i + 0.25, freq * 0.62, vol * 0.32);
+        _schedTick(ac, now + i + 0.75, freq * 0.62, vol * 0.32);
+      }
+    }
+    // Allarme finale: tre note discendenti
+    const endT = now + seconds;
+    [800, 600, 400].forEach((f, i) => {
+      const o = ac.createOscillator();
+      o.type = 'sawtooth'; o.frequency.value = f;
+      o.connect(cdMasterGain);
+      const t0 = endT + i * 0.2;
+      o.start(t0); o.stop(t0 + 0.5);
+    });
+  }catch(_){}
+}
+
+function aggiungiBtnRiavvia(slideEl, slideIdx){
+  const toolbar = slideEl.querySelector('.toolbar');
+  if(!toolbar) return;
+  // Evita duplicati
+  if(toolbar.querySelector('[data-action="riavvia"]')) return;
+  const btn = document.createElement('button');
+  btn.className = 'ghost-btn';
+  btn.dataset.action = 'riavvia';
+  btn.textContent = 'Riavvia tempo';
+  btn.style.cssText = 'border-color:var(--rosso);color:var(--rosso);';
+  btn.addEventListener('click', async () => {
+    if(!db || !sessionId) return;
+    btn.disabled = true;
+    btn.textContent = '…';
+    try{
+      // 1. Cancella i voti della slide da Firebase
+      await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/votes/' + slideIdx).remove();
+      // 2. Segnale ai telefoni: svuotate il localStorage e ririspondete
+      await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/resetSlide').set({ idx: slideIdx, ts: Date.now() });
+    }catch(_){}
+    btn.remove();
+    const activeSlide = stage.querySelector('.slide.active');
+    if(activeSlide) startCountdownOnSlide(activeSlide);
+  });
+  toolbar.appendChild(btn);
+}
+
+function _schedTick(ac, time, freq, vol){
+  const o = ac.createOscillator();
+  const g = ac.createGain();
+  o.type = 'triangle'; o.frequency.value = freq;
+  o.connect(g); g.connect(cdMasterGain);
+  g.gain.setValueAtTime(0, time);
+  g.gain.linearRampToValueAtTime(vol, time + 0.009);
+  g.gain.exponentialRampToValueAtTime(0.001, time + 0.13);
+  o.start(time); o.stop(time + 0.15);
+}
+
+function startStatsPolling(){
+  // Con Firebase i connessi e le risposte arrivano da soli tramite gli ascolti
+  // in tempo reale, non serve più richiamare il backend ogni dieci secondi.
+  // Questa funzione resta solo per compatibilità con il resto del codice.
+}
+
+function stopStatsPolling(){
+  if(statsTimer){ clearInterval(statsTimer); statsTimer = null; }
+}
+
+function letterFor(i){ return String.fromCharCode(65+i); }
+function getPin(){ return localStorage.getItem('presenterPin') || ''; }
+
+function updateDocumentTitle(){
+  document.title = (courseNumber ? courseNumber + '° ' : '') + 'Corso Allievi Agenti — Presentazione SILP CGIL';
+}
+
+function applyCourseNumber(){
+  const el = stage.querySelector('.slide[data-index="0"] .title-big');
+  if(el) el.textContent = (courseNumber || '—') + '°';
+  updateDocumentTitle();
+}
+
+function buildSlideEl(s, idx){
+  const el = document.createElement('div');
+  el.className = 'slide';
+  el.dataset.index = idx;
+
+  if(s.type === 'title'){
+    el.dataset.bg = 'titlehero';
+    const participantUrl = location.href.replace(/presentazione\.html.*$/, 'partecipa.html');
+    el.innerHTML = `
+      <div class="title-date-corner">${dataOggiFormattata()}</div>
+      <div class="title-columns">
+        <div class="title-col-side">
+          <img class="title-logo-col heartbeat-logo" src="logo.jpg" alt="">
+        </div>
+        <div class="title-col-center">
+          ${scuolaCorrente ? `<div class="title-scuola-badge">${scuolaCorrente}</div>` : ''}
+          <h1 class="title-big">${(courseNumber || '—') + '°'}</h1>
+          <div class="title-sub">${s.sub}</div>
+          <div class="title-accent-line"></div>
+          <div class="title-meta">Conferenze SILP CGIL</div>
+          <div class="qr-block">
+            <div class="qr-label">Inquadrate il QR code per partecipare</div>
+            <div class="qr-row">
+              <img class="logo-flank qr-join-img" width="320" height="320" src="https://api.qrserver.com/v1/create-qr-code/?size=360x360&data=${encodeURIComponent(participantUrl)}" alt="QR code">
+            </div>
+            <div class="qr-url">${participantUrl}</div>
+          </div>
+        </div>
+        <div class="title-col-side">
+          <img class="title-logo-col heartbeat-logo" src="logo.jpg" alt="" style="animation-delay:.9s;">
+        </div>
+      </div>
+    `;
+  } else if(s.type === 'closing'){
+    el.dataset.bg = 'deep';
+    el.innerHTML = `
+      <div class="closing-grid">
+        <div class="closing-side">
+          <img class="logo-flank heartbeat-logo" src="logo.jpg" alt="">
+        </div>
+        <div class="closing-center">
+          <div class="contact-chips">${contactChipsHtml(200)}</div>
+          <h1 class="title-big">${s.title}</h1>
+          <div class="title-sub">${s.sub}</div>
+        </div>
+        <div class="closing-side">
+          <img class="logo-flank heartbeat-logo" src="logo.jpg" alt="">
+        </div>
+      </div>
+    `;
+  } else if(s.type === 'narrazione'){
+    el.dataset.bg = 'deep';
+    if(s.section === 'p1') el.dataset.accent = 'p1';
+    else if(s.section === 'p2') el.dataset.accent = 'p2';
+    else if(s.section === 'p3') el.dataset.accent = 'p3';
+    const motivoLabel = s.motivo ? `Il ${['primo','secondo','terzo','quarto','quinto','sesto','settimo','ottavo','nono','decimo'][s.motivo-1]} buon motivo per iscriverti al SILP CGIL` : '';
+    el.innerHTML = `
+      ${s.motivo ? `<div class="narrazione-num">${s.motivo}</div>` : ''}
+      <img class="narrazione-logo" src="logo.jpg" alt="SILP CGIL">
+      ${motivoLabel ? `<div class="narrazione-motivo">${motivoLabel}</div>` : ''}
+      <h1 class="narrazione-titolo">${s.titolo}</h1>
+      <div class="narrazione-testo">${s.testo}</div>
+    `;
+  } else if(s.type === 'pausa'){
+    el.dataset.bg = 'verde';
+    el.innerHTML = `
+      <div class="contact-chips">${contactChipsHtml(190)}</div>
+      <span class="pausa-icon">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path class="steam-line steam-1" d="M24 20 C 20 14, 28 10, 24 4" stroke="var(--crema)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path class="steam-line steam-2" d="M34 22 C 30 16, 38 12, 34 6" stroke="var(--crema)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M14 26 h26 v13 a13 13 0 0 1 -13 13 h0 a13 13 0 0 1 -13 -13 z" fill="var(--crema)"/>
+          <path d="M40 30 h5 a5.5 5.5 0 0 1 0 11 h-5" fill="none" stroke="var(--crema)" stroke-width="3"/>
+          <rect x="12" y="52" width="30" height="4" rx="2" fill="var(--crema)"/>
+        </svg>
+      </span>
+      <h1 class="pausa-title">Pausa</h1>
+      <ul class="pausa-list">${s.list.map((i,liIdx)=>`<li style="animation-delay:${(0.18*liIdx).toFixed(2)}s">${i}</li>`).join('')}</ul>
+    `;
+  } else {
+    el.dataset.bg = 'blu';
+    if(s.section === 'p1') el.dataset.accent = 'p1';
+    else if(s.section === 'p2') el.dataset.accent = 'p2';
+    else if(s.section === 'p3') el.dataset.accent = 'p3';
+    const badge = badgeLabels[s.type];
+    const hasOptions = s.options && s.options.length > 0;
+    const isWordcloud = s.type === 'wordcloud';
+    let html = `<div class="badge ${badge.cls}">${badge.text}</div>`;
+    html += `<h1 class="question">${s.q}</h1>`;
+    if(s.hint) html += `<div class="hint">${s.hint}</div>`;
+
+    if(isWordcloud){
+      html += `<div class="cloud-wrap"><canvas class="cloud-canvas"></canvas><div class="cloud-empty">Nessuna risposta ancora.</div></div>`;
+    } else if(hasOptions){
+      html += `<div class="options" data-count="${s.options.length}">${s.options.map((o,i)=>`
+        <div class="option" data-key="${o.toLowerCase().trim().replace(/"/g,'&quot;')}">
+          <div class="bar-fill"></div>
+          <span class="letter">${letterFor(i)}</span>
+          <span class="opt-text">${o}</span>
+          <span class="opt-count"></span>
+        </div>`).join('')}</div>`;
+    } else if(s.type === 'quiz' && !hasOptions){
+      html += `<div class="cloud-wrap"><canvas class="cloud-canvas"></canvas><div class="cloud-empty">Nessuna risposta ancora.</div></div>`;
+    }
+
+    let toolbar = '';
+    if(isWordcloud || hasOptions || (s.type === 'quiz' && !hasOptions)){
+      toolbar += `<button class="ghost-btn" data-action="results">Mostra risultati</button><span class="update-badge" data-role="update-badge">Aggiornato adesso</span>`;
+    }
+    if(s.type === 'quiz' && s.correct !== undefined){
+      toolbar += `<button class="ghost-btn" data-action="classifica">Classifica</button>`;
+    }
+    if(s.answer){
+      toolbar += `<button class="ghost-btn" data-action="reveal">Mostra risposta</button>`;
+    }
+    if(toolbar) html += `<div class="toolbar">${toolbar}</div>`;
+
+    if(s.answer){
+      html += `<div class="answer-panel"><span class="answer-label">Risposta</span>${s.answer}</div>`;
+    }
+    // overlay classifica è globale, non va dentro la slide
+
+    el.innerHTML = html;
+  }
+  return el;
+}
+
+function render(){
+  stopResultsPolling();
+  activeCloud = null;
+  stage.innerHTML = '';
+  slides.forEach((s, i) => {
+    const el = buildSlideEl(s, i);
+    if(i === current) el.classList.add('active');
+    stage.appendChild(el);
+  });
+
+  const s = slides[current];
+  sectionLabelEl.textContent = 'Coordinamento nazionale Scuole di Polizia SILP CGIL';
+  counterEl.textContent = '';
+  // connessi visibile su tutte le slide, risposte su quiz, sondaggi e wordcloud, cioè dove risponde l'allievo
+  const haRisposteAllievi = s.type === 'quiz' || s.type === 'sondaggio' || s.type === 'wordcloud';
+  if(pillRisposte) pillRisposte.style.display = haRisposteAllievi ? '' : 'none';
+
+  const activeSlide = stage.querySelector('.slide.active');
+
+  // resultsBtn è dentro la slide attiva, lo cerco dopo che è stata creata
+  const resultsBtn = activeSlide ? activeSlide.querySelector('[data-action="results"]') : null;
+  const slideInterattiva = s.type === 'wordcloud' || s.type === 'quiz' || s.type === 'sondaggio';
+  if(resultsBtn) resultsBtn.style.display = slideInterattiva ? '' : 'none';
+
+  const revealBtn = activeSlide.querySelector('[data-action="reveal"]');
+  if(revealBtn){
+    revealBtn.addEventListener('click', () => {
+      const panel = activeSlide.querySelector('.answer-panel');
+      panel.classList.toggle('open');
+      const aperto = panel.classList.contains('open');
+      revealBtn.textContent = aperto ? 'Nascondi risposta' : 'Mostra risposta';
+      aggiornaVisibilitaContatti();
+    });
+  }
+
+  const classificaBtn = activeSlide ? activeSlide.querySelector('[data-action="classifica"]') : null;
+  if(classificaBtn){
+    classificaBtn.addEventListener('click', () => {
+      apriClassificaOverlay();
+    });
+  }
+
+  if(resultsBtn){
+    resultsBtn.addEventListener('click', () => {
+      const showing = resultsBtn.dataset.open === '1';
+      if(showing){
+        resultsBtn.dataset.open = '0';
+        resultsBtn.textContent = 'Mostra risultati';
+        stopResultsPolling();
+        const cloudWrap = activeSlide.querySelector('.cloud-wrap');
+        if(cloudWrap) cloudWrap.classList.remove('open');
+        activeCloud = null;
+      } else {
+        resultsBtn.dataset.open = '1';
+        resultsBtn.textContent = 'Nascondi risultati';
+        const cloudWrap = activeSlide.querySelector('.cloud-wrap');
+        if(cloudWrap) cloudWrap.classList.add('open');
+        startResultsPolling();
+      }
+      aggiornaVisibilitaContatti();
+    });
+  }
+
+  function aggiornaVisibilitaContatti(){
+    const contactCorner = document.getElementById('contactCorner');
+    if(!contactCorner) return;
+    const t = slides[current] && slides[current].type;
+    if(t === 'pausa' || t === 'closing'){
+      contactCorner.style.display = 'none';
+      return;
+    }
+    const rispostaAperta = activeSlide.querySelector('.answer-panel.open');
+    const risultatiAperti = resultsBtn && resultsBtn.dataset.open === '1';
+    contactCorner.style.display = (rispostaAperta || risultatiAperti) ? 'none' : 'grid';
+  }
+
+  updateTrack();
+  pushSlide(current);
+
+  const contactCorner = document.getElementById('contactCorner');
+  const t = slides[current] && slides[current].type;
+  if(contactCorner){
+    contactCorner.style.display = (t === 'pausa' || t === 'closing' || t === 'title') ? 'none' : 'grid';
+  }
+  const rejoinQr = document.getElementById('rejoinQr');
+  if(rejoinQr){
+    rejoinQr.style.display = (t === 'title' || t === 'closing') ? 'none' : 'flex';
+  }
+}
+
+function goTo(i){
+  if(i < 0 || i >= slides.length) return;
+  stopCountdown();
+  fermaClassificaListener();
+  chiudiClassificaOverlay();
+  // Snapshot punteggi prima di cambiare slide: servirà per l'animazione "before/after"
+  if(db && sessionId){
+    db.ref(DB_PREFIX + '/sessions/' + sessionId + '/scores').once('value').then(snap => {
+      prevScores = snap.exists() ? snap.val() : {};
+    });
+  }
+  current = i;
+  render();
+  updateCornerBadge(i);
+  attachVotesListener();
+  // Avvia countdown sulle slide interattive, solo se non ci sono già risposte
+  const s = slides[i];
+  if((s.type === 'quiz' || s.type === 'sondaggio') && countdownSeconds > 0){
+    if(db && sessionId){
+      db.ref(DB_PREFIX + '/sessions/' + sessionId + '/votes/' + i).once('value').then(snap => {
+        const hasVotes = snap.exists() && Object.keys(snap.val()).length > 0;
+        const activeSlide = stage.querySelector('.slide.active');
+        if(!activeSlide) return;
+        if(hasVotes){
+          aggiungiBtnRiavvia(activeSlide, i);
+        } else {
+          startCountdownOnSlide(activeSlide);
+        }
+      });
+    } else {
+      // Firebase non configurato: parti comunque
+      const activeSlide = stage.querySelector('.slide.active');
+      if(activeSlide) startCountdownOnSlide(activeSlide);
+    }
+  }
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current-1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current+1));
+document.addEventListener('keydown', (e) => {
+  if(document.getElementById('overlay').classList.contains('open')) return;
+  if(e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current+1); }
+  if(e.key === 'ArrowLeft') { e.preventDefault(); goTo(current-1); }
+  if(e.key === 'f' || e.key === 'F') toggleFullscreen();
+});
+
+document.getElementById('fsBtn').addEventListener('click', toggleFullscreen);
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    document.documentElement.requestFullscreen().catch(()=>{});
+  } else {
+    document.exitFullscreen();
+  }
+}
+
+// Track / scaletta
+const trackGroupClass = { pausa:'g-pausa', p1:'g-p1', p2:'g-p2', p3:'g-p3' };
+
+function buildTrack(){
+  trackEl.innerHTML = '';
+  let trackGroupEl = null;
+  let trackGroupKey = null;
+  slides.forEach((s, i) => {
+    const key = s.section || s.type;
+    if(key !== trackGroupKey){
+      trackGroupEl = document.createElement('div');
+      trackGroupEl.className = 'track-group ' + (trackGroupClass[key] || 'g-p1');
+      trackEl.appendChild(trackGroupEl);
+      trackGroupKey = key;
+    }
+    const dot = document.createElement('button');
+    const etichettaPiccola = s.type === 'narrazione' || s.type === 'title' || s.type === 'closing' || s.type === 'pausa';
+    dot.className = 'track-dot' + (etichettaPiccola ? ' narrazione' : '');
+    dot.dataset.index = i;
+    const etichetta = s.num ? `Domanda ${s.num}`
+      : s.type === 'title' ? 'Inizio'
+      : s.type === 'closing' ? 'Fine'
+      : s.type === 'pausa' ? 'Pausa'
+      : (s.titolo || s.type);
+    dot.setAttribute('aria-label', etichetta);
+    dot.addEventListener('click', () => goTo(i));
+    trackGroupEl.appendChild(dot);
+  });
+}
+
+// Mappa "X DI Y" per sezione, ricreata dopo ogni modifica alle slide
+let _secIdxMap = {};
+function buildSecIdxMap(){
+  _secIdxMap = {};
+  const secSlides = {};
+  slides.forEach((s, i) => {
+    if(s.num !== undefined){
+      if(!secSlides[s.section]) secSlides[s.section] = [];
+      secSlides[s.section].push(i);
+    }
+  });
+  Object.entries(secSlides).forEach(([sec, arr]) => {
+    arr.forEach((slideIdx, pos) => {
+      _secIdxMap[slideIdx] = { pos: pos + 1, total: arr.length };
+    });
+  });
+}
+
+function updateCornerBadge(idx){
+  const old = document.getElementById('cornerBadge');
+  if(old) old.remove();
+  const el = document.createElement('div');
+  el.id = 'cornerBadge';
+  el.textContent = (idx + 1) + ' DI ' + slides.length;
+  stage.appendChild(el);
+}
+
+function updateTrack(){
+  let activeDot = null;
+  document.querySelectorAll('.track-dot').forEach(d => {
+    const isActive = parseInt(d.dataset.index) === current;
+    d.classList.toggle('active', isActive);
+    if(isActive) activeDot = d;
+  });
+  if(activeDot) activeDot.scrollIntoView({inline:'center', block:'nearest', behavior:'smooth'});
+}
+
+// ===== Backend sync =====
+function configured(){
+  return !!db;
+}
+
+// Conta le persone che hanno risposto davvero, non le singole parole. Per la
+// wordcloud una persona può scrivere due voti, con chiavi tipo ID e ID_1, ma
+// deve contare come una sola risposta, non due.
+function contaRispondentiUnici(oggettoVoti){
+  const base = new Set();
+  Object.keys(oggettoVoti).forEach(chiave => {
+    base.add(chiave.replace(/__w\d+$/, ''));
+  });
+  return base.size;
+}
+
+// Ascolto permanente su chi è presente nella sessione attuale, per il badge connessi
+let presenceRef = null;
+function attachPresenceListener(){
+  if(!db || !sessionId) return;
+  if(presenceRef) presenceRef.off();
+  presenceRef = db.ref(DB_PREFIX + '/sessions/' + sessionId + '/presence');
+  presenceRef.on('value', snap => {
+    const n = snap.exists() ? Object.keys(snap.val()).length : 0;
+    aggiornaConnessi(n);
+  });
+}
+
+// Ascolto sui voti della slide attuale, per il badge risposte e per "Mostra risultati"
+let votesRef = null;
+let risposteMostrate = 0;
+
+// ── Classifica overlay panquiz-style ─────────────────────────────────────────
+let classificaScoresRef = null;
+let prevScores = {};
+
+// ── Audio per classifica ──────────────────────────────────────────────────────
+let _ac = null;
+function getAC(){
+  if(!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)();
+  return _ac;
+}
+
+function playTick(progress){
+  try{
+    const ac = getAC();
+    const o = ac.createOscillator();
+    const g = ac.createGain();
+    o.connect(g); g.connect(ac.destination);
+    // pitch sale con il progresso: da 480Hz a 1100Hz
+    o.frequency.value = 480 + progress * 620;
+    o.type = 'sine';
+    const t = ac.currentTime;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(0.055, t + 0.006);
+    g.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
+    o.start(t); o.stop(t + 0.05);
+  } catch(_){}
+}
+
+function playDing(rank){ // rank 0=oro, 1=argento, 2=bronzo, altro=normale
+  try{
+    const ac = getAC();
+    const t  = ac.currentTime;
+    // nota base per ciascun posto
+    const freqs = rank === 0 ? [880, 1108, 1320] : rank === 1 ? [740, 932, 1109] : rank === 2 ? [659, 830, 988] : [523, 659, 784];
+    freqs.forEach((f, i) => {
+      const o = ac.createOscillator();
+      const g = ac.createGain();
+      o.connect(g); g.connect(ac.destination);
+      o.type = 'sine'; o.frequency.value = f;
+      const t0 = t + i * 0.07;
+      g.gain.setValueAtTime(0, t0);
+      g.gain.linearRampToValueAtTime(0.09 - i * 0.015, t0 + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.001, t0 + 0.55);
+      o.start(t0); o.stop(t0 + 0.6);
+    });
+  } catch(_){}
+}
+
+// ── Counter animato con suono ─────────────────────────────────────────────────
+function countUp(el, from, to, durationMs, rank){
+  const start = performance.now();
+  const range = to - from;
+  let lastTick = -1;
+  const tickEvery = Math.max(1, Math.round(range / 18)); // ~18 tick totali
+  function step(now){
+    const elapsed = now - start;
+    const t = Math.min(elapsed / durationMs, 1);
+    const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+    const current = Math.round(from + range * eased);
+    el.textContent = current + ' pt';
+    // suono tick ogni N unità
+    if(range > 0 && Math.floor(current / tickEvery) > lastTick){
+      lastTick = Math.floor(current / tickEvery);
+      playTick(eased);
+    }
+    if(t < 1){
+      requestAnimationFrame(step);
+    } else {
+      el.textContent = to + ' pt'; // valore esatto finale
+      playDing(rank);
+    }
+  }
+  requestAnimationFrame(step);
+}
+
+async function apriClassificaOverlay(){
+  if(!db || !sessionId) return;
+  const ov    = document.getElementById('classificaOverlay');
+  const lista = document.getElementById('clovLista');
+  const fase  = document.getElementById('clovFase');
+  if(!ov || !lista) return;
+
+  ov.classList.add('open');
+
+  // Fase 1: mostra la classifica PRIMA di questa domanda
+  fase.textContent = 'prima di questa domanda';
+  renderClovLista(lista, prevScores, null);
+
+  // Fase 2: dopo 2,5s anima verso i punteggi attuali
+  const snap = await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/scores').once('value');
+  const currentScores = snap.exists() ? snap.val() : {};
+
+  setTimeout(() => {
+    fase.textContent = '';
+    animateClovLista(lista, prevScores, currentScores);
+  }, 2500);
+}
+
+function renderClovLista(lista, scores, _unused){
+  const sorted = Object.entries(scores).sort((a,b) => b[1]-a[1]);
+  if(sorted.length === 0){
+    lista.innerHTML = '<div class="clov-empty">Nessun punteggio ancora — questa è la prima domanda.</div>';
+    return;
+  }
+  lista.innerHTML = '';
+  sorted.slice(0, 15).forEach(([nick, pts], i) => {
+    const el = document.createElement('div');
+    el.className = 'clov-riga ' + (i===0?'top1':i===1?'top2':i===2?'top3':'');
+    el.dataset.nick = nick;
+    const med = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    el.innerHTML = `<span class="clov-pos">${med}</span><span class="clov-nick">${nick}</span><span class="clov-pts">0 pt</span>`;
+    lista.appendChild(el);
+    const ptsEl = el.querySelector('.clov-pts');
+    const delay = i * 60; // cascata: ogni riga parte 60ms dopo
+    setTimeout(() => countUp(ptsEl, 0, pts, 1100, i), delay);
+  });
+}
+
+function animateClovLista(lista, before, after){
+  // Unione di tutti i nick
+  const all = {};
+  Object.keys(before).forEach(n => { all[n] = after[n] !== undefined ? after[n] : before[n]; });
+  Object.keys(after).forEach(n => { all[n] = after[n]; });
+
+  // FLIP — First: registra posizioni prima del reorder
+  const firstPos = {};
+  Array.from(lista.querySelectorAll('.clov-riga')).forEach(r => {
+    firstPos[r.dataset.nick] = r.getBoundingClientRect().top;
+  });
+
+  // Ridisegna con nuova classifica + delta
+  const sorted = Object.entries(all).sort((a,b) => b[1]-a[1]);
+  lista.innerHTML = '';
+  sorted.slice(0, 15).forEach(([nick, pts], i) => {
+    const el = document.createElement('div');
+    el.className = 'clov-riga ' + (i===0?'top1':i===1?'top2':i===2?'top3':'');
+    el.dataset.nick = nick;
+    const med    = i===0?'🥇':i===1?'🥈':i===2?'🥉':(i+1)+'.';
+    const gained = pts - (before[nick] || 0);
+    const deltaCls = gained > 0 ? 'su' : gained < 0 ? 'giu' : 'zero';
+    const deltaStr = gained > 0 ? '+'+gained : gained === 0 ? '=' : gained;
+    el.innerHTML = `<span class="clov-pos">${med}</span><span class="clov-nick">${nick}</span><span class="clov-delta ${deltaCls}">${deltaStr}</span><span class="clov-pts">${before[nick]||0} pt</span>`;
+    if(gained > 0) el.classList.add('gained');
+    lista.appendChild(el);
+    if(gained !== 0){
+      const ptsEl = el.querySelector('.clov-pts');
+      const delay = i * 55;
+      setTimeout(() => countUp(ptsEl, before[nick]||0, pts, 950, i), delay);
+    }
+  });
+
+  // FLIP — Last → Invert → Play
+  Array.from(lista.querySelectorAll('.clov-riga')).forEach(r => {
+    const nick = r.dataset.nick;
+    if(firstPos[nick] === undefined) return;
+    const lastY = r.getBoundingClientRect().top;
+    const dy    = firstPos[nick] - lastY;
+    if(dy === 0) return;
+    r.style.transform  = `translateY(${dy}px)`;
+    r.style.transition = 'none';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        r.style.transition = 'transform .7s cubic-bezier(.4,0,.2,1)';
+        r.style.transform  = '';
+      });
+    });
+  });
+}
+
+function chiudiClassificaOverlay(){
+  const ov = document.getElementById('classificaOverlay');
+  if(ov) ov.classList.remove('open');
+}
+
+function fermaClassificaListener(){
+  if(classificaScoresRef){ classificaScoresRef.off(); classificaScoresRef = null; }
+}
+
+function attachVotesListener(){
+  if(!db || !sessionId) return;
+  if(votesRef) votesRef.off();
+  risposteMostrate = 0;
+  let primaLettura = true; // la prima snapshot è lo stato esistente, non una nuova risposta
+  votesRef = db.ref(DB_PREFIX + '/sessions/' + sessionId + '/votes/' + current);
+  votesRef.on('value', snap => {
+    const n = snap.exists() ? contaRispondentiUnici(snap.val()) : 0;
+    if(pillRisposte.style.display !== 'none'){
+      statsBadge.style.display = 'flex';
+      pRisposte.textContent = n;
+    }
+    if(!primaLettura && n > risposteMostrate) suonaRisposta();
+    primaLettura = false;
+    risposteMostrate = n;
+  });
+}
+
+async function refreshSession(){
+  if(!configured()) return;
+  try{
+    const snap = await db.ref(DB_PREFIX + '/config/currentSession').once('value');
+    const sid = snap.val();
+    if(!sid) return;
+    sessionId = sid;
+    const statoSnap = await db.ref(DB_PREFIX + '/sessions/' + sessionId).once('value');
+    const data = statoSnap.val() || {};
+    if(data.corso && data.corso !== courseNumber){
+      courseNumber = data.corso;
+      localStorage.setItem('courseNumber', courseNumber);
+      applyCourseNumber();
+    }
+    attachPresenceListener();
+    attachVotesListener();
+  } catch(err){}
+}
+
+let lastSlideError = '';
+async function pushSlide(index){
+  if(!configured()) return;
+  if(!sessionId) await refreshSession();
+  if(!sessionId) return;
+  try{
+    const upd = {};
+    upd[DB_PREFIX + '/sessions/' + sessionId + '/slide'] = index;
+    upd[DB_PREFIX + '/config/currentSession'] = sessionId;
+    await db.ref().update(upd);
+    lastSlideError = '';
+  } catch(err){
+    lastSlideError = 'Attenzione, l\'ultimo cambio slide non è arrivato agli allievi, controlla la connessione a Firebase.';
+    panelStatus.textContent = lastSlideError;
+  }
+}
+
+async function fetchResults(slideIndex){
+  if(!configured() || !sessionId) return null;
+  try{
+    const snap = await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/votes/' + slideIndex).once('value');
+    const counts = {};
+    let total = 0;
+    if(snap.exists()){
+      Object.values(snap.val()).forEach(v => {
+        const key = String(v).trim().toLowerCase();
+        if(!key) return;
+        counts[key] = (counts[key] || 0) + 1;
+        total++;
+      });
+    }
+    return { counts, total };
+  } catch(err){
+    return null;
+  }
+}
+
+function mostraBadgeAggiornato(activeSlide){
+  const badge = activeSlide.querySelector('[data-role="update-badge"]');
+  if(!badge) return;
+  badge.classList.add('visibile');
+  clearTimeout(badge._timeoutId);
+  badge._timeoutId = setTimeout(() => badge.classList.remove('visibile'), 2200);
+}
+
+function applyResults(slideIndex, data){
+  if(!data) return;
+  const s = slides[slideIndex];
+  const isWordcloud = s.type === 'wordcloud';
+  const hasOptions = s.options && s.options.length > 0;
+  const activeSlide = stage.querySelector('.slide.active');
+  if(!activeSlide) return;
+
+  if(hasOptions && !isWordcloud){
+    const sigOpzioni = JSON.stringify(data.counts || {});
+    if(prevCloudWords[slideIndex] !== undefined && prevCloudWords[slideIndex] !== sigOpzioni){
+      mostraBadgeAggiornato(activeSlide);
+    }
+    prevCloudWords[slideIndex] = sigOpzioni;
+    activeSlide.querySelectorAll('.option').forEach(optEl => {
+      const key = optEl.dataset.key;
+      const count = data.counts[key] || 0;
+      const pct = data.total > 0 ? Math.round((count/data.total)*100) : 0;
+      optEl.querySelector('.bar-fill').style.width = pct + '%';
+      optEl.querySelector('.opt-count').textContent = count > 0 ? (count + ' · ' + pct + '%') : '';
+    });
+  } else {
+    const wrap = activeSlide.querySelector('.cloud-wrap');
+    if(!wrap) return;
+    const canvas = wrap.querySelector('.cloud-canvas');
+    const emptyEl = wrap.querySelector('.cloud-empty');
+    const merged = {};
+    Object.entries(data.counts || {}).forEach(([word,count]) => {
+      const norm = String(word).trim().toLowerCase().replace(/\s+/g,' ');
+      if(!norm) return;
+      merged[norm] = (merged[norm]||0) + count;
+    });
+    const entries = Object.entries(merged);
+    if(entries.length === 0){
+      canvas.style.display = 'none';
+      emptyEl.style.display = 'flex';
+      activeCloud = null;
+      return;
+    }
+    emptyEl.style.display = 'none';
+    canvas.style.display = 'block';
+    activeCloud = {canvas, entries};
+    drawCloud(canvas, entries);
+    // effetto pop e badge se sono arrivate parole nuove o conteggi cambiati
+    const sig = JSON.stringify(merged);
+    if(prevCloudWords[slideIndex] !== undefined && prevCloudWords[slideIndex] !== sig){
+      popCanvas(canvas);
+      mostraBadgeAggiornato(activeSlide);
+    }
+    prevCloudWords[slideIndex] = sig;
+  }
+}
+
+function drawCloud(canvas, entries){
+  const rect = canvas.getBoundingClientRect();
+  canvas.width = Math.max(280, Math.round(rect.width));
+  canvas.height = Math.max(160, Math.round(rect.height));
+  const max = Math.max.apply(null, entries.map(e => e[1]));
+  const palette = ['#FFE699','#F7F3E8','#9FD8FF'];
+  function hashColor(word){
+    let h = 0;
+    for(let i=0;i<word.length;i++) h = (h*31 + word.charCodeAt(i)) | 0;
+    return palette[Math.abs(h) % palette.length];
+  }
+  WordCloud(canvas, {
+    list: entries.map(([w,c]) => [w.charAt(0).toUpperCase()+w.slice(1), c]),
+    weightFactor: size => 14 + (size/max)*46,
+    fontFamily: "'Inter', sans-serif",
+    fontWeight: '800',
+    color: word => hashColor(word),
+    backgroundColor: 'transparent',
+    rotateRatio: .15,
+    rotationSteps: 2,
+    minSize: 9,
+    gridSize: Math.max(4, Math.round(canvas.width/120)),
+    drawOutOfBound: false,
+    shrinkToFit: true
+  });
+}
+
+window.addEventListener('resize', () => {
+  if(activeCloud) drawCloud(activeCloud.canvas, activeCloud.entries);
+});
+
+// ── COUNTDOWN VISIVO ─────────────────────────────────────────
+function startCountdown(activeSlide){
+  if(!activeSlide) return;
+  const bar = activeSlide.querySelector('[data-countdown]');
+  if(!bar) return;
+  if(countdownSeconds <= 0){ bar.style.display = 'none'; return; }
+  // reset e riavvio dell'animazione
+  bar.style.display = 'block';
+  bar.classList.remove('running');
+  bar.style.animationDuration = countdownSeconds + 's';
+  // forza reflow per far ripartire l'animazione da capo
+  void bar.offsetWidth;
+  bar.classList.add('running');
+}
+
+// ── EFFETTO POP SULLA NUVOLA ─────────────────────────────────
+function popCanvas(canvas){
+  canvas.style.transition = 'transform .25s cubic-bezier(.34,1.56,.64,1)';
+  canvas.style.transform = 'scale(1.04)';
+  setTimeout(() => { canvas.style.transform = 'scale(1)'; }, 250);
+}
+
+function startResultsPolling(){
+  stopResultsPolling();
+  const idx = current;
+  const tick = async () => {
+    const data = await fetchResults(idx);
+    applyResults(idx, data);
+  };
+  tick();
+  resultsTimer = setInterval(tick, 3000);
+}
+function stopResultsPolling(){
+  if(resultsTimer){ clearInterval(resultsTimer); resultsTimer = null; }
+}
+
+// ===== Settings panel =====
+const overlay = document.getElementById('overlay');
+const corsoInput = document.getElementById('corsoInput');
+const placeholderRimosso1 = null;
+const countdownInput = document.getElementById('countdownInput');
+const terzoNomeInput = document.getElementById('terzoNomeInput');
+const terzoCognomeInput = document.getElementById('terzoCognomeInput');
+const terzoNumeroInput = document.getElementById('terzoNumeroInput');
+const quartoNomeInput = document.getElementById('quartoNomeInput');
+const quartoCognomeInput = document.getElementById('quartoCognomeInput');
+const quartoNumeroInput = document.getElementById('quartoNumeroInput');
+const panelStatus = document.getElementById('panelStatus');
+const placeholderRimosso2 = null;
+
+document.getElementById('settingsBtn').addEventListener('click', () => {
+  overlay.classList.add('open');
+  if(localStorage.getItem('presenterUnlocked') === '1'){
+    apriPannelloRelatore();
+    return;
+  }
+  document.getElementById('panelGate').style.display = 'block';
+  document.getElementById('panelBody').style.display = 'none';
+  const gateInput = document.getElementById('gatePinInput');
+  gateInput.value = '';
+  document.getElementById('gateStatus').textContent = getPin()
+    ? ''
+    : 'Prima volta qui: scrivi il PIN che vuoi usare da ora in poi.';
+  gateInput.focus();
+});
+
+function apriPannelloRelatore(){
+  document.getElementById('panelGate').style.display = 'none';
+  document.getElementById('panelBody').style.display = 'block';
+  corsoInput.value = courseNumber;
+  countdownInput.value = countdownSeconds;
+  if(terzoNomeInput) terzoNomeInput.value = localStorage.getItem('terzoNome') || '';
+  if(terzoCognomeInput) terzoCognomeInput.value = localStorage.getItem('terzoCognome') || '';
+  if(terzoNumeroInput) terzoNumeroInput.value = localStorage.getItem('terzoNumero') || '';
+  if(quartoNomeInput) quartoNomeInput.value = localStorage.getItem('quartoNome') || '';
+  if(quartoCognomeInput) quartoCognomeInput.value = localStorage.getItem('quartoCognome') || '';
+  if(quartoNumeroInput) quartoNumeroInput.value = localStorage.getItem('quartoNumero') || '';
+  const scuolaSelect = document.getElementById('scuolaSelect');
+  if(scuolaSelect) scuolaSelect.value = scuolaCorrente;
+  if(lastSlideError){
+    panelStatus.textContent = lastSlideError;
+  }
+  refreshSession().then(() => {
+    corsoInput.value = courseNumber;
+    if(lastSlideError){
+      panelStatus.textContent = lastSlideError;
+    } else {
+      panelStatus.textContent = configured()
+        ? ('Connesso. Sessione attuale: ' + (sessionId || '—'))
+        : 'Firebase non configurato: controllare FIREBASE_CONFIG in config.js.';
+    }
+  });
+}
+
+function tentaAccessoPannello(){
+  const inserito = document.getElementById('gatePinInput').value.trim();
+  const memorizzato = getPin();
+  if(!inserito){
+    document.getElementById('gateStatus').textContent = 'Scrivi il PIN per continuare.';
+    return;
+  }
+  if(!memorizzato){
+    // Prima volta su questo dispositivo: quello che scrivi ora diventa il PIN
+    localStorage.setItem('presenterPin', inserito);
+    localStorage.setItem('presenterUnlocked', '1');
+    apriPannelloRelatore();
+    return;
+  }
+  if(inserito === memorizzato){
+    localStorage.setItem('presenterUnlocked', '1');
+    apriPannelloRelatore();
+  } else {
+    document.getElementById('gateStatus').textContent = 'PIN errato, riprova.';
+  }
+}
+
+document.getElementById('gateEnterBtn').addEventListener('click', tentaAccessoPannello);
+document.getElementById('gatePinInput').addEventListener('keydown', e => {
+  if(e.key === 'Enter') tentaAccessoPannello();
+});
+document.getElementById('gateCloseBtn').addEventListener('click', () => overlay.classList.remove('open'));
+
+document.getElementById('saveTerzoBtn').addEventListener('click', async () => {
+  const nome = terzoNomeInput.value.trim();
+  const cognome = terzoCognomeInput.value.trim();
+  const numero = terzoNumeroInput.value.trim().replace(/\s+/g,'');
+  localStorage.setItem('terzoNome', nome);
+  localStorage.setItem('terzoCognome', cognome);
+  localStorage.setItem('terzoNumero', numero);
+  panelStatus.textContent = 'Salvataggio terzo contatto…';
+  renderContatti();
+  if(configured() && sessionId){
+    try{
+      await db.ref(DB_PREFIX + '/sessions/' + sessionId).update({ terzoNome: nome, terzoCognome: cognome, terzoNumero: numero });
+      panelStatus.textContent = nome
+        ? ('Terzo contatto salvato: ' + nome + ' (' + (numero || 'nessun numero') + ')')
+        : 'Terzo contatto rimosso.';
+    } catch(e){
+      panelStatus.textContent = 'Salvato in locale, Firebase non raggiunto.';
+    }
+  } else {
+    panelStatus.textContent = nome ? 'Terzo contatto salvato in locale.' : 'Terzo contatto rimosso.';
+  }
+});
+document.getElementById('saveQuartoBtn').addEventListener('click', async () => {
+  const nome = quartoNomeInput.value.trim();
+  const cognome = quartoCognomeInput.value.trim();
+  const numero = quartoNumeroInput.value.trim().replace(/\s+/g,'');
+  localStorage.setItem('quartoNome', nome);
+  localStorage.setItem('quartoCognome', cognome);
+  localStorage.setItem('quartoNumero', numero);
+  panelStatus.textContent = 'Salvataggio quarto contatto…';
+  renderContatti();
+  if(configured() && sessionId){
+    try{
+      await db.ref(DB_PREFIX + '/sessions/' + sessionId).update({ quartoNome: nome, quartoCognome: cognome, quartoNumero: numero });
+      panelStatus.textContent = nome
+        ? ('Quarto contatto salvato: ' + nome + ' (' + (numero || 'nessun numero') + ')')
+        : 'Quarto contatto rimosso.';
+    } catch(e){
+      panelStatus.textContent = 'Salvato in locale, Firebase non raggiunto.';
+    }
+  } else {
+    panelStatus.textContent = nome ? 'Quarto contatto salvato in locale.' : 'Quarto contatto rimosso.';
+  }
+});
+
+document.getElementById('clearTerzoBtn').addEventListener('click', async () => {
+  ['terzoNome','terzoCognome','terzoNumero'].forEach(k => localStorage.removeItem(k));
+  if(terzoNomeInput) terzoNomeInput.value = '';
+  if(terzoCognomeInput) terzoCognomeInput.value = '';
+  if(terzoNumeroInput) terzoNumeroInput.value = '';
+  renderContatti();
+  if(configured() && sessionId){
+    try{ await db.ref(DB_PREFIX + '/sessions/' + sessionId).update({ terzoNome:'', terzoCognome:'', terzoNumero:'' }); }catch(_){}
+  }
+  panelStatus.textContent = 'Terzo contatto rimosso.';
+});
+
+document.getElementById('clearQuartoBtn').addEventListener('click', async () => {
+  ['quartoNome','quartoCognome','quartoNumero'].forEach(k => localStorage.removeItem(k));
+  if(quartoNomeInput) quartoNomeInput.value = '';
+  if(quartoCognomeInput) quartoCognomeInput.value = '';
+  if(quartoNumeroInput) quartoNumeroInput.value = '';
+  renderContatti();
+  if(configured() && sessionId){
+    try{ await db.ref(DB_PREFIX + '/sessions/' + sessionId).update({ quartoNome:'', quartoCognome:'', quartoNumero:'' }); }catch(_){}
+  }
+  panelStatus.textContent = 'Quarto contatto rimosso.';
+});
+
+document.getElementById('closeSettingsBtn').addEventListener('click', () => overlay.classList.remove('open'));
+
+document.getElementById('saveCountdownBtn').addEventListener('click', async () => {
+  const val = parseInt(countdownInput.value, 10);
+  countdownSeconds = isNaN(val) || val < 0 ? 0 : val;
+  localStorage.setItem('countdownSeconds', String(countdownSeconds));
+  panelStatus.textContent = 'Salvataggio durata…';
+  if(configured() && sessionId){
+    try{
+      await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/countdown').set(countdownSeconds);
+      panelStatus.textContent = countdownSeconds > 0
+        ? ('Durata countdown impostata a ' + countdownSeconds + ' secondi per tutti i dispositivi.')
+        : 'Countdown disattivato per tutti i dispositivi.';
+    } catch(e){
+      panelStatus.textContent = 'Durata salvata qui, ma non è stato possibile aggiornare Firebase.';
+    }
+  } else {
+    panelStatus.textContent = countdownSeconds > 0
+      ? ('Durata countdown impostata a ' + countdownSeconds + ' secondi.')
+      : 'Countdown disattivato.';
+  }
+});
+
+document.getElementById('saveCorsoBtn').addEventListener('click', async () => {
+  const value = corsoInput.value.trim();
+  courseNumber = value;
+  localStorage.setItem('courseNumber', courseNumber);
+  applyCourseNumber();
+  if(!configured() || !sessionId){
+    panelStatus.textContent = 'Numero corso salvato su questo dispositivo. Nessuna sessione attiva, gli allievi non lo vedranno.';
+    return;
+  }
+  try{
+    await db.ref(DB_PREFIX + '/sessions/' + sessionId + '/corso').set(value);
+    panelStatus.textContent = 'Numero corso aggiornato per tutti i dispositivi collegati.';
+  } catch(err){
+    panelStatus.textContent = 'Numero corso salvato qui, ma non è stato possibile aggiornare Firebase.';
+  }
+});
+
+document.getElementById('newSessionBtn').addEventListener('click', async () => {
+  if(!configured()){
+    panelStatus.textContent = 'Firebase non configurato: controllare FIREBASE_CONFIG in config.js.';
+    return;
+  }
+  panelStatus.textContent = 'Avvio nuova sessione…';
+  try{
+    const nuovoId = 'S' + Date.now();
+    await db.ref(DB_PREFIX + '/sessions/' + nuovoId).set({
+      slide: 0,
+      corso: courseNumber || '',
+      countdown: countdownSeconds,
+      terzoNome: localStorage.getItem('terzoNome') || '',
+      terzoCognome: localStorage.getItem('terzoCognome') || '',
+      terzoNumero: localStorage.getItem('terzoNumero') || '',
+      quartoNome: localStorage.getItem('quartoNome') || '',
+      quartoCognome: localStorage.getItem('quartoCognome') || '',
+      quartoNumero: localStorage.getItem('quartoNumero') || ''
+    });
+    await db.ref(DB_PREFIX + '/config/currentSession').set(nuovoId);
+    sessionId = nuovoId;
+    azzeraPeriodoConnessi(); // nuova sessione, il conteggio riparte da zero
+    attachPresenceListener();
+    attachVotesListener();
+    renderContatti();
+    panelStatus.textContent = 'Nuova sessione avviata: ' + sessionId + '. Le slide riprendono dall\'inizio per gli allievi.';
+    goTo(0);
+  } catch(err){
+    panelStatus.textContent = 'Errore di connessione a Firebase.';
+  }
+});
+
+function buildRejoinQr(){
+  const rejoinImg = document.getElementById('rejoinQrImg');
+  if(!rejoinImg) return;
+  const participantUrl = location.href.replace(/presentazione\.html.*$/, 'partecipa.html');
+  rejoinImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=${encodeURIComponent(participantUrl)}`;
+}
+
+// ===== Contatti (Gianluca e Michela fissi, terzo e quarto se impostati) =====
+function getContatti(){
+  const list = [
+    { nome:'Gianluca', cognome:'Cioè', numero:'3312333830' },
+    { nome:'Michela', cognome:'Pascali', numero:'3271150184' }
+  ];
+  const terzoNome = localStorage.getItem('terzoNome') || '';
+  const terzoNumero = localStorage.getItem('terzoNumero') || '';
+  if(terzoNome && terzoNumero){
+    list.push({ nome:terzoNome, cognome:localStorage.getItem('terzoCognome') || '', numero:terzoNumero });
+  }
+  const quartoNome = localStorage.getItem('quartoNome') || '';
+  const quartoNumero = localStorage.getItem('quartoNumero') || '';
+  if(quartoNome && quartoNumero){
+    list.push({ nome:quartoNome, cognome:localStorage.getItem('quartoCognome') || '', numero:quartoNumero });
+  }
+  return list;
+}
+
+function contactChipsHtml(size){
+  const contactUrl = 'https://scuolepoliziasilpcgil.github.io/contatti/index.html';
+  const qrSrc = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(contactUrl)}`;
+  return getContatti().map(c => `
+    <div class="contact-chip">
+      <div class="contact-chip-name">${c.nome}${c.cognome ? ' ' + c.cognome : ''}</div>
+      <div class="contact-chip-numero">${c.numero}</div>
+      <img src="${qrSrc}" width="${size}" height="${size}" alt="QR contatti ${c.nome}">
+    </div>
+  `).join('');
+}
+
+function renderContatti(){
+  const contactCorner = document.getElementById('contactCorner');
+  if(!contactCorner) return;
+  contactCorner.innerHTML = contactChipsHtml(170);
+}
+
+// Snapshot delle slide di default (prima di qualsiasi override Firebase)
+let _slidesDefault = JSON.parse(JSON.stringify(slides));
+
+// Carica la configurazione slide custom da Firebase, se presente.
+// Le slide con disabled:true vengono filtrate dall'array runtime.
+async function loadSlidesConfig(){
+  try{
+    const snap = await db.ref(DB_PREFIX + '/slides_config/custom').once('value');
+    if(snap.exists()){
+      const all = snap.val();
+      if(Array.isArray(all) && all.length > 0){
+        slides = all.filter(s => !s.disabled);
+      }
+    }
+  }catch(e){
+    console.warn('loadSlidesConfig: impossibile caricare da Firebase, uso default.', e);
+  }
+}
+
+async function initApp(){
+  await loadSlidesConfig();
+  buildTrack();
+  buildSecIdxMap();
+  refreshSession();
+  render();
+  renderContatti();
+  buildRejoinQr();
+  startStatsPolling();
+  const sel = document.getElementById('scuolaSelect');
+  if(sel){
+    ELENCO_SCUOLE.forEach(nome => {
+      const opt = document.createElement('option');
+      opt.value = nome;
+      opt.textContent = nome;
+      sel.appendChild(opt);
+    });
+    sel.value = scuolaCorrente;
+  }
+}
+
+initApp();
+
+document.getElementById('saveScuolaBtn').addEventListener('click', () => {
+  const sel = document.getElementById('scuolaSelect');
+  scuolaCorrente = sel.value;
+  localStorage.setItem('scuolaCorrente', scuolaCorrente);
+  panelStatus.textContent = scuolaCorrente
+    ? ('Scuola impostata: ' + scuolaCorrente)
+    : 'Nessuna scuola selezionata.';
+  render();
+});
+
+document.getElementById('clearScuolaBtn').addEventListener('click', () => {
+  scuolaCorrente = '';
+  localStorage.removeItem('scuolaCorrente');
+  const sel = document.getElementById('scuolaSelect');
+  if(sel) sel.value = '';
+  panelStatus.textContent = 'Scuola rimossa.';
+  render();
+});
+</script>
+<div class="rev-tag">index · rev 8 · 14.07.2026</div>
+
+<!-- ============================================================
+     EDITOR DOMANDE — overlay fullscreen con lista editabile
+     ============================================================ -->
+<style>
+  /* Overlay editor */
+  #editorOverlay{
+    position:fixed;
+    inset:0;
+    background:rgba(10,20,40,.96);
+    z-index:60;
+    display:none;
+    flex-direction:column;
+    overflow:hidden;
+  }
+  #editorOverlay.open{ display:flex; }
+
+  /* Header fisso */
+  .ed-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:.9rem 1.4rem;
+    background:rgba(31,56,100,.95);
+    border-bottom:1px solid rgba(247,243,232,.15);
+    flex:0 0 auto;
+    gap:.8rem;
+    flex-wrap:wrap;
+  }
+  .ed-header h2{
+    font-family:'Space Grotesk',sans-serif;
+    font-size:1.1rem;
+    margin:0;
+    flex:1;
+    min-width:120px;
+  }
+  .ed-header-btns{ display:flex; gap:.6rem; flex-wrap:wrap; }
+
+  /* Lista slide */
+  .ed-list{
+    flex:1 1 auto;
+    overflow-y:auto;
+    padding:1rem 1.2rem;
+    display:flex;
+    flex-direction:column;
+    gap:.55rem;
+  }
+
+  /* Singola riga slide */
+  .ed-row{
+    background:rgba(247,243,232,.06);
+    border:1px solid rgba(247,243,232,.14);
+    border-radius:12px;
+    overflow:hidden;
+    transition:border-color .2s;
+  }
+  .ed-row.locked{ opacity:.55; }
+  .ed-row.disabled-row{ opacity:.4; }
+
+  /* Header riga */
+  .ed-row-head{
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    padding:.65rem .9rem;
+    cursor:default;
+  }
+
+  /* Badge tipo */
+  .ed-type{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.62rem;
+    font-weight:600;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    padding:.25rem .55rem;
+    border-radius:6px;
+    flex:0 0 auto;
+  }
+  .ed-type.t-quiz{ background:rgba(200,16,46,.35); color:#ffb3be; }
+  .ed-type.t-sondaggio{ background:rgba(159,216,255,.2); color:#9fd8ff; }
+  .ed-type.t-wordcloud{ background:rgba(79,166,107,.25); color:#b6e3c0; }
+  .ed-type.t-narrazione{ background:rgba(255,230,153,.15); color:#ffe699; }
+  .ed-type.t-pausa{ background:rgba(79,166,107,.15); color:#b6e3c0; }
+  .ed-type.t-title,
+  .ed-type.t-closing{ background:rgba(247,243,232,.12); color:var(--crema); }
+
+  /* Preview testo domanda */
+  .ed-preview{
+    flex:1 1 auto;
+    font-size:.88rem;
+    color:var(--crema);
+    opacity:.85;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  /* Toggle attiva/disattiva */
+  .ed-toggle{
+    display:flex;
+    align-items:center;
+    gap:.4rem;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    opacity:.75;
+    flex:0 0 auto;
+    cursor:pointer;
+    user-select:none;
+  }
+  .ed-toggle input[type=checkbox]{ cursor:pointer; width:1rem; height:1rem; accent-color:var(--accent-p3); }
+
+  /* Pulsanti riga */
+  .ed-row-btns{ display:flex; gap:.4rem; flex:0 0 auto; }
+  .ed-icon-btn{
+    background:none;
+    border:1px solid rgba(247,243,232,.2);
+    border-radius:7px;
+    color:var(--crema);
+    cursor:pointer;
+    font-size:.9rem;
+    padding:.3rem .5rem;
+    line-height:1;
+    transition:background .15s, border-color .15s;
+  }
+  .ed-icon-btn:hover{ background:rgba(247,243,232,.12); border-color:rgba(247,243,232,.5); }
+  .ed-icon-btn.del{ border-color:rgba(200,16,46,.5); color:#ffb3be; }
+  .ed-icon-btn.del:hover{ background:rgba(200,16,46,.2); }
+
+  /* Form espanso */
+  .ed-form{
+    display:none;
+    padding:.8rem 1rem 1rem;
+    border-top:1px solid rgba(247,243,232,.1);
+    background:rgba(0,0,0,.2);
+    flex-direction:column;
+    gap:.7rem;
+  }
+  .ed-form.open{ display:flex; }
+  .ed-form label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    opacity:.65;
+    margin-bottom:.2rem;
+    display:block;
+  }
+  .ed-form textarea,
+  .ed-form input[type=text],
+  .ed-form input[type=number]{
+    width:100%;
+    background:rgba(247,243,232,.07);
+    border:1px solid rgba(247,243,232,.2);
+    border-radius:8px;
+    color:var(--crema);
+    font-family:'Inter',sans-serif;
+    font-size:.9rem;
+    padding:.6rem .8rem;
+    resize:vertical;
+  }
+  .ed-form textarea{ min-height:60px; }
+  .ed-form input[type=text]::placeholder{ color:var(--crema); opacity:.4; }
+
+  /* Riga singola opzione */
+  .ed-opt-row{
+    display:flex;
+    align-items:center;
+    gap:.5rem;
+    margin-bottom:.35rem;
+  }
+  .ed-opt-row input[type=text]{ flex:1; margin:0; }
+  .ed-opt-row input[type=radio]{ cursor:pointer; accent-color:var(--accent-p2); flex:0 0 auto; }
+  .ed-opt-row .ed-icon-btn{ padding:.25rem .4rem; font-size:.8rem; }
+
+  /* Pulsante aggiungi opzione */
+  .ed-add-opt-btn{
+    background:none;
+    border:1px dashed rgba(247,243,232,.3);
+    border-radius:8px;
+    color:var(--crema);
+    opacity:.65;
+    cursor:pointer;
+    font-size:.8rem;
+    padding:.4rem .8rem;
+    width:100%;
+    text-align:left;
+    transition:opacity .15s;
+  }
+  .ed-add-opt-btn:hover{ opacity:1; }
+
+  /* Sezione tipo selettore (solo per nuova slide) */
+  .ed-type-select{
+    display:flex;
+    gap:.5rem;
+    flex-wrap:wrap;
+    margin-bottom:.5rem;
+  }
+  .ed-type-radio{ display:none; }
+  .ed-type-label{
+    padding:.35rem .8rem;
+    border-radius:8px;
+    border:1px solid rgba(247,243,232,.2);
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.7rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    cursor:pointer;
+    transition:background .15s, border-color .15s;
+    user-select:none;
+  }
+  .ed-type-radio:checked + .ed-type-label{
+    background:rgba(182,227,192,.2);
+    border-color:var(--accent-p3);
+    color:var(--accent-p3);
+  }
+
+  /* Footer lista */
+  .ed-footer{
+    display:flex;
+    align-items:center;
+    gap:1rem;
+    padding:.8rem 1.2rem;
+    border-top:1px solid rgba(247,243,232,.1);
+    flex:0 0 auto;
+    flex-wrap:wrap;
+  }
+  .ed-status{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:.75rem;
+    opacity:.6;
+    flex:1;
+  }
+</style>
+
+<div id="editorOverlay">
+  <div class="ed-header">
+    <h2>✎ Modifica domande</h2>
+    <div class="ed-header-btns">
+      <button class="ghost-btn" id="edResetBtn" style="border-color:var(--rosso);color:#ffb3be;">↺ Ripristina default</button>
+      <button class="ghost-btn" id="edSaveBtn" style="border-color:var(--accent-p3);color:var(--accent-p3);">✔ Salva</button>
+      <button class="ghost-btn" id="edCloseBtn" style="border-color:var(--crema);color:var(--crema);">✕ Chiudi</button>
+    </div>
+  </div>
+  <div class="ed-list" id="edList"></div>
+  <div class="ed-footer">
+    <button class="ghost-btn" id="edAddBtn" style="border-color:var(--accent-p3);color:var(--accent-p3);">+ Aggiungi domanda</button>
+    <span class="ed-status" id="edStatus"></span>
+  </div>
+</div>
+<!-- ============================================================
+     CLASSIFICA OVERLAY — fullscreen panquiz-style
+     ============================================================ -->
+<div id="classificaOverlay">
+  <div class="clov-header">
+    <div class="clov-titolo"><span class="class-live-dot"></span>Classifica live</div>
+    <span class="clov-fase" id="clovFase"></span>
+    <button class="clov-close" id="clovCloseBtn">✕ Chiudi</button>
+  </div>
+  <div class="clov-lista" id="clovLista"></div>
+</div>
+<script>
+  document.getElementById('clovCloseBtn').addEventListener('click', chiudiClassificaOverlay);
+</script>
+
+<script>
+/* ============================================================
+   EDITOR DOMANDE
+   Gestisce un working copy (editorSlides) dell'array completo
+   (incluse slide disabled). Al salvataggio scrive su Firebase
+   e aggiorna il runtime slides[] + track bar.
+   ============================================================ */
+
+// Tipi bloccati: non editabili, non cancellabili, sempre attivi
+const LOCKED_TYPES = ['title', 'closing', 'pausa'];
+
+// Working copy usata nell'editor (include le disabled)
+let editorSlides = [];
+// Indice della riga attualmente espansa (-1 = nessuna)
+let edOpenRow = -1;
+
+// Apre l'editor
+document.getElementById('openEditorBtn').addEventListener('click', () => {
+  // Costruiamo editorSlides dal config Firebase (se presente) oppure dal default
+  db.ref(DB_PREFIX + '/slides_config/custom').once('value').then(snap => {
+    if(snap.exists() && Array.isArray(snap.val()) && snap.val().length > 0){
+      editorSlides = JSON.parse(JSON.stringify(snap.val()));
+    } else {
+      // Nessun custom: usiamo il default come base
+      editorSlides = JSON.parse(JSON.stringify(_slidesDefault));
+    }
+    renderEditorList();
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('editorOverlay').classList.add('open');
+    document.getElementById('edStatus').textContent = '';
+  }).catch(() => {
+    editorSlides = JSON.parse(JSON.stringify(_slidesDefault));
+    renderEditorList();
+    document.getElementById('overlay').classList.remove('open');
+    document.getElementById('editorOverlay').classList.add('open');
+    document.getElementById('edStatus').textContent = 'Attenzione: impossibile leggere config da Firebase. Mostro default.';
+  });
+});
+
+document.getElementById('edCloseBtn').addEventListener('click', () => {
+  document.getElementById('editorOverlay').classList.remove('open');
+});
+
+// ───── Salvataggio ─────
+document.getElementById('edSaveBtn').addEventListener('click', async () => {
+  document.getElementById('edStatus').textContent = 'Salvataggio…';
+  try{
+    await db.ref(DB_PREFIX + '/slides_config/custom').set(editorSlides);
+    await db.ref(DB_PREFIX + '/slides_config/savedAt').set(Date.now());
+    // Aggiorna runtime
+    slides = editorSlides.filter(s => !s.disabled);
+    current = Math.min(current, slides.length - 1);
+    buildTrack();
+    buildSecIdxMap();
+    updateCornerBadge(current);
+    render();
+    document.getElementById('edStatus').textContent = '✔ Salvato — ' + slides.length + ' slide attive.';
+  }catch(e){
+    document.getElementById('edStatus').textContent = '✖ Errore salvataggio: ' + e.message;
+  }
+});
+
+// ───── Ripristina default ─────
+document.getElementById('edResetBtn').addEventListener('click', async () => {
+  if(!confirm('Ripristini le domande originali? Tutte le modifiche custom verranno cancellate.')) return;
+  document.getElementById('edStatus').textContent = 'Ripristino…';
+  try{
+    await db.ref(DB_PREFIX + '/slides_config/custom').remove();
+    editorSlides = JSON.parse(JSON.stringify(_slidesDefault));
+    slides = _slidesDefault.slice();
+    current = Math.min(current, slides.length - 1);
+    buildTrack();
+    buildSecIdxMap();
+    updateCornerBadge(current);
+    render();
+    renderEditorList();
+    document.getElementById('edStatus').textContent = '↺ Default ripristinato.';
+  }catch(e){
+    document.getElementById('edStatus').textContent = '✖ Errore ripristino: ' + e.message;
+  }
+});
+
+// ───── Aggiungi domanda ─────
+document.getElementById('edAddBtn').addEventListener('click', () => {
+  // Aggiunge una nuova slide quiz vuota prima della closing (o in fondo)
+  const newSlide = { type:'quiz', section:'p2', q:'', options:['',''], correct:0, answer:'' };
+  const closingIdx = editorSlides.findIndex(s => s.type === 'closing');
+  if(closingIdx > -1){
+    editorSlides.splice(closingIdx, 0, newSlide);
+    renderEditorList();
+    // Apri subito il form della nuova slide
+    const newRealIdx = closingIdx;
+    toggleEdRow(newRealIdx);
+    document.getElementById('edList').scrollTop = document.getElementById('edList').scrollHeight;
+  } else {
+    editorSlides.push(newSlide);
+    renderEditorList();
+    toggleEdRow(editorSlides.length - 1);
+  }
+  document.getElementById('edStatus').textContent = 'Nuova domanda aggiunta — ricorda di salvare.';
+});
+
+// ───── Render lista ─────
+function renderEditorList(){
+  const list = document.getElementById('edList');
+  list.innerHTML = '';
+  edOpenRow = -1;
+  editorSlides.forEach((s, idx) => buildEdRow(s, idx));
+}
+
+function buildEdRow(s, idx){
+  const list = document.getElementById('edList');
+  const locked = LOCKED_TYPES.includes(s.type);
+
+  const row = document.createElement('div');
+  row.className = 'ed-row' + (locked ? ' locked' : '') + (s.disabled ? ' disabled-row' : '');
+  row.dataset.edIdx = idx;
+
+  // ── Header riga ──
+  const head = document.createElement('div');
+  head.className = 'ed-row-head';
+
+  // Badge tipo
+  const badge = document.createElement('span');
+  badge.className = 'ed-type t-' + s.type;
+  badge.textContent = edTypLabel(s.type);
+  head.appendChild(badge);
+
+  // Preview
+  const preview = document.createElement('span');
+  preview.className = 'ed-preview';
+  preview.textContent = edPreview(s);
+  head.appendChild(preview);
+
+  // Toggle (non sui locked)
+  if(!locked){
+    const togLabel = document.createElement('label');
+    togLabel.className = 'ed-toggle';
+    const togCb = document.createElement('input');
+    togCb.type = 'checkbox';
+    togCb.checked = !s.disabled;
+    togCb.addEventListener('change', () => {
+      editorSlides[idx].disabled = !togCb.checked;
+      row.classList.toggle('disabled-row', !!editorSlides[idx].disabled);
+      document.getElementById('edStatus').textContent = 'Modifica non salvata.';
+    });
+    togLabel.appendChild(togCb);
+    togLabel.appendChild(document.createTextNode('Attiva'));
+    head.appendChild(togLabel);
+  }
+
+  // Pulsanti (non sui locked)
+  const btns = document.createElement('div');
+  btns.className = 'ed-row-btns';
+  if(!locked){
+    const editBtn = document.createElement('button');
+    editBtn.className = 'ed-icon-btn';
+    editBtn.title = 'Modifica';
+    editBtn.textContent = '✎';
+    editBtn.addEventListener('click', () => toggleEdRow(idx));
+    btns.appendChild(editBtn);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'ed-icon-btn del';
+    delBtn.title = 'Elimina';
+    delBtn.textContent = '✕';
+    delBtn.addEventListener('click', () => {
+      if(!confirm('Eliminare questa domanda?')) return;
+      editorSlides.splice(idx, 1);
+      renderEditorList();
+      document.getElementById('edStatus').textContent = 'Domanda eliminata — ricorda di salvare.';
+    });
+    btns.appendChild(delBtn);
+  }
+  head.appendChild(btns);
+  row.appendChild(head);
+
+  // ── Form espanso ──
+  if(!locked){
+    const form = document.createElement('div');
+    form.className = 'ed-form';
+    form.id = 'ed-form-' + idx;
+    buildEdForm(form, s, idx);
+    row.appendChild(form);
+  }
+
+  list.appendChild(row);
+}
+
+// Apre/chiude il form di una riga
+function toggleEdRow(idx){
+  // Chiude la precedente
+  if(edOpenRow >= 0 && edOpenRow !== idx){
+    const prevForm = document.getElementById('ed-form-' + edOpenRow);
+    if(prevForm) prevForm.classList.remove('open');
+  }
+  const form = document.getElementById('ed-form-' + idx);
+  if(!form) return;
+  if(edOpenRow === idx){
+    form.classList.remove('open');
+    edOpenRow = -1;
+  } else {
+    form.classList.add('open');
+    edOpenRow = idx;
+    // Scroll leggero per portare il form in vista
+    setTimeout(() => form.scrollIntoView({ behavior:'smooth', block:'nearest' }), 80);
+  }
+}
+
+// Costruisce il form in base al tipo
+function buildEdForm(container, s, idx){
+  const type = s.type;
+
+  if(type === 'quiz' || type === 'sondaggio'){
+    // Selettore tipo
+    appendTypeSelector(container, s, idx);
+    // Domanda
+    appendTextareaField(container, 'Domanda', s.q || '', val => { editorSlides[idx].q = val; updateEdPreview(idx); });
+    // Opzioni
+    const optsLabel = document.createElement('label');
+    optsLabel.textContent = type === 'quiz' ? 'Opzioni (seleziona la risposta corretta →)' : 'Opzioni';
+    container.appendChild(optsLabel);
+    const optsWrap = document.createElement('div');
+    optsWrap.id = 'ed-opts-' + idx;
+    container.appendChild(optsWrap);
+    rebuildOptsUI(optsWrap, s, idx);
+    // Pulsante aggiungi opzione
+    const addOptBtn = document.createElement('button');
+    addOptBtn.className = 'ed-add-opt-btn';
+    addOptBtn.textContent = '+ Aggiungi opzione';
+    addOptBtn.addEventListener('click', () => {
+      if(!editorSlides[idx].options) editorSlides[idx].options = [];
+      editorSlides[idx].options.push('');
+      rebuildOptsUI(optsWrap, editorSlides[idx], idx);
+    });
+    container.appendChild(addOptBtn);
+    // Risposta (solo quiz)
+    if(type === 'quiz'){
+      appendTextareaField(container, 'Spiegazione risposta', s.answer || '', val => { editorSlides[idx].answer = val; });
+    }
+  } else if(type === 'wordcloud'){
+    appendTypeSelector(container, s, idx);
+    appendTextareaField(container, 'Domanda', s.q || '', val => { editorSlides[idx].q = val; updateEdPreview(idx); });
+    // maxSelect
+    const msLabel = document.createElement('label');
+    msLabel.textContent = 'Selezioni massime per partecipante';
+    container.appendChild(msLabel);
+    const msInput = document.createElement('input');
+    msInput.type = 'number';
+    msInput.min = '1'; msInput.max = '5';
+    msInput.value = s.maxSelect || 2;
+    msInput.addEventListener('input', () => { editorSlides[idx].maxSelect = parseInt(msInput.value) || 2; });
+    container.appendChild(msInput);
+    // Opzioni (parole)
+    const optsLabel = document.createElement('label');
+    optsLabel.textContent = 'Parole / opzioni';
+    container.appendChild(optsLabel);
+    const optsWrap = document.createElement('div');
+    optsWrap.id = 'ed-opts-' + idx;
+    container.appendChild(optsWrap);
+    rebuildOptsUI(optsWrap, s, idx, false);
+    const addOptBtn = document.createElement('button');
+    addOptBtn.className = 'ed-add-opt-btn';
+    addOptBtn.textContent = '+ Aggiungi parola';
+    addOptBtn.addEventListener('click', () => {
+      if(!editorSlides[idx].options) editorSlides[idx].options = [];
+      editorSlides[idx].options.push('');
+      rebuildOptsUI(optsWrap, editorSlides[idx], idx, false);
+    });
+    container.appendChild(addOptBtn);
+  } else if(type === 'narrazione'){
+    appendTypeSelector(container, s, idx);
+    appendInputField(container, 'Titolo', s.titolo || '', val => { editorSlides[idx].titolo = val; updateEdPreview(idx); });
+    appendTextareaField(container, 'Testo', s.testo || '', val => { editorSlides[idx].testo = val; });
+  }
+}
+
+// Costruisce la lista opzioni con radio (quiz) o solo X (wordcloud/sondaggio)
+function rebuildOptsUI(wrap, s, idx, showCorrectRadio){
+  if(showCorrectRadio === undefined) showCorrectRadio = (s.type === 'quiz');
+  wrap.innerHTML = '';
+  const opts = s.options || [];
+  opts.forEach((opt, oi) => {
+    const row = document.createElement('div');
+    row.className = 'ed-opt-row';
+    if(showCorrectRadio){
+      const radio = document.createElement('input');
+      radio.type = 'radio';
+      radio.name = 'correct-' + idx;
+      radio.checked = (s.correct === oi);
+      radio.title = 'Risposta corretta';
+      radio.addEventListener('change', () => { editorSlides[idx].correct = oi; });
+      row.appendChild(radio);
+    }
+    const inp = document.createElement('input');
+    inp.type = 'text';
+    inp.value = opt;
+    inp.placeholder = 'Opzione ' + (oi + 1);
+    inp.addEventListener('input', () => { editorSlides[idx].options[oi] = inp.value; });
+    row.appendChild(inp);
+    const xBtn = document.createElement('button');
+    xBtn.className = 'ed-icon-btn del';
+    xBtn.textContent = '✕';
+    xBtn.title = 'Rimuovi opzione';
+    xBtn.addEventListener('click', () => {
+      editorSlides[idx].options.splice(oi, 1);
+      if(editorSlides[idx].correct >= editorSlides[idx].options.length){
+        editorSlides[idx].correct = Math.max(0, editorSlides[idx].options.length - 1);
+      }
+      rebuildOptsUI(wrap, editorSlides[idx], idx, showCorrectRadio);
+    });
+    row.appendChild(xBtn);
+    wrap.appendChild(row);
+  });
+}
+
+// Selettore tipo (quiz/sondaggio/wordcloud/narrazione)
+function appendTypeSelector(container, s, idx){
+  const TIPI = ['quiz','sondaggio','wordcloud','narrazione'];
+  const TIPI_LABEL = { quiz:'Quiz', sondaggio:'Sondaggio', wordcloud:'Word cloud', narrazione:'Narrazione' };
+  const label = document.createElement('label');
+  label.textContent = 'Tipo';
+  container.appendChild(label);
+  const wrap = document.createElement('div');
+  wrap.className = 'ed-type-select';
+  TIPI.forEach(t => {
+    const radio = document.createElement('input');
+    radio.type = 'radio';
+    radio.name = 'type-' + idx;
+    radio.id = 'etype-' + idx + '-' + t;
+    radio.value = t;
+    radio.className = 'ed-type-radio';
+    radio.checked = (s.type === t);
+    radio.addEventListener('change', () => {
+      if(!radio.checked) return;
+      editorSlides[idx].type = t;
+      // Sezione default per il tipo
+      if(t === 'narrazione') editorSlides[idx].section = 'p3';
+      else if(!editorSlides[idx].section) editorSlides[idx].section = 'p2';
+      // Ricostruisce il form
+      const form = document.getElementById('ed-form-' + idx);
+      if(form){ form.innerHTML = ''; buildEdForm(form, editorSlides[idx], idx); }
+      updateEdPreview(idx);
+    });
+    const lbl = document.createElement('label');
+    lbl.htmlFor = 'etype-' + idx + '-' + t;
+    lbl.className = 'ed-type-label';
+    lbl.textContent = TIPI_LABEL[t];
+    wrap.appendChild(radio);
+    wrap.appendChild(lbl);
+  });
+  container.appendChild(wrap);
+}
+
+function appendTextareaField(container, labelText, value, onChange){
+  const lbl = document.createElement('label');
+  lbl.textContent = labelText;
+  container.appendChild(lbl);
+  const ta = document.createElement('textarea');
+  ta.value = value;
+  ta.rows = 2;
+  ta.addEventListener('input', () => onChange(ta.value));
+  container.appendChild(ta);
+}
+
+function appendInputField(container, labelText, value, onChange){
+  const lbl = document.createElement('label');
+  lbl.textContent = labelText;
+  container.appendChild(lbl);
+  const inp = document.createElement('input');
+  inp.type = 'text';
+  inp.value = value;
+  inp.addEventListener('input', () => onChange(inp.value));
+  container.appendChild(inp);
+}
+
+// Aggiorna il testo di preview nella riga dopo una modifica
+function updateEdPreview(idx){
+  const row = document.querySelector('[data-ed-idx="' + idx + '"]');
+  if(!row) return;
+  const prev = row.querySelector('.ed-preview');
+  if(prev) prev.textContent = edPreview(editorSlides[idx]);
+  const badge = row.querySelector('.ed-type');
+  if(badge){
+    badge.className = 'ed-type t-' + editorSlides[idx].type;
+    badge.textContent = edTypLabel(editorSlides[idx].type);
+  }
+}
+
+function edTypLabel(type){
+  return { quiz:'Quiz', sondaggio:'Sondaggio', wordcloud:'Cloud', narrazione:'Narrazione', pausa:'Pausa', title:'Inizio', closing:'Fine' }[type] || type;
+}
+
+function edPreview(s){
+  if(s.type === 'title') return 'Slide iniziale + QR code';
+  if(s.type === 'closing') return 'Slide finale — Grazie';
+  if(s.type === 'pausa') return 'Pausa caffè';
+  return s.q || s.titolo || '(nessun testo)';
+}
+</script>
+</body>
+</html>
