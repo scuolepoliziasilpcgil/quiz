@@ -49,9 +49,19 @@
   .opt-fill.c1{ background:#9fd8ff; }
   .opt-fill.c2{ background:#ffe699; }
   .opt-fill.c3{ background:#ffb3be; }
+  .bottom-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+    margin-top:.8rem;
+    align-items:start;
+  }
   .classifica{ background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.12);
-    border-radius:10px; padding:.9rem; margin-bottom:1.2rem; }
+    border-radius:10px; padding:.9rem; }
   .classifica h3{ font-family:sans-serif; font-size:.9rem; color:#ffe699; margin-bottom:.7rem; }
+  .log-wrap{ display:flex; flex-direction:column; gap:.4rem; }
+  .log-title{ font-family:'IBM Plex Mono',monospace; font-size:.68rem;
+    letter-spacing:.1em; text-transform:uppercase; opacity:.45; }
   .clas-scroll{ max-height:280px; overflow-y:auto; }
   .clas-row{ display:flex; align-items:center; gap:.7rem; padding:.3rem .1rem;
     border-bottom:1px solid rgba(255,255,255,.06); font-size:.8rem; }
@@ -83,6 +93,11 @@
   <div class="card">
     <div class="label">Presenze Firebase</div>
     <div class="val ok" id="valPres">0</div>
+  </div>
+  <div class="card" style="border-color:rgba(255,230,153,.3);">
+    <div class="label" style="color:#ffe699;">🟢 Connessi visualizzati</div>
+    <div class="val" id="valConnIndex" style="color:#ffe699;">0</div>
+    <div style="font-size:.65rem;opacity:.45;margin-top:.2rem;">con algoritmo asimmetrico +0s / -18s</div>
   </div>
   <div class="card">
     <div class="label">Voti inviati</div>
@@ -125,15 +140,17 @@
 
 <div class="rtt-hist" id="rttHist"></div>
 
-<hr>
-<div class="classifica">
-  <h3>🏆 Classifica live — top 10 da Firebase</h3>
-  <div id="clasLive"><span class="clas-empty">In attesa di punteggi…</span></div>
-  <div style="font-size:.68rem;opacity:.4;margin-top:.6rem;" id="clasLastUpdate"></div>
+<div class="bottom-grid">
+  <div class="classifica">
+    <h3>🏆 Classifica live — top 10</h3>
+    <div id="clasLive"><span class="clas-empty">In attesa di punteggi…</span></div>
+    <div style="font-size:.68rem;opacity:.4;margin-top:.6rem;" id="clasLastUpdate"></div>
+  </div>
+  <div class="log-wrap">
+    <div class="log-title">Log</div>
+    <div class="log" id="logEl"></div>
+  </div>
 </div>
-
-<hr>
-<div class="log" id="logEl"></div>
 
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
@@ -431,6 +448,7 @@ async function ferma(){
   votoDistrib = {};
   document.getElementById('valRtt').textContent = '—';
   document.getElementById('rttHist').innerHTML = '';
+  document.getElementById('valConnIndex').textContent = '0';
   aggiornaUI();
   log('✓ Simulazione fermata — ' + chiuse + ' listener staccati', 'ok');
 
@@ -576,9 +594,29 @@ initMaster().then(() => {
     });
 
     // Listener presenza
+    let _displayedConn = 0;
+    let _decreaseTimer = null;
+
     masterDb._presRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence');
     masterDb._presRef.on('value', snap => {
-      document.getElementById('valPres').textContent = snap.numChildren();
+      const n = snap.numChildren();
+      document.getElementById('valPres').textContent = n;
+
+      // Algoritmo asimmetrico identico a index.html:
+      // aumenti immediati, diminuzioni ritardate 18 secondi
+      if(n > _displayedConn){
+        _displayedConn = n;
+        document.getElementById('valConnIndex').textContent = _displayedConn;
+        if(_decreaseTimer){ clearTimeout(_decreaseTimer); _decreaseTimer = null; }
+      } else if(n < _displayedConn){
+        if(_decreaseTimer) clearTimeout(_decreaseTimer);
+        _decreaseTimer = setTimeout(() => {
+          _displayedConn = n;
+          document.getElementById('valConnIndex').textContent = _displayedConn;
+          _decreaseTimer = null;
+        }, 18000);
+      }
+
       renderClassifica(snap.val() || {});
     });
   });
@@ -595,7 +633,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 6 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 9 · 14.07.2026</div>
 
 </body>
 </html>
