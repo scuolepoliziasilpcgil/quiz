@@ -3204,6 +3204,9 @@ function render(){
         const cloudWrap = activeSlide.querySelector('.cloud-wrap');
         if(cloudWrap) cloudWrap.classList.remove('open');
         activeCloud = null;
+        // Azzera barre e contatori lasciati da applyResults
+        activeSlide.querySelectorAll('.bar-fill').forEach(el => { el.style.width = '0%'; });
+        activeSlide.querySelectorAll('.opt-count').forEach(el => { el.textContent = ''; });
       } else {
         resultsBtn.dataset.open = '1';
         resultsBtn.textContent = 'Nascondi risultati';
@@ -4131,7 +4134,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 15 · 14.07.2026</div>
+<div class="rev-tag">index · rev 16 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile
