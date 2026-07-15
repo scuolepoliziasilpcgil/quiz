@@ -3606,6 +3606,28 @@ async function refreshSession(){
       localStorage.setItem('courseNumber', courseNumber);
       applyCourseNumber();
     }
+    if(data.scuola && data.scuola !== scuolaCorrente){
+      scuolaCorrente = data.scuola;
+      localStorage.setItem('scuolaCorrente', scuolaCorrente);
+    }
+    // Listener remoti: scuola, corso, countdown modificabili dal simulatore
+    db.ref(DB_PREFIX + '/sessions/' + sessionId + '/scuola').on('value', s => {
+      if(s.exists() && s.val() !== scuolaCorrente){
+        scuolaCorrente = s.val();
+        localStorage.setItem('scuolaCorrente', scuolaCorrente);
+        if(slides[current] && slides[current].type === 'title') render();
+      }
+    });
+    db.ref(DB_PREFIX + '/sessions/' + sessionId + '/corso').on('value', s => {
+      if(s.exists() && s.val() !== courseNumber){
+        courseNumber = s.val();
+        localStorage.setItem('courseNumber', courseNumber);
+        applyCourseNumber();
+      }
+    });
+    db.ref(DB_PREFIX + '/sessions/' + sessionId + '/countdown').on('value', s => {
+      if(s.exists()) countdownSeconds = parseInt(s.val()) || 15;
+    });
     attachPresenceListener();
     attachVotesListener();
   } catch(err){}
@@ -3983,6 +4005,7 @@ document.getElementById('newSessionBtn').addEventListener('click', async () => {
       slide: 0,
       corso: courseNumber || '',
       countdown: countdownSeconds,
+      scuola: scuolaCorrente || '',
       terzoNome: localStorage.getItem('terzoNome') || '',
       terzoCognome: localStorage.getItem('terzoCognome') || '',
       terzoNumero: localStorage.getItem('terzoNumero') || '',
@@ -4108,7 +4131,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 14 · 14.07.2026</div>
+<div class="rev-tag">index · rev 15 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile

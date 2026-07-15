@@ -111,7 +111,7 @@
 </head>
 <body>
 
-<h1>⚡ SILP Quiz — Simulatore di carico</h1>
+<h1>⚡ SILP Quiz — Simulatore di carico <button id="cfgToggleBtn" style="background:none;border:1px solid rgba(255,255,255,.3);border-radius:8px;color:#9fd8ff;cursor:pointer;font-size:.78rem;padding:.3rem .8rem;margin-left:.8rem;vertical-align:middle;">⚙ Configura</button></h1>
 <p class="session-info" id="sessionInfo">Carico sessione da Firebase…</p>
 <p class="session-info" style="color:#ffe699;margin-top:.3rem;">
   ⚠ Chrome gestisce max ~256 WebSocket per tab. Oltre quel numero le connessioni eccedenti
@@ -621,17 +621,167 @@ initMaster().then(() => {
   aggiornaUI();
 });
 
+/* ============================================================
+   PANNELLO CONFIGURAZIONE
+   ============================================================ */
+function cfgStatus(msg, err){
+  const el = document.getElementById('cfgStatus');
+  el.textContent = msg;
+  el.style.color = err ? '#ffb3be' : '#b6e3c0';
+}
+
+document.getElementById('cfgToggleBtn').addEventListener('click', async () => {
+  // Precarica i valori correnti da Firebase
+  if(currentSid){
+    try{
+      const snap = await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).once('value');
+      const d = snap.val() || {};
+      if(d.corso)     document.getElementById('cfgCorso').value     = d.corso;
+      if(d.countdown) document.getElementById('cfgCountdown').value  = d.countdown;
+      if(d.scuola)    document.getElementById('cfgScuola').value     = d.scuola;
+    }catch(_){}
+  }
+  document.getElementById('cfgOverlay').classList.add('open');
+});
+
+document.getElementById('cfgChiudi').addEventListener('click', () => {
+  document.getElementById('cfgOverlay').classList.remove('open');
+});
+
+document.getElementById('cfgSalvaCorso').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = parseInt(document.getElementById('cfgCorso').value);
+  if(!val){ cfgStatus('Inserisci un numero corso valido.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/corso').set(String(val));
+  cfgStatus('✓ Corso ' + val + '° salvato.');
+});
+
+document.getElementById('cfgSalvaCountdown').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = parseInt(document.getElementById('cfgCountdown').value);
+  if(!val || val < 5){ cfgStatus('Minimo 5 secondi.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/countdown').set(val);
+  cfgStatus('✓ Countdown ' + val + 's salvato.');
+});
+
+document.getElementById('cfgSalvaScuola').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = document.getElementById('cfgScuola').value;
+  if(!val){ cfgStatus('Seleziona una scuola.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scuola').set(val);
+  cfgStatus('✓ Scuola salvata.');
+});
+
+document.getElementById('cfgNuovaSessione').addEventListener('click', async () => {
+  if(!confirm('Avviare una nuova sessione? Tutte le risposte e i punteggi correnti verranno azzerati.')) return;
+  cfgStatus('Avvio nuova sessione…');
+  try{
+    const corso     = document.getElementById('cfgCorso').value || '';
+    const countdown = parseInt(document.getElementById('cfgCountdown').value) || 15;
+    const scuola    = document.getElementById('cfgScuola').value || '';
+    const nuovoId   = 'S' + Date.now();
+    await masterDb.ref(DB_PREFIX + '/sessions/' + nuovoId).set({
+      slide: 0, corso, countdown, scuola
+    });
+    await masterDb.ref(DB_PREFIX + '/config/currentSession').set(nuovoId);
+    cfgStatus('✓ Nuova sessione: ' + nuovoId);
+    document.getElementById('cfgOverlay').classList.remove('open');
+  }catch(e){ cfgStatus('Errore: ' + e.message, true); }
+});
+
+// Chiudi overlay cliccando fuori dal pannello
+document.getElementById('cfgOverlay').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('open');
+});
+
 // Aggiornamento UI periodico
 setInterval(aggiornaUI, 2000);
 </script>
 <style>
-  .rev-tag{
+  .cfg-overlay{
+    position:fixed; inset:0; background:rgba(10,20,40,.96); z-index:50;
+    display:none; align-items:center; justify-content:center;
+  }
+  .cfg-overlay.open{ display:flex; }
+  .cfg-panel{
+    background:#0e1e3a; border:1px solid rgba(255,255,255,.15); border-radius:14px;
+    padding:1.4rem; width:min(480px,94vw); display:flex; flex-direction:column; gap:.9rem;
+  }
+  .cfg-panel h3{ font-family:sans-serif; font-size:1rem; color:#9fd8ff; margin:0; }
+  .cfg-row{ display:grid; grid-template-columns:1fr auto; gap:.6rem; align-items:center; }
+  .cfg-row label{ font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; opacity:.55; margin-bottom:.25rem; display:block; }
+  .cfg-row input, .cfg-row select{
+    background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18);
+    border-radius:8px; color:#f7f3e8; font-family:inherit; font-size:.88rem;
+    padding:.5rem .7rem; width:100%;
+  }
+  .cfg-row select option{ background:#0e1e3a; }
+  .cfg-sep{ border:none; border-top:1px solid rgba(255,255,255,.1); margin:.2rem 0; }
+  #cfgStatus{ font-size:.75rem; opacity:.6; min-height:1.2rem; }
+  .cfg-footer{ display:flex; gap:.6rem; justify-content:flex-end; flex-wrap:wrap; }
+</style>
+
+<div class="cfg-overlay" id="cfgOverlay">
+  <div class="cfg-panel">
+    <h3>⚙ Configurazione sessione</h3>
+
+    <div class="cfg-row">
+      <div>
+        <label>Numero del corso</label>
+        <input type="number" id="cfgCorso" placeholder="es. 233" min="1">
+      </div>
+      <button class="ghost-btn" id="cfgSalvaCorso" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    </div>
+
+    <div class="cfg-row">
+      <div>
+        <label>Durata countdown (secondi)</label>
+        <input type="number" id="cfgCountdown" placeholder="es. 15" min="5" max="60">
+      </div>
+      <button class="ghost-btn" id="cfgSalvaCountdown" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    </div>
+
+    <div class="cfg-row">
+      <div>
+        <label>Scuola di questa conferenza</label>
+        <select id="cfgScuola">
+          <option value="">— Seleziona —</option>
+          <option>Scuola Allievi Agenti di Alessandria</option>
+          <option>Scuola Allievi Agenti di Trieste</option>
+          <option>Scuola Allievi Agenti di Caserta</option>
+          <option>Scuola Allievi Agenti di Campobasso</option>
+          <option>Scuola Allievi Agenti di Peschiera del Garda</option>
+          <option>Scuola Allievi Agenti di Piacenza</option>
+          <option>Scuola Allievi Agenti di Vibo Valentia</option>
+          <option>Scuola Pol.G.A.I. di Brescia</option>
+          <option>Istituto per Ispettori di Nettuno</option>
+          <option>Istituto per Sovrintendenti di Spoleto</option>
+          <option>Scuola per il Controllo del Territorio di Pescara</option>
+          <option>C.A.I.P. di Abbasanta</option>
+          <option>C.A.P.S. di Cesena</option>
+        </select>
+      </div>
+      <button class="ghost-btn" id="cfgSalvaScuola" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    </div>
+
+    <hr class="cfg-sep">
+
+    <button class="ghost-btn" id="cfgNuovaSessione" style="border-color:#ffe699;color:#ffe699;width:100%;padding:.6rem;">
+      🔄 Nuova sessione (reset completo)
+    </button>
+
+    <div id="cfgStatus"></div>
+    <div class="cfg-footer">
+      <button class="ghost-btn" id="cfgChiudi" style="border-color:rgba(255,255,255,.3);color:#f7f3e8;">✕ Chiudi</button>
+    </div>
+  </div>
+</div>
     position:fixed; bottom:.6rem; right:.9rem;
     font-family:'IBM Plex Mono',monospace; font-size:.62rem;
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 22 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 23 · 14.07.2026</div>
 
 </body>
 </html>
