@@ -631,45 +631,74 @@ setInterval(aggiornaUI, 2000);
   .cfg-overlay.open{ display:flex; }
   .cfg-panel{
     background:#0e1e3a; border:1px solid rgba(255,255,255,.15); border-radius:14px;
-    padding:1.4rem; width:min(480px,94vw); display:flex; flex-direction:column; gap:.9rem;
+    padding:1.2rem 1.4rem; width:min(520px,96vw); display:flex; flex-direction:column; gap:.65rem;
+    max-height:92vh; overflow-y:auto;
   }
-  .cfg-panel h3{ font-family:sans-serif; font-size:1rem; color:#9fd8ff; margin:0; }
-  .cfg-row{ display:grid; grid-template-columns:1fr auto; gap:.6rem; align-items:center; }
-  .cfg-row label{ font-size:.68rem; letter-spacing:.09em; text-transform:uppercase; opacity:.55; margin-bottom:.25rem; display:block; }
-  .cfg-row input, .cfg-row select{
+  .cfg-head{ display:flex; justify-content:space-between; align-items:center; }
+  .cfg-head h3{ font-family:sans-serif; font-size:1rem; color:#9fd8ff; margin:0; }
+  .cfg-head button{ padding:.25rem .6rem; font-size:.9rem; }
+  /* Riga a 2 colonne: campo + salva */
+  .cfg-2col{ display:grid; grid-template-columns:1fr auto; gap:.6rem; align-items:flex-end; }
+  /* Riga a 3 colonne: nome cognome numero */
+  .cfg-3col{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:.5rem; }
+  .cfg-field label{ font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; opacity:.5; margin-bottom:.2rem; display:block; }
+  .cfg-field input, .cfg-field select,
+  .cfg-2col input, .cfg-2col select{
     background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.18);
-    border-radius:8px; color:#f7f3e8; font-family:inherit; font-size:.88rem;
-    padding:.5rem .7rem; width:100%;
+    border-radius:7px; color:#f7f3e8; font-family:inherit; font-size:.85rem;
+    padding:.45rem .65rem; width:100%;
   }
-  .cfg-row select option{ background:#0e1e3a; }
-  .cfg-sep{ border:none; border-top:1px solid rgba(255,255,255,.1); margin:.2rem 0; }
-  #cfgStatus{ font-size:.75rem; opacity:.6; min-height:1.2rem; }
-  .cfg-footer{ display:flex; gap:.6rem; justify-content:flex-end; flex-wrap:wrap; }
+  .cfg-2col select option, .cfg-field select option{ background:#0e1e3a; }
+  .cfg-section-title{ font-size:.63rem; letter-spacing:.09em; text-transform:uppercase; opacity:.5; }
+  .cfg-btn-row{ display:flex; gap:.5rem; }
+  .cfg-save-btn{
+    background:none; border:1px solid #b6e3c0; border-radius:7px; color:#b6e3c0;
+    cursor:pointer; font-family:inherit; font-size:.78rem; padding:.4rem .9rem;
+    white-space:nowrap; transition:background .15s;
+  }
+  .cfg-save-btn:hover{ background:rgba(182,227,192,.12); }
+  .cfg-del-btn{
+    background:none; border:1px solid rgba(200,16,46,.5); border-radius:7px; color:#ffb3be;
+    cursor:pointer; font-family:inherit; font-size:.78rem; padding:.4rem .9rem;
+    transition:background .15s;
+  }
+  .cfg-del-btn:hover{ background:rgba(200,16,46,.12); }
+  .cfg-editor-link{
+    display:block; text-align:center; padding:.5rem; border:1px solid rgba(182,162,232,.5);
+    border-radius:8px; color:#b6a2e8; font-size:.8rem; text-decoration:none;
+    transition:background .15s;
+  }
+  .cfg-editor-link:hover{ background:rgba(182,162,232,.08); }
+  .cfg-sep{ border:none; border-top:1px solid rgba(255,255,255,.1); }
+  #cfgStatus{ font-size:.73rem; min-height:1rem; }
 </style>
 
 <div class="cfg-overlay" id="cfgOverlay">
   <div class="cfg-panel">
-    <h3>⚙ Configurazione sessione</h3>
-
-    <div class="cfg-row">
-      <div>
-        <label>Numero del corso</label>
-        <input type="number" id="cfgCorso" placeholder="es. 233" min="1">
-      </div>
-      <button class="ghost-btn" id="cfgSalvaCorso" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    <div class="cfg-head">
+      <h3>⚙ Configurazione sessione</h3>
+      <button class="ghost-btn" id="cfgChiudi">✕</button>
     </div>
 
-    <div class="cfg-row">
-      <div>
-        <label>Durata countdown (secondi)</label>
-        <input type="number" id="cfgCountdown" placeholder="es. 15" min="5" max="60">
+    <div class="cfg-2col">
+      <div class="cfg-field">
+        <label>Corso N°</label>
+        <input type="number" id="cfgCorso" placeholder="233" min="1">
       </div>
-      <button class="ghost-btn" id="cfgSalvaCountdown" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+      <button class="cfg-save-btn" id="cfgSalvaCorso">Salva</button>
     </div>
 
-    <div class="cfg-row">
-      <div>
-        <label>Scuola di questa conferenza</label>
+    <div class="cfg-2col">
+      <div class="cfg-field">
+        <label>Countdown (sec)</label>
+        <input type="number" id="cfgCountdown" placeholder="15" min="5" max="60">
+      </div>
+      <button class="cfg-save-btn" id="cfgSalvaCountdown">Salva</button>
+    </div>
+
+    <div class="cfg-2col">
+      <div class="cfg-field">
+        <label>Scuola</label>
         <select id="cfgScuola">
           <option value="">— Seleziona —</option>
           <option>Scuola Allievi Agenti di Alessandria</option>
@@ -687,43 +716,39 @@ setInterval(aggiornaUI, 2000);
           <option>C.A.P.S. di Cesena</option>
         </select>
       </div>
-      <button class="ghost-btn" id="cfgSalvaScuola" style="align-self:flex-end;border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+      <button class="cfg-save-btn" id="cfgSalvaScuola">Salva</button>
     </div>
 
     <hr class="cfg-sep">
 
-    <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;opacity:.55;">Terzo contatto WhatsApp</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.5rem;align-items:end;">
-      <div><label>Nome</label><input type="text" id="cfgTerzoNome" placeholder="Nome"></div>
-      <div><label>Cognome</label><input type="text" id="cfgTerzoCognome" placeholder="Cognome"></div>
-      <div><label>Numero</label><input type="text" id="cfgTerzoNumero" placeholder="33…"></div>
-      <button class="ghost-btn" id="cfgSalvaTerzo" style="border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    <div class="cfg-section-title">Terzo contatto WhatsApp</div>
+    <div class="cfg-3col">
+      <div class="cfg-field"><label>Nome</label><input type="text" id="cfgTerzoNome" placeholder="Nome"></div>
+      <div class="cfg-field"><label>Cognome</label><input type="text" id="cfgTerzoCognome" placeholder="Cognome"></div>
+      <div class="cfg-field"><label>Numero</label><input type="text" id="cfgTerzoNumero" placeholder="33…"></div>
     </div>
-    <button class="ghost-btn" id="cfgSvuotaTerzo" style="border-color:rgba(200,16,46,.5);color:#ffb3be;font-size:.75rem;align-self:flex-start;">× Svuota terzo</button>
+    <div class="cfg-btn-row">
+      <button class="cfg-save-btn" id="cfgSalvaTerzo">Salva terzo</button>
+      <button class="cfg-del-btn" id="cfgSvuotaTerzo">× Svuota</button>
+    </div>
 
-    <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;opacity:.55;margin-top:.3rem;">Quarto contatto WhatsApp</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.5rem;align-items:end;">
-      <div><label>Nome</label><input type="text" id="cfgQuartoNome" placeholder="Nome"></div>
-      <div><label>Cognome</label><input type="text" id="cfgQuartoCognome" placeholder="Cognome"></div>
-      <div><label>Numero</label><input type="text" id="cfgQuartoNumero" placeholder="33…"></div>
-      <button class="ghost-btn" id="cfgSalvaQuarto" style="border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    <div class="cfg-section-title">Quarto contatto WhatsApp</div>
+    <div class="cfg-3col">
+      <div class="cfg-field"><label>Nome</label><input type="text" id="cfgQuartoNome" placeholder="Nome"></div>
+      <div class="cfg-field"><label>Cognome</label><input type="text" id="cfgQuartoCognome" placeholder="Cognome"></div>
+      <div class="cfg-field"><label>Numero</label><input type="text" id="cfgQuartoNumero" placeholder="33…"></div>
     </div>
-    <button class="ghost-btn" id="cfgSvuotaQuarto" style="border-color:rgba(200,16,46,.5);color:#ffb3be;font-size:.75rem;align-self:flex-start;">× Svuota quarto</button>
+    <div class="cfg-btn-row">
+      <button class="cfg-save-btn" id="cfgSalvaQuarto">Salva quarto</button>
+      <button class="cfg-del-btn" id="cfgSvuotaQuarto">× Svuota</button>
+    </div>
 
     <hr class="cfg-sep">
 
-    <button class="ghost-btn" id="cfgNuovaSessione" style="border-color:#ffe699;color:#ffe699;width:100%;padding:.6rem;">
-      🔄 Nuova sessione (reset completo)
-    </button>
-
-    <a href="./" target="_blank" style="display:block;text-align:center;padding:.6rem;border:1px solid rgba(182,162,232,.6);border-radius:8px;color:#b6a2e8;font-size:.82rem;text-decoration:none;">
-      ✎ Apri editor domande (si apre in nuova scheda)
-    </a>
+    <button class="ghost-btn" id="cfgNuovaSessione" style="border-color:#ffe699;color:#ffe699;width:100%;">🔄 Nuova sessione</button>
+    <a href="./" target="_blank" class="cfg-editor-link">✎ Apri editor domande</a>
 
     <div id="cfgStatus"></div>
-    <div class="cfg-footer">
-      <button class="ghost-btn" id="cfgChiudi" style="border-color:rgba(255,255,255,.3);color:#f7f3e8;">✕ Chiudi</button>
-    </div>
   </div>
 <script>
 /* Pannello configurazione — in script separato DOPO l'HTML dell'overlay
@@ -838,7 +863,7 @@ document.getElementById('cfgOverlay').addEventListener('click', function(e){
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 27 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 28 · 14.07.2026</div>
 
 <style>
   .by-tag{
