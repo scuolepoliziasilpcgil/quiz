@@ -2679,8 +2679,8 @@ let statsTimer = null;
 let connessiMostrati = 0;
 let connessiReale    = 0;
 let discesaConnessiTimer = null;
-const DISCESA_INTERVALLO_MS  = 20000; // un passo ogni 20 secondi
-const DISCESA_PERCENTUALE    = 0.10;  // 10% del divario per passo
+const DISCESA_INTERVALLO_MS  = 8000;  // passo ogni 8 secondi
+const DISCESA_PERCENTUALE    = 0.15;  // 15% del divario per passo → svuota in ~5 min
 
 function _scriviDisplayedConn(){
   if(!sessionId) return;
@@ -4108,7 +4108,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 13 · 14.07.2026</div>
+<div class="rev-tag">index · rev 14 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile

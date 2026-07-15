@@ -557,9 +557,45 @@ const CLIENT_ID = 'C' + Math.random().toString(36).slice(2) + Date.now().toStrin
   const btn    = document.getElementById('nickBtn');
   const err    = document.getElementById('nickError');
 
+  // Lista termini non accettati: sindacati rivali (anche camuffati) e parolacce
+  const NICK_BANNATI = [
+    // Sindacati di Polizia rivali
+    'siulp','siap','sap','coisp','fsp','consap','uilpa','silp',
+    // Parolacce italiane
+    'cazzo','minchia','vaffanculo','fanculo','stronzo','stronza',
+    'merda','puttana','bastardo','bastarda','coglione','figlio',
+    'imbecille','deficiente','idiota','scemo','ritardato'
+  ];
+  const MESSAGGI_RIFIUTO = [
+    'Dai, quel nome proprio no! 😄 Scegline un altro.',
+    'Ehm… questo soprannome non lo accettiamo. Su, uno diverso! 🙃',
+    'Ci hai provato! 😄 Ma questo nome non va. Riprova.',
+    'Bello spirito, ma no. 😂 Trovane uno che possiamo accettare!',
+    'Niente da fare con questo nome! 🙅 Dai, ce ne vuole un altro.'
+  ];
+
+  function normalizzaPerFiltro(s){
+    return s.toLowerCase()
+      .replace(/[àáâã]/g, 'a').replace(/[èéê]/g, 'e')
+      .replace(/[ìíî]/g, 'i').replace(/[òóô]/g, 'o').replace(/[ùúû]/g, 'u')
+      .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e')
+      .replace(/4/g, 'a').replace(/5/g, 's').replace(/7/g, 't').replace(/@/g, 'a')
+      .replace(/[^a-z]/g, '');
+  }
+
+  function nickBannato(val){
+    const norm = normalizzaPerFiltro(val);
+    return NICK_BANNATI.some(t => norm.includes(t));
+  }
+
   function submit(){
     const val = input.value.trim().replace(/\s+/g, '.');
     if(val.length < 2){ err.textContent = 'Almeno 2 caratteri'; return; }
+    if(nickBannato(val)){
+      err.textContent = MESSAGGI_RIFIUTO[Math.floor(Math.random() * MESSAGGI_RIFIUTO.length)];
+      input.select();
+      return;
+    }
     err.textContent = '';
     myNick = val;
     localStorage.setItem('silpNick', val);
@@ -1113,6 +1149,6 @@ db.ref('.info/connected').on('value', function(snap){
   }
 });
 </script>
-<div class="rev-tag">partecipa · rev 5 · 14.07.2026</div>
+<div class="rev-tag">partecipa · rev 6 · 14.07.2026</div>
 </body>
 </html>
