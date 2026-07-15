@@ -543,18 +543,27 @@ initMaster().then(() => {
     currentSid = nuovoSid;
     currentSlide = null;
     votoDistrib = {};
-    log('🔄 Sessione rilevata: ' + currentSid, 'info');
+
+    if(Object.keys(bots).length > 0){
+      log('⚠ Sessione cambiata con ' + Object.keys(bots).length + ' bot attivi — premere "Ferma e pulisci" poi riavviare.', 'err');
+    } else {
+      log('🔄 Sessione rilevata: ' + currentSid, 'info');
+    }
+
     document.getElementById('sessionInfo').textContent =
       'Sessione: ' + currentSid + ' — DB prefix: ' + DB_PREFIX + ' — Istanza: ' + INSTANCE_ID;
     document.getElementById('valSlide').textContent = '—';
     document.getElementById('valSlideInfo').textContent = '';
-    // Abilita pulsanti che funzionano anche senza bot attivi
+    document.getElementById('valConnIndex').textContent = '—';
     document.getElementById('btnReset').disabled = false;
     document.getElementById('btnResetScores').disabled = false;
 
     // Stacco listener precedenti
-    if(masterDb._slideRef) masterDb._slideRef.off();
-    if(masterDb._presRef)  masterDb._presRef.off();
+    if(masterDb._slideRef)    masterDb._slideRef.off();
+    if(masterDb._presRef)     masterDb._presRef.off();
+    if(masterDb._scoresRef)   masterDb._scoresRef.off();
+    if(masterDb._votesRef)    masterDb._votesRef.off();
+    if(masterDb._dispConnRef) masterDb._dispConnRef.off();
 
     // Listener slide corrente
     masterDb._slideRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/slide');
@@ -579,27 +588,18 @@ initMaster().then(() => {
       }
     });
 
-    // Listener presenza
-    let _displayedConn = 0;
-    let _decreaseTimer = null;
-
-    // Presenza — solo contatore connessi (con algoritmo asimmetrico)
+    // Presenza — solo per presenze Firebase e connessioni aperte
     masterDb._presRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/presence');
     masterDb._presRef.on('value', snap => {
-      const n = snap.numChildren();
-      document.getElementById('valPres').textContent = n;
-      if(n > _displayedConn){
-        _displayedConn = n;
-        document.getElementById('valConnIndex').textContent = _displayedConn;
-        if(_decreaseTimer){ clearTimeout(_decreaseTimer); _decreaseTimer = null; }
-      } else if(n < _displayedConn){
-        if(_decreaseTimer) clearTimeout(_decreaseTimer);
-        _decreaseTimer = setTimeout(() => {
-          _displayedConn = n;
-          document.getElementById('valConnIndex').textContent = _displayedConn;
-          _decreaseTimer = null;
-        }, 18000);
-      }
+      document.getElementById('valPres').textContent = snap.numChildren();
+    });
+
+    // displayedConn — legge il valore REALE scritto da index.html su Firebase
+    // (nessun algoritmo locale: è il dato esatto che vede il relatore)
+    if(masterDb._dispConnRef) masterDb._dispConnRef.off();
+    masterDb._dispConnRef = masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/ui/displayedConn');
+    masterDb._dispConnRef.on('value', snap => {
+      document.getElementById('valConnIndex').textContent = snap.exists() ? snap.val() : '—';
     });
 
     // Scores — per classifica (stesso nodo di index.html)
@@ -632,7 +632,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 20 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 21 · 14.07.2026</div>
 
 </body>
 </html>

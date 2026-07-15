@@ -2682,6 +2682,11 @@ let discesaConnessiTimer = null;
 const DISCESA_INTERVALLO_MS  = 20000; // un passo ogni 20 secondi
 const DISCESA_PERCENTUALE    = 0.10;  // 10% del divario per passo
 
+function _scriviDisplayedConn(){
+  if(!sessionId) return;
+  db.ref(DB_PREFIX + '/sessions/' + sessionId + '/ui/displayedConn').set(connessiMostrati);
+}
+
 function aggiornaConnessi(nVero){
   const tipoSlide = slides[current] && slides[current].type;
   if(tipoSlide === 'closing'){ statsBadge.style.display = 'none'; return; }
@@ -2689,12 +2694,11 @@ function aggiornaConnessi(nVero){
   connessiReale = nVero;
 
   if(nVero > connessiMostrati){
-    // Salita: immediata, cancella qualsiasi timer di discesa in corso
     connessiMostrati = nVero;
     if(discesaConnessiTimer){ clearTimeout(discesaConnessiTimer); discesaConnessiTimer = null; }
     if(tipoSlide === 'title') suonaConnessione();
+    _scriviDisplayedConn();
   } else if(nVero < connessiMostrati && !discesaConnessiTimer){
-    // Discesa: avvia il processo progressivo solo se non è già in corso
     _scheduleDiscesa();
   }
 
@@ -2705,12 +2709,13 @@ function aggiornaConnessi(nVero){
 function _scheduleDiscesa(){
   discesaConnessiTimer = setTimeout(() => {
     discesaConnessiTimer = null;
-    if(connessiReale >= connessiMostrati) return; // si sono riconnessi nel frattempo
+    if(connessiReale >= connessiMostrati) return;
     const divario = connessiMostrati - connessiReale;
     const calo    = Math.max(1, Math.floor(divario * DISCESA_PERCENTUALE));
     connessiMostrati = Math.max(connessiReale, connessiMostrati - calo);
     pConnessi.textContent = connessiMostrati;
-    if(connessiMostrati > connessiReale) _scheduleDiscesa(); // continua finché non allineato
+    _scriviDisplayedConn();
+    if(connessiMostrati > connessiReale) _scheduleDiscesa();
   }, DISCESA_INTERVALLO_MS);
 }
 
@@ -2718,6 +2723,7 @@ function azzeraPeriodoConnessi(){
   connessiMostrati = 0;
   connessiReale    = 0;
   if(discesaConnessiTimer){ clearTimeout(discesaConnessiTimer); discesaConnessiTimer = null; }
+  _scriviDisplayedConn();
 }
 
 // ===== Suoni brevi, una sola nota, non invasivi =====
@@ -4102,7 +4108,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 12 · 14.07.2026</div>
+<div class="rev-tag">index · rev 13 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile
