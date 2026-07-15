@@ -252,7 +252,6 @@ function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
 function aggiornaUI(){
   const N = parseInt(document.getElementById('numBots').value) || 300;
   document.getElementById('valConn').textContent  = totalConn;
-  document.getElementById('valPres').textContent  = Object.keys(bots).length;
   document.getElementById('valErr').textContent   = totalErr;
   document.getElementById('progressBar').style.width = Math.min(100, totalConn / N * 100) + '%';
   if(rttSamples.length > 0){
@@ -632,7 +631,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 21 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 22 · 14.07.2026</div>
 
 </body>
 </html>
