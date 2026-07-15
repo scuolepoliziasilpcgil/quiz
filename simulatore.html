@@ -621,79 +621,6 @@ initMaster().then(() => {
   aggiornaUI();
 });
 
-/* ============================================================
-   PANNELLO CONFIGURAZIONE
-   ============================================================ */
-function cfgStatus(msg, err){
-  const el = document.getElementById('cfgStatus');
-  el.textContent = msg;
-  el.style.color = err ? '#ffb3be' : '#b6e3c0';
-}
-
-document.getElementById('cfgToggleBtn').addEventListener('click', async () => {
-  // Precarica i valori correnti da Firebase
-  if(currentSid){
-    try{
-      const snap = await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).once('value');
-      const d = snap.val() || {};
-      if(d.corso)     document.getElementById('cfgCorso').value     = d.corso;
-      if(d.countdown) document.getElementById('cfgCountdown').value  = d.countdown;
-      if(d.scuola)    document.getElementById('cfgScuola').value     = d.scuola;
-    }catch(_){}
-  }
-  document.getElementById('cfgOverlay').classList.add('open');
-});
-
-document.getElementById('cfgChiudi').addEventListener('click', () => {
-  document.getElementById('cfgOverlay').classList.remove('open');
-});
-
-document.getElementById('cfgSalvaCorso').addEventListener('click', async () => {
-  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
-  const val = parseInt(document.getElementById('cfgCorso').value);
-  if(!val){ cfgStatus('Inserisci un numero corso valido.', true); return; }
-  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/corso').set(String(val));
-  cfgStatus('✓ Corso ' + val + '° salvato.');
-});
-
-document.getElementById('cfgSalvaCountdown').addEventListener('click', async () => {
-  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
-  const val = parseInt(document.getElementById('cfgCountdown').value);
-  if(!val || val < 5){ cfgStatus('Minimo 5 secondi.', true); return; }
-  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/countdown').set(val);
-  cfgStatus('✓ Countdown ' + val + 's salvato.');
-});
-
-document.getElementById('cfgSalvaScuola').addEventListener('click', async () => {
-  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
-  const val = document.getElementById('cfgScuola').value;
-  if(!val){ cfgStatus('Seleziona una scuola.', true); return; }
-  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scuola').set(val);
-  cfgStatus('✓ Scuola salvata.');
-});
-
-document.getElementById('cfgNuovaSessione').addEventListener('click', async () => {
-  if(!confirm('Avviare una nuova sessione? Tutte le risposte e i punteggi correnti verranno azzerati.')) return;
-  cfgStatus('Avvio nuova sessione…');
-  try{
-    const corso     = document.getElementById('cfgCorso').value || '';
-    const countdown = parseInt(document.getElementById('cfgCountdown').value) || 15;
-    const scuola    = document.getElementById('cfgScuola').value || '';
-    const nuovoId   = 'S' + Date.now();
-    await masterDb.ref(DB_PREFIX + '/sessions/' + nuovoId).set({
-      slide: 0, corso, countdown, scuola
-    });
-    await masterDb.ref(DB_PREFIX + '/config/currentSession').set(nuovoId);
-    cfgStatus('✓ Nuova sessione: ' + nuovoId);
-    document.getElementById('cfgOverlay').classList.remove('open');
-  }catch(e){ cfgStatus('Errore: ' + e.message, true); }
-});
-
-// Chiudi overlay cliccando fuori dal pannello
-document.getElementById('cfgOverlay').addEventListener('click', function(e){
-  if(e.target === this) this.classList.remove('open');
-});
-
 // Aggiornamento UI periodico
 setInterval(aggiornaUI, 2000);
 </script>
@@ -775,6 +702,68 @@ setInterval(aggiornaUI, 2000);
       <button class="ghost-btn" id="cfgChiudi" style="border-color:rgba(255,255,255,.3);color:#f7f3e8;">✕ Chiudi</button>
     </div>
   </div>
+<script>
+/* Pannello configurazione — in script separato DOPO l'HTML dell'overlay
+   così i getElementById trovano gli elementi già nel DOM              */
+function cfgStatus(msg, err){
+  const el = document.getElementById('cfgStatus');
+  el.textContent = msg;
+  el.style.color = err ? '#ffb3be' : '#b6e3c0';
+}
+document.getElementById('cfgToggleBtn').addEventListener('click', async () => {
+  if(currentSid){
+    try{
+      const snap = await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).once('value');
+      const d = snap.val() || {};
+      if(d.corso)     document.getElementById('cfgCorso').value    = d.corso;
+      if(d.countdown) document.getElementById('cfgCountdown').value = d.countdown;
+      if(d.scuola)    document.getElementById('cfgScuola').value    = d.scuola;
+    }catch(_){}
+  }
+  document.getElementById('cfgOverlay').classList.add('open');
+});
+document.getElementById('cfgChiudi').addEventListener('click', () => {
+  document.getElementById('cfgOverlay').classList.remove('open');
+});
+document.getElementById('cfgSalvaCorso').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = parseInt(document.getElementById('cfgCorso').value);
+  if(!val){ cfgStatus('Inserisci un numero corso valido.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/corso').set(String(val));
+  cfgStatus('✓ Corso ' + val + '° salvato.');
+});
+document.getElementById('cfgSalvaCountdown').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = parseInt(document.getElementById('cfgCountdown').value);
+  if(!val || val < 5){ cfgStatus('Minimo 5 secondi.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/countdown').set(val);
+  cfgStatus('✓ Countdown ' + val + 's salvato.');
+});
+document.getElementById('cfgSalvaScuola').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const val = document.getElementById('cfgScuola').value;
+  if(!val){ cfgStatus('Seleziona una scuola.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scuola').set(val);
+  cfgStatus('✓ Scuola salvata.');
+});
+document.getElementById('cfgNuovaSessione').addEventListener('click', async () => {
+  if(!confirm('Avviare una nuova sessione? Risposte e punteggi correnti verranno azzerati.')) return;
+  cfgStatus('Avvio nuova sessione…');
+  try{
+    const corso     = document.getElementById('cfgCorso').value || '';
+    const countdown = parseInt(document.getElementById('cfgCountdown').value) || 15;
+    const scuola    = document.getElementById('cfgScuola').value || '';
+    const nuovoId   = 'S' + Date.now();
+    await masterDb.ref(DB_PREFIX + '/sessions/' + nuovoId).set({ slide:0, corso, countdown, scuola });
+    await masterDb.ref(DB_PREFIX + '/config/currentSession').set(nuovoId);
+    cfgStatus('✓ Nuova sessione: ' + nuovoId);
+    document.getElementById('cfgOverlay').classList.remove('open');
+  }catch(e){ cfgStatus('Errore: ' + e.message, true); }
+});
+document.getElementById('cfgOverlay').addEventListener('click', function(e){
+  if(e.target === this) this.classList.remove('open');
+});
+</script>
 </div>
 <style>
   .rev-tag{
@@ -783,7 +772,7 @@ setInterval(aggiornaUI, 2000);
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 23 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 24 · 14.07.2026</div>
 
 </body>
 </html>
