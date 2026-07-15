@@ -3631,6 +3631,15 @@ async function refreshSession(){
     db.ref(DB_PREFIX + '/sessions/' + sessionId + '/countdown').on('value', s => {
       if(s.exists()) countdownSeconds = parseInt(s.val()) || 15;
     });
+    // Terzo e quarto contatto — aggiornabili da remoto (es. dal simulatore)
+    const contattiKeys = ['terzoNome','terzoCognome','terzoNumero','quartoNome','quartoCognome','quartoNumero'];
+    contattiKeys.forEach(k => {
+      db.ref(DB_PREFIX + '/sessions/' + sessionId + '/' + k).on('value', s => {
+        if(s.exists()) localStorage.setItem(k, s.val());
+        else localStorage.removeItem(k);
+        renderContatti();
+      });
+    });
     attachPresenceListener();
     attachVotesListener();
   } catch(err){}
@@ -4134,7 +4143,7 @@ document.getElementById('clearScuolaBtn').addEventListener('click', () => {
   render();
 });
 </script>
-<div class="rev-tag">index · rev 16 · 14.07.2026</div>
+<div class="rev-tag">index · rev 18 · 14.07.2026</div>
 
 <!-- ============================================================
      EDITOR DOMANDE — overlay fullscreen con lista editabile
@@ -4851,5 +4860,14 @@ function edPreview(s){
   return s.q || s.titolo || '(nessun testo)';
 }
 </script>
+<style>
+  .by-tag{
+    position:fixed; bottom:.6rem; left:.9rem;
+    font-family:'IBM Plex Mono',monospace; font-size:.62rem;
+    opacity:.35; letter-spacing:.06em; pointer-events:none;
+    color:inherit;
+  }
+</style>
+<div class="by-tag">by Gianluca Cioè</div>
 </body>
 </html>

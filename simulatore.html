@@ -692,9 +692,33 @@ setInterval(aggiornaUI, 2000);
 
     <hr class="cfg-sep">
 
+    <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;opacity:.55;">Terzo contatto WhatsApp</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.5rem;align-items:end;">
+      <div><label>Nome</label><input type="text" id="cfgTerzoNome" placeholder="Nome"></div>
+      <div><label>Cognome</label><input type="text" id="cfgTerzoCognome" placeholder="Cognome"></div>
+      <div><label>Numero</label><input type="text" id="cfgTerzoNumero" placeholder="33…"></div>
+      <button class="ghost-btn" id="cfgSalvaTerzo" style="border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    </div>
+    <button class="ghost-btn" id="cfgSvuotaTerzo" style="border-color:rgba(200,16,46,.5);color:#ffb3be;font-size:.75rem;align-self:flex-start;">× Svuota terzo</button>
+
+    <div style="font-size:.68rem;letter-spacing:.09em;text-transform:uppercase;opacity:.55;margin-top:.3rem;">Quarto contatto WhatsApp</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:.5rem;align-items:end;">
+      <div><label>Nome</label><input type="text" id="cfgQuartoNome" placeholder="Nome"></div>
+      <div><label>Cognome</label><input type="text" id="cfgQuartoCognome" placeholder="Cognome"></div>
+      <div><label>Numero</label><input type="text" id="cfgQuartoNumero" placeholder="33…"></div>
+      <button class="ghost-btn" id="cfgSalvaQuarto" style="border-color:#b6e3c0;color:#b6e3c0;">Salva</button>
+    </div>
+    <button class="ghost-btn" id="cfgSvuotaQuarto" style="border-color:rgba(200,16,46,.5);color:#ffb3be;font-size:.75rem;align-self:flex-start;">× Svuota quarto</button>
+
+    <hr class="cfg-sep">
+
     <button class="ghost-btn" id="cfgNuovaSessione" style="border-color:#ffe699;color:#ffe699;width:100%;padding:.6rem;">
       🔄 Nuova sessione (reset completo)
     </button>
+
+    <a href="./" target="_blank" style="display:block;text-align:center;padding:.6rem;border:1px solid rgba(182,162,232,.6);border-radius:8px;color:#b6a2e8;font-size:.82rem;text-decoration:none;">
+      ✎ Apri editor domande (si apre in nuova scheda)
+    </a>
 
     <div id="cfgStatus"></div>
     <div class="cfg-footer">
@@ -714,9 +738,15 @@ document.getElementById('cfgToggleBtn').addEventListener('click', async () => {
     try{
       const snap = await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).once('value');
       const d = snap.val() || {};
-      if(d.corso)     document.getElementById('cfgCorso').value    = d.corso;
-      if(d.countdown) document.getElementById('cfgCountdown').value = d.countdown;
-      if(d.scuola)    document.getElementById('cfgScuola').value    = d.scuola;
+      if(d.corso)          document.getElementById('cfgCorso').value         = d.corso;
+      if(d.countdown)      document.getElementById('cfgCountdown').value      = d.countdown;
+      if(d.scuola)         document.getElementById('cfgScuola').value         = d.scuola;
+      if(d.terzoNome)      document.getElementById('cfgTerzoNome').value      = d.terzoNome;
+      if(d.terzoCognome)   document.getElementById('cfgTerzoCognome').value   = d.terzoCognome;
+      if(d.terzoNumero)    document.getElementById('cfgTerzoNumero').value    = d.terzoNumero;
+      if(d.quartoNome)     document.getElementById('cfgQuartoNome').value     = d.quartoNome;
+      if(d.quartoCognome)  document.getElementById('cfgQuartoCognome').value  = d.quartoCognome;
+      if(d.quartoNumero)   document.getElementById('cfgQuartoNumero').value   = d.quartoNumero;
     }catch(_){}
   }
   document.getElementById('cfgOverlay').classList.add('open');
@@ -745,6 +775,43 @@ document.getElementById('cfgSalvaScuola').addEventListener('click', async () => 
   await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid + '/scuola').set(val);
   cfgStatus('✓ Scuola salvata.');
 });
+document.getElementById('cfgSalvaTerzo').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const nome = document.getElementById('cfgTerzoNome').value.trim();
+  const cognome = document.getElementById('cfgTerzoCognome').value.trim();
+  const numero = document.getElementById('cfgTerzoNumero').value.trim().replace(/\s+/g,'');
+  if(!nome || !numero){ cfgStatus('Nome e numero obbligatori per il terzo contatto.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).update({ terzoNome: nome, terzoCognome: cognome, terzoNumero: numero });
+  cfgStatus('✓ Terzo contatto salvato.');
+});
+
+document.getElementById('cfgSvuotaTerzo').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).update({ terzoNome: '', terzoCognome: '', terzoNumero: '' });
+  document.getElementById('cfgTerzoNome').value = '';
+  document.getElementById('cfgTerzoCognome').value = '';
+  document.getElementById('cfgTerzoNumero').value = '';
+  cfgStatus('✓ Terzo contatto svuotato.');
+});
+
+document.getElementById('cfgSalvaQuarto').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  const nome = document.getElementById('cfgQuartoNome').value.trim();
+  const cognome = document.getElementById('cfgQuartoCognome').value.trim();
+  const numero = document.getElementById('cfgQuartoNumero').value.trim().replace(/\s+/g,'');
+  if(!nome || !numero){ cfgStatus('Nome e numero obbligatori per il quarto contatto.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).update({ quartoNome: nome, quartoCognome: cognome, quartoNumero: numero });
+  cfgStatus('✓ Quarto contatto salvato.');
+});
+
+document.getElementById('cfgSvuotaQuarto').addEventListener('click', async () => {
+  if(!currentSid){ cfgStatus('Nessuna sessione attiva.', true); return; }
+  await masterDb.ref(DB_PREFIX + '/sessions/' + currentSid).update({ quartoNome: '', quartoCognome: '', quartoNumero: '' });
+  document.getElementById('cfgQuartoNome').value = '';
+  document.getElementById('cfgQuartoCognome').value = '';
+  document.getElementById('cfgQuartoNumero').value = '';
+  cfgStatus('✓ Quarto contatto svuotato.');
+});
 document.getElementById('cfgNuovaSessione').addEventListener('click', async () => {
   if(!confirm('Avviare una nuova sessione? Risposte e punteggi correnti verranno azzerati.')) return;
   cfgStatus('Avvio nuova sessione…');
@@ -771,7 +838,16 @@ document.getElementById('cfgOverlay').addEventListener('click', function(e){
     opacity:.35; letter-spacing:.08em; pointer-events:none;
   }
 </style>
-<div class="rev-tag">simulatore · rev 25 · 14.07.2026</div>
+<div class="rev-tag">simulatore · rev 27 · 14.07.2026</div>
 
+<style>
+  .by-tag{
+    position:fixed; bottom:.6rem; left:.9rem;
+    font-family:'IBM Plex Mono',monospace; font-size:.62rem;
+    opacity:.35; letter-spacing:.06em; pointer-events:none;
+    color:inherit;
+  }
+</style>
+<div class="by-tag">by Gianluca Cioè</div>
 </body>
 </html>
